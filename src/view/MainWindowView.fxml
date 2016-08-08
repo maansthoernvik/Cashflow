@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="mainAnchorPane" minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
+   <children>
+       <SplitPane fx:id="mainSplitPane" dividerPositions="0.1" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="30">
+         <items>
+            <VBox fx:id="mainVBoxMenu" minWidth="200" maxWidth="200">
+               <children>
+                  <Label fx:id="labelMyEconomy" onMouseReleased="#handleLabelMyEconomy" text="My economy" />
+                  <Label fx:id="labelLoans" onMouseReleased="#handleLabelLoans" text="Loans" />
+                  <Label fx:id="labelExpenses" onMouseReleased="#handleLabelExpenses" text="Expenses" />
+                  <Label fx:id="labelSettings" onMouseReleased="#handleLabelSettings" text="Settings" />
+               </children></VBox>
+             <VBox fx:id="emptyVBox" />
+         </items></SplitPane>
+      <MenuBar fx:id="menuBar" prefHeight="30" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+               AnchorPane.topAnchor="0" useSystemMenuBar="true">
+        <menus>
+          <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem fx:id="menuItemClose" mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu fx:id="menuEdit" mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem fx:id="menuItemDelete" mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem fx:id="menuItemAbout" mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </children>
+</AnchorPane>
