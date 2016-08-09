@@ -97,6 +97,8 @@ public class LoanView extends VBox {
             tfAmortizationAmount.clear();
             dpNextPayment.setValue(null);
             dpBoundTo.setValue(null);
+
+            refreshTableContent();
         });
 
         btnUpdateLoan.setOnMouseReleased( releaseEvent -> {
@@ -121,6 +123,16 @@ public class LoanView extends VBox {
                 SQLiteConn.updateLoan(updatedLoan);
 
                 currentLoan = null;
+
+                tfName.clear();
+                tfAmount.clear();
+                tfInterestRate.clear();
+                tfAmortizationRate.clear();
+                tfAmortizationAmount.clear();
+                dpNextPayment.setValue(null);
+                dpBoundTo.setValue(null);
+
+                refreshTableContent();
             }
         });
 
