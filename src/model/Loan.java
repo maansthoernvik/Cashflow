@@ -9,25 +9,18 @@ import java.sql.Date;
  */
 
 public class Loan {
-    private String name;
+    private int id;
 
+    private String name;
     private int amount;             // The loan amount
     private double interestRate;    // The current interest
     private double amortizationRate;
     private int amortizationAmount;
-
-    private Date nextPayment;       // Last time a loan payment was made, in order to keep track of amortization
-                                    // payments so that the loan amount gets updated properly.
-    private Date boundTo;           // How long the loans interest rate has been bound
-
-    public Loan(String name, int amount, double interestRate) {
-        this.name = name;
-        this.amount = amount;
-        this.interestRate = interestRate;
-    }
+    private long nextPayment;
+    private long boundTo;
 
     public Loan(String name, int amount, double interestRate, double amortizationRate, int amortizationAmount,
-                Date nextPayment, Date boundTo) {
+                long nextPayment, long boundTo) {
         this.name = name;
         this.amount = amount;
         this.interestRate = interestRate;
@@ -37,8 +30,25 @@ public class Loan {
         this.boundTo = boundTo;
     }
 
-    public String setBankName(String newBankName) {
-        name = newBankName;
+    public Loan(int id, String name, int amount, double interestRate, double amortizationRate, int amortizationAmount,
+                long nextPayment, long boundTo) {
+        this.id = id;
+        this.name = name;
+        this.amount = amount;
+        this.interestRate = interestRate;
+        this.amortizationRate = amortizationRate;
+        this.amortizationAmount = amortizationAmount;
+        this.nextPayment = nextPayment;
+        this.boundTo = boundTo;
+    }
+
+    public int setId(int newId) {
+        id = newId;
+        return id;
+    }
+
+    public String setName(String newName) {
+        name = newName;
         return name;
     }
 
@@ -62,14 +72,18 @@ public class Loan {
         return amortizationAmount;
     }
 
-    public Date setLastPayment(Date newLastPayment) {
+    public long setLastPayment(long newLastPayment) {
         nextPayment = newLastPayment;
         return nextPayment;
     }
 
-    public Date setBoundTo(Date newDate) {
+    public long setBoundTo(long newDate) {
         boundTo = newDate;
         return boundTo;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -92,11 +106,11 @@ public class Loan {
         return amortizationAmount;
     }
 
-    public Date getNextPayment() {
+    public long getNextPayment() {
         return nextPayment;
     }
 
-    public Date getBoundTo() {
+    public long getBoundTo() {
         return boundTo;
     }
 

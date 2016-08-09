@@ -26,14 +26,14 @@ public class SQLiteConnection {
 
     public ArrayList<Loan> fetchLoans(String query, String user) {
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
-             PreparedStatement ps = createPreparedStatement(conn, query, user);
+             PreparedStatement ps = createSelectPreparedStatement(conn, query, user);
              ResultSet rs = ps.executeQuery()) {
             ArrayList<Loan> result = new ArrayList<>();
 
             while(rs.next()) {
-                result.add(new Loan(rs.getString("Name"), rs.getInt("Amount"), rs.getDouble("InterestRate"),
+                result.add(new Loan(rs.getInt("id"), rs.getString("Name"), rs.getInt("Amount"), rs.getDouble("InterestRate"),
                         rs.getDouble("AmortizationRate"), rs.getInt("AmortizationAmount"),
-                        new Date((long) rs.getInt("NextPayment")), new Date((long) rs.getInt("BoundTo"))));
+                        rs.getLong("NextPayment"), rs.getLong("BoundTo")));
             }
 
             return result;
@@ -45,7 +45,7 @@ public class SQLiteConnection {
 
     public ArrayList<Expense> fetchExpenses(String query, String user) {
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
-             PreparedStatement ps = createPreparedStatement(conn, query, user);
+             PreparedStatement ps = createSelectPreparedStatement(conn, query, user);
              ResultSet rs = ps.executeQuery()) {
             ArrayList<Expense> result = new ArrayList<>();
 
@@ -61,11 +61,68 @@ public class SQLiteConnection {
         }
     }
 
-    private PreparedStatement createPreparedStatement(Connection conn, String query, String user) throws SQLException {
+    private PreparedStatement createSelectPreparedStatement(Connection conn, String query, String user) throws SQLException {
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, user);
 
         return ps;
     }
 
+    public boolean insertLoan(Loan loan, String user) {
+        String insert = "INSERT INTO Loans (User, Name, Amount, InterestRate, AmortizationRate, AmortizationAmount, " +
+                "NextPayment, BoundTo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createInsertLoanPreparedStatement(conn, insert, loan, user)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private PreparedStatement createInsertLoanPreparedStatement(Connection conn, String insert, Loan loan, String user) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(insert);
+        ps.setString(1, user);
+        ps.setString(2, loan.getName());
+        ps.setInt(3, loan.getAmount());
+        ps.setDouble(4, loan.getInterestRate());
+        ps.setDouble(5, loan.getAmortizationRate());
+        ps.setInt(6, loan.getAmortizationAmount());
+        ps.setLong(7, loan.getNextPayment());
+        ps.setLong(8, loan.getBoundTo());
+
+        return ps;
+    }
+
+    public boolean updateLoan(Loan loan) {
+        String update = "UPDATE Loans SET Name = ?, Amount = ?, InterestRate = ?, AmortizationRate = ?, AmortizationAmount = ?, " +
+                "NextPayment = ?, BoundTo = ? WHERE Id = ?;";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createUpdateLoanPreparedStatement(conn, update, loan)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private PreparedStatement createUpdateLoanPreparedStatement(Connection conn, String update, Loan loan) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(update);
+        ps.setString(1, loan.getName());
+        ps.setInt(2, loan.getAmount());
+        ps.setDouble(3, loan.getInterestRate());
+        ps.setDouble(4, loan.getAmortizationRate());
+        ps.setInt(5, loan.getAmortizationAmount());
+        ps.setLong(6, loan.getNextPayment());
+        ps.setLong(7, loan.getBoundTo());
+        ps.setInt(8, loan.getId());
+
+        return ps;
+    }
 }

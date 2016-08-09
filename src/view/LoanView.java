@@ -13,8 +13,6 @@ import javafx.scene.layout.VBox;
 
 import java.sql.Date;
 import java.time.LocalDate;
-
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -25,9 +23,32 @@ import java.util.Calendar;
 
 public class LoanView extends VBox {
 
+    private SQLiteConnection SQLiteConn;
+    private TableView<Loan> tvLoans;
+    private Loan currentLoan;
+
     public LoanView() {
         super();
         this.setAlignment(Pos.TOP_LEFT);
+
+        SQLiteConn = new SQLiteConnection();
+
+        tvLoans = new TableView<>();
+        tvLoans.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableColumn<Loan, String> tcolName = new TableColumn<>("Name");
+        tcolName.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        TableColumn<Loan, Integer> tcolAmount = new TableColumn<>("Amount");
+        tcolAmount.setCellValueFactory(new PropertyValueFactory<>("Amount"));
+        TableColumn<Loan, Double> tcolInterestRate = new TableColumn<>("Interest rate");
+        tcolInterestRate.setCellValueFactory(new PropertyValueFactory<>("InterestRate"));
+        TableColumn<Loan, Double> tcolAmortizationRate = new TableColumn<>("Amortization rate");
+        tcolAmortizationRate.setCellValueFactory(new PropertyValueFactory<>("AmortizationRate"));
+        TableColumn<Loan, Integer> tcolAmortizationAmount = new TableColumn<>("Amortization amount");
+        tcolAmortizationAmount.setCellValueFactory(new PropertyValueFactory<>("AmortizationAmount"));
+        tvLoans.getColumns().addAll(
+                tcolName, tcolAmount, tcolInterestRate, tcolAmortizationRate, tcolAmortizationAmount
+        );
+        tvLoans = refreshTableContent();
 
         Label lblName = new Label("Name:");
         Label lblAmount = new Label("Amount:");
@@ -44,15 +65,102 @@ public class LoanView extends VBox {
         TextField tfAmortizationAmount = new TextField();
         DatePicker dpNextPayment = new DatePicker();
         DatePicker dpBoundTo = new DatePicker();
-        TextField test = new TextField();
-        TextField testTwo = new TextField();
-        dpBoundTo.setOnAction( actionEvent -> {
-            Calendar cal = Calendar.getInstance();
-            LocalDate local = dpBoundTo.getValue();
-            cal.set(local.getYear(), local.getMonthValue() - 1, local.getDayOfMonth());
 
-            test.setText("" + cal.getTimeInMillis());
-            testTwo.setText("" + new Date(cal.getTimeInMillis()).toString());
+        Button btnUpdateLoan = new Button("Update");
+        btnUpdateLoan.setDisable(true);
+
+        Button btnClearFields = new Button("Clear");
+        btnClearFields.setDisable(true);
+
+        Button btnSaveLoan = new Button("Save");
+
+        btnSaveLoan.setOnMouseReleased( releaseEvent -> {
+            LocalDate nextPaymentDate = dpNextPayment.getValue();
+            Calendar nextPaymentCal = Calendar.getInstance();
+            nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1, nextPaymentDate.getDayOfMonth());
+
+            LocalDate boundToDate = dpBoundTo.getValue();
+            Calendar boundToCal = Calendar.getInstance();
+            boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth());
+
+            Loan insertedLoan = new Loan(tfName.getText(), Integer.parseInt(tfAmount.getText()),
+                    Double.parseDouble(tfInterestRate.getText()), Double.parseDouble(tfAmortizationRate.getText()),
+                    Integer.parseInt(tfAmortizationAmount.getText()), nextPaymentCal.getTimeInMillis(),
+                    boundToCal.getTimeInMillis());
+
+            SQLiteConn.insertLoan(insertedLoan, "Alpha");
+
+            tfName.clear();
+            tfAmount.clear();
+            tfInterestRate.clear();
+            tfAmortizationRate.clear();
+            tfAmortizationAmount.clear();
+            dpNextPayment.setValue(null);
+            dpBoundTo.setValue(null);
+        });
+
+        btnUpdateLoan.setOnMouseReleased( releaseEvent -> {
+            if (currentLoan != null) {
+                btnSaveLoan.setDisable(false);
+                btnUpdateLoan.setDisable(true);
+                btnClearFields.setDisable(true);
+
+                LocalDate nextPaymentDate = dpNextPayment.getValue();
+                Calendar nextPaymentCal = Calendar.getInstance();
+                nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1, nextPaymentDate.getDayOfMonth());
+
+                LocalDate boundToDate = dpBoundTo.getValue();
+                Calendar boundToCal = Calendar.getInstance();
+                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth());
+
+                Loan updatedLoan = new Loan(currentLoan.getId(), tfName.getText(),
+                        Integer.parseInt(tfAmount.getText()), Double.parseDouble(tfInterestRate.getText()),
+                        Double.parseDouble(tfAmortizationRate.getText()), Integer.parseInt(tfAmortizationAmount.getText()),
+                        nextPaymentCal.getTimeInMillis(), boundToCal.getTimeInMillis());
+
+                SQLiteConn.updateLoan(updatedLoan);
+
+                currentLoan = null;
+            }
+        });
+
+        btnClearFields.setOnMouseReleased( releaseEvent -> {
+            btnSaveLoan.setDisable(false);
+            btnUpdateLoan.setDisable(true);
+            btnClearFields.setDisable(true);
+
+            tfName.clear();
+            tfAmount.clear();
+            tfInterestRate.clear();
+            tfAmortizationRate.clear();
+            tfAmortizationAmount.clear();
+            dpNextPayment.setValue(null);
+            dpBoundTo.setValue(null);
+
+            currentLoan = null;
+        });
+
+        tvLoans.setRowFactory( tv -> {
+            TableRow<Loan> row = new TableRow<>();
+            row.setOnMouseClicked( clickEvent -> {
+                if ((clickEvent.getClickCount() == 1) && (!row.isEmpty())) {
+                    Loan loan = row.getItem();
+                    currentLoan = loan;
+
+                    tfName.setText(loan.getName());
+                    tfAmount.setText("" + loan.getAmount());
+                    tfInterestRate.setText("" + loan.getInterestRate());
+                    tfAmortizationRate.setText("" + loan.getAmortizationRate());
+                    tfAmortizationAmount.setText("" + loan.getAmortizationAmount());
+                    dpNextPayment.setValue(new Date(loan.getNextPayment()).toLocalDate());
+                    dpBoundTo.setValue(new Date(loan.getBoundTo()).toLocalDate());
+
+                    btnSaveLoan.setDisable(true);
+                    btnUpdateLoan.setDisable(false);
+                    btnClearFields.setDisable(false);
+                }
+            });
+            return row;
         });
 
         HBox hbFirst = new HBox();
@@ -76,58 +184,28 @@ public class LoanView extends VBox {
         hbFifth.setAlignment(Pos.TOP_LEFT);
 
         HBox hbSixth = new HBox();
-        hbSixth.getChildren().addAll(dpNextPayment, dpBoundTo, test, testTwo);
+        hbSixth.getChildren().addAll(dpNextPayment, dpBoundTo, btnUpdateLoan);
         hbSixth.setAlignment(Pos.TOP_LEFT);
 
-        TableView<Loan> tvLoans = new TableView<>();
-        tvLoans.setEditable(true);
-
-        TableColumn<Loan, String> tcolName = new TableColumn<>("Name");
-        TableColumn<Loan, Integer> tcolAmount = new TableColumn<>("Amount");
-        TableColumn<Loan, Double> tcolInterestRate = new TableColumn<>("Interest rate");
-        TableColumn<Loan, Double> tcolAmortizationRate = new TableColumn<>("Amortization rate");
-        TableColumn<Loan, Integer> tcolAmortizationAmount = new TableColumn<>("Amortization amount");
-
-        // The TableView goes directly to the Loan's getters and attempts to attain the data. Adds "get" in front of
-        // each string and capitalizes (if not already done) the first letter. Spaces fuck shit up, not using camel-
-        // cases fucks things up. Don't fuck shit up.
-        tcolName.setCellValueFactory(new PropertyValueFactory<>("Name"));
-        tcolAmount.setCellValueFactory(new PropertyValueFactory<>("Amount"));
-        tcolInterestRate.setCellValueFactory(new PropertyValueFactory<>("InterestRate"));
-        tcolAmortizationRate.setCellValueFactory(new PropertyValueFactory<>("AmortizationRate"));
-        tcolAmortizationAmount.setCellValueFactory(new PropertyValueFactory<>("AmortizationAmount"));
-
-        tvLoans.setRowFactory( tv -> {
-            TableRow<Loan> row = new TableRow<>();
-            row.setOnMouseClicked( clickEvent -> {
-                if ((clickEvent.getClickCount() == 1) && (!row.isEmpty())) {
-                    Loan loan = row.getItem();
-                    tfName.setText(loan.getName());
-                    tfAmount.setText("" + loan.getAmount());
-                    tfInterestRate.setText("" + loan.getInterestRate());
-                    tfAmortizationRate.setText("" + loan.getAmortizationRate());
-                    tfAmortizationAmount.setText("" + loan.getAmortizationAmount());
-                    dpNextPayment.setValue(loan.getNextPayment().toLocalDate());
-                    dpBoundTo.setValue(loan.getBoundTo().toLocalDate());
-                }
-            });
-            return row;
-        });
-
-        SQLiteConnection SQLiteConn = new SQLiteConnection();
-
-        ArrayList<Loan> loans;
-        loans = SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE User = ?;", "Alpha");
-        ObservableList<Loan> obsLoans = FXCollections.observableArrayList(loans);
-
-        tvLoans.setItems(obsLoans);
-        tvLoans.getColumns().addAll(
-                tcolName, tcolAmount, tcolInterestRate, tcolAmortizationRate, tcolAmortizationAmount
-        );
-        tvLoans.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        HBox hbSeventh = new HBox();
+        hbSeventh.getChildren().addAll(btnSaveLoan, btnUpdateLoan, btnClearFields);
 
         this.getChildren().addAll(
-                tvLoans, hbFirst, hbSecond, hbThird, hbFourth, hbFifth, hbSixth
+                tvLoans, hbFirst, hbSecond, hbThird, hbFourth, hbFifth, hbSixth, hbSeventh
         );
+    }
+
+    private TableView<Loan> refreshTableContent() {
+        ObservableList<Loan> loans = FXCollections.observableArrayList(
+                SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE User = ?;", "Alpha"));
+
+        tvLoans.setEditable(true);
+        tvLoans.setItems(loans);
+
+        return tvLoans;
+    }
+
+    public Loan getCurrentLoan() {
+        return currentLoan;
     }
 }
