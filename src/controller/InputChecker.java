@@ -7,6 +7,5 @@ package controller;
  */
 
 public class InputChecker {
-
-
+        
 }
