@@ -1,5 +1,6 @@
 package view;
 
+import javafx.scene.text.Text;
 import model.Loan;
 import controller.SQLiteConnection;
 
@@ -73,6 +74,9 @@ public class LoanView extends VBox {
         btnClearFields.setDisable(true);
 
         Button btnSaveLoan = new Button("Save");
+
+        Button getValue = new Button("Get value");
+        TextField gottenValue = new TextField();
 
         btnSaveLoan.setOnMouseReleased( releaseEvent -> {
             LocalDate nextPaymentDate = dpNextPayment.getValue();
@@ -199,8 +203,16 @@ public class LoanView extends VBox {
         hbSixth.getChildren().addAll(dpNextPayment, dpBoundTo, btnUpdateLoan);
         hbSixth.setAlignment(Pos.TOP_LEFT);
 
+        getValue.setOnAction( action -> {
+            if (dpNextPayment.getValue() == null) {
+                gottenValue.setText("It was null");
+            } else {
+                gottenValue.setText(dpNextPayment.getValue().toString());
+            }
+        });
+
         HBox hbSeventh = new HBox();
-        hbSeventh.getChildren().addAll(btnSaveLoan, btnUpdateLoan, btnClearFields);
+        hbSeventh.getChildren().addAll(btnSaveLoan, btnUpdateLoan, btnClearFields, getValue, gottenValue);
 
         this.getChildren().addAll(
                 tvLoans, hbFirst, hbSecond, hbThird, hbFourth, hbFifth, hbSixth, hbSeventh
