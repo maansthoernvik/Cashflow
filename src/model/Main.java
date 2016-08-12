@@ -36,6 +36,7 @@ public class Main extends Application {
             mainWindowController.setMain(this);
 
             Scene scene = new Scene(pane);
+            scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());
             primaryStage.setScene(scene);
 
             primaryStage.setMaximized(true);
