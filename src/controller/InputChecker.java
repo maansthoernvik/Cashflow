@@ -31,7 +31,7 @@ public class InputChecker {
         String text = "Skandia";
         String notText = "Ca$hbank";
 
-        System.out.println(text.matches("^[a-zA-Z0-9-]{1,20}$"));
+        System.out.println(text.matches("^[a-zA-Z0-9- ]{1,20}$"));
         System.out.println(notText.matches("^[a-zA-Z0-9-]{1,20}$"));
 
         // Only emails

@@ -1,6 +1,5 @@
 package view;
 
-import javafx.scene.text.Text;
 import model.Loan;
 import controller.SQLiteConnection;
 
@@ -11,6 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import model.Input.ModdedTextField;
+import model.Input.Regex;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -25,8 +26,16 @@ import java.util.Calendar;
 public class LoanView extends VBox {
 
     private SQLiteConnection SQLiteConn;
-    private TableView<Loan> tvLoans;
     private Loan currentLoan;
+
+    private TableView<Loan> tvLoans;
+    private ModdedTextField tfName;
+    private ModdedTextField tfAmount;
+    private ModdedTextField tfInterestRate;
+    private ModdedTextField tfAmortizationRate;
+    private ModdedTextField tfAmortizationAmount;
+    private DatePicker dpNextPayment;
+    private DatePicker dpBoundTo;
 
     public LoanView() {
         super();
@@ -51,32 +60,23 @@ public class LoanView extends VBox {
         );
         tvLoans = refreshTableContent();
 
-        Label lblName = new Label("Name:");
-        Label lblAmount = new Label("Amount:");
-        Label lblInterestRate = new Label("Interest rate:");
-        Label lblAmortizationRate = new Label("Amortization rate:");
-        Label lblAmortizationAmount = new Label("Amortization amount:");
-        Label lblNextPayment = new Label("Next payment:");
-        Label lblBoundTo = new Label("Bound to:");
+        tfName = new ModdedTextField();
+        tfName.setUpValidation(Regex.NAME);
+        tfAmount = new ModdedTextField();
+        tfAmount.setUpValidation(Regex.AMOUNT);
+        tfInterestRate = new ModdedTextField();
+        tfInterestRate.setUpValidation(Regex.PERCENTAGE);
+        tfAmortizationRate = new ModdedTextField();
+        tfAmortizationRate.setUpValidation(Regex.PERCENTAGE);
+        tfAmortizationAmount = new ModdedTextField();
+        tfAmortizationAmount.setUpValidation(Regex.AMOUNT);
 
-        TextField tfName = new TextField();
-        TextField tfAmount = new TextField();
-        TextField tfInterestRate = new TextField();
-        TextField tfAmortizationRate = new TextField();
-        TextField tfAmortizationAmount = new TextField();
-        DatePicker dpNextPayment = new DatePicker();
-        DatePicker dpBoundTo = new DatePicker();
-
-        Button btnUpdateLoan = new Button("Update");
-        btnUpdateLoan.setDisable(true);
-
-        Button btnClearFields = new Button("Clear");
-        btnClearFields.setDisable(true);
+        dpNextPayment = new DatePicker();
+        dpBoundTo = new DatePicker();
 
         Button btnSaveLoan = new Button("Save");
-
-        Button getValue = new Button("Get value");
-        TextField gottenValue = new TextField();
+        Button btnUpdateLoan = new Button("Update");
+        Button btnClearFields = new Button("Clear");
 
         btnSaveLoan.setOnMouseReleased( releaseEvent -> {
             LocalDate nextPaymentDate = dpNextPayment.getValue();
@@ -94,17 +94,11 @@ public class LoanView extends VBox {
 
             SQLiteConn.insertLoan(insertedLoan, "Alpha");
 
-            tfName.clear();
-            tfAmount.clear();
-            tfInterestRate.clear();
-            tfAmortizationRate.clear();
-            tfAmortizationAmount.clear();
-            dpNextPayment.setValue(null);
-            dpBoundTo.setValue(null);
-
+            clearFields();
             refreshTableContent();
         });
 
+        btnUpdateLoan.setDisable(true);
         btnUpdateLoan.setOnMouseReleased( releaseEvent -> {
             if (currentLoan != null) {
                 btnSaveLoan.setDisable(false);
@@ -126,34 +120,18 @@ public class LoanView extends VBox {
 
                 SQLiteConn.updateLoan(updatedLoan);
 
-                currentLoan = null;
-
-                tfName.clear();
-                tfAmount.clear();
-                tfInterestRate.clear();
-                tfAmortizationRate.clear();
-                tfAmortizationAmount.clear();
-                dpNextPayment.setValue(null);
-                dpBoundTo.setValue(null);
-
+                clearFields();
                 refreshTableContent();
             }
         });
 
+        btnClearFields.setDisable(true);
         btnClearFields.setOnMouseReleased( releaseEvent -> {
             btnSaveLoan.setDisable(false);
             btnUpdateLoan.setDisable(true);
             btnClearFields.setDisable(true);
 
-            tfName.clear();
-            tfAmount.clear();
-            tfInterestRate.clear();
-            tfAmortizationRate.clear();
-            tfAmortizationAmount.clear();
-            dpNextPayment.setValue(null);
-            dpBoundTo.setValue(null);
-
-            currentLoan = null;
+            clearFields();
         });
 
         tvLoans.setRowFactory( tv -> {
@@ -180,7 +158,7 @@ public class LoanView extends VBox {
         });
 
         HBox hbFirst = new HBox();
-        hbFirst.getChildren().addAll(lblName, lblAmount);
+        hbFirst.getChildren().addAll(new Label("Name:"), new Label("Amount:"));
         hbFirst.setAlignment(Pos.TOP_LEFT);
 
         HBox hbSecond = new HBox();
@@ -188,7 +166,7 @@ public class LoanView extends VBox {
         hbSecond.setAlignment(Pos.TOP_LEFT);
 
         HBox hbThird = new HBox();
-        hbThird.getChildren().addAll(lblInterestRate, lblAmortizationRate, lblAmortizationAmount);
+        hbThird.getChildren().addAll(new Label("Interest rate:"), new Label("Amortization rate:"), new Label("Amortization amount:"));
         hbThird.setAlignment(Pos.TOP_LEFT);
 
         HBox hbFourth = new HBox();
@@ -196,23 +174,15 @@ public class LoanView extends VBox {
         hbFourth.setAlignment(Pos.TOP_LEFT);
 
         HBox hbFifth = new HBox();
-        hbFifth.getChildren().addAll(lblNextPayment, lblBoundTo);
+        hbFifth.getChildren().addAll(new Label("Next payment:"), new Label("Bound to:"));
         hbFifth.setAlignment(Pos.TOP_LEFT);
 
         HBox hbSixth = new HBox();
         hbSixth.getChildren().addAll(dpNextPayment, dpBoundTo, btnUpdateLoan);
         hbSixth.setAlignment(Pos.TOP_LEFT);
 
-        getValue.setOnAction( action -> {
-            if (dpNextPayment.getValue() == null) {
-                gottenValue.setText("It was null");
-            } else {
-                gottenValue.setText(dpNextPayment.getValue().toString());
-            }
-        });
-
         HBox hbSeventh = new HBox();
-        hbSeventh.getChildren().addAll(btnSaveLoan, btnUpdateLoan, btnClearFields, getValue, gottenValue);
+        hbSeventh.getChildren().addAll(btnSaveLoan, btnUpdateLoan, btnClearFields);
 
         this.getChildren().addAll(
                 tvLoans, hbFirst, hbSecond, hbThird, hbFourth, hbFifth, hbSixth, hbSeventh
@@ -231,5 +201,17 @@ public class LoanView extends VBox {
 
     public Loan getCurrentLoan() {
         return currentLoan;
+    }
+
+    private void clearFields() {
+        tfName.clear();
+        tfAmount.clear();
+        tfInterestRate.clear();
+        tfAmortizationRate.clear();
+        tfAmortizationAmount.clear();
+        dpNextPayment.setValue(null);
+        dpBoundTo.setValue(null);
+
+        currentLoan = null;
     }
 }
