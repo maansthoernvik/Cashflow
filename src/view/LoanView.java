@@ -55,7 +55,7 @@ public class LoanView extends VBox {
         tvLoans.getColumns().addAll(
                 tcolName, tcolAmount, tcolInterestRate, tcolAmortizationRate
         );
-        tvLoans = refreshTableContent();
+        refreshTableContent();
 
         tfName = new ModdedTextField();
         tfName.setUpValidation(Regex.NAME);
@@ -199,9 +199,14 @@ public class LoanView extends VBox {
         );
     }
 
+    public Loan getCurrentLoan() {
+        return currentLoan;
+    }
+
     private TableView<Loan> refreshTableContent() {
         ObservableList<Loan> loans = FXCollections.observableArrayList(
-                SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE User = ?;", "Alpha"));
+                SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE User = ?;", "Alpha")
+        );
 
         tvLoans.setEditable(true);
         tvLoans.setItems(loans);
@@ -209,9 +214,6 @@ public class LoanView extends VBox {
         return tvLoans;
     }
 
-    public Loan getCurrentLoan() {
-        return currentLoan;
-    }
 
     private void clearFields() {
         tfName.clear();

@@ -1,7 +1,5 @@
 package model;
 
-import java.sql.Date;
-
 /**
  * Created by MTs on 03/08/16.
  *
@@ -9,13 +7,20 @@ import java.sql.Date;
  */
 
 public class Expense {
+    private int id;
+
     private String name;
-
     private int amount;
+    private long endDate;
 
-    private Date endDate;
+    public Expense(String name, int amount, long endDate) {
+        this.name = name;
+        this.amount = amount;
+        this.endDate = endDate;
+    }
 
-    public Expense(String name, int amount, Date endDate) {
+    public Expense(int id, String name, int amount, long endDate) {
+        this.id = id;
         this.name = name;
         this.amount = amount;
         this.endDate = endDate;
@@ -31,9 +36,13 @@ public class Expense {
         return amount;
     }
 
-    public Date setEndDate(Date newEndDate) {
+    public long setEndDate(long newEndDate) {
         endDate = newEndDate;
         return endDate;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -44,7 +53,7 @@ public class Expense {
         return amount;
     }
 
-    public Date getEndDate() {
+    public long getEndDate() {
         return endDate;
     }
 }

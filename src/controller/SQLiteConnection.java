@@ -24,6 +24,12 @@ public class SQLiteConnection {
         config.enforceForeignKeys(true);
     }
 
+    /**********************************************************
+     *                                                        *
+     *                  SELECT STATEMENTS!                    *
+     *                                                        *
+     *********************************************************/
+
     public ArrayList<Loan> fetchLoans(String query, String user) {
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createSelectPreparedStatement(conn, query, user);
@@ -49,8 +55,8 @@ public class SQLiteConnection {
             ArrayList<Expense> result = new ArrayList<>();
 
             while(rs.next()) {
-                result.add(new Expense(rs.getString("Name"), rs.getInt("Amount"),
-                        new Date((long) rs.getInt("EndDate"))));
+                result.add(new Expense(rs.getInt("id"), rs.getString("Name"), rs.getInt("Amount"),
+                        rs.getLong("EndDate")));
             }
 
             return result;
@@ -66,6 +72,12 @@ public class SQLiteConnection {
 
         return ps;
     }
+
+    /**********************************************************
+     *                                                        *
+     *                 LOAN STATEMENTS!                       *
+     *                                                        *
+     *********************************************************/
 
     public boolean insertLoan(Loan loan, String user) {
         String insert = "INSERT INTO Loans (User, Name, Amount, InterestRate, AmortizationRate, AmortizationAmount, " +
@@ -140,6 +152,81 @@ public class SQLiteConnection {
     private PreparedStatement createDeleteLoanPreparedStatement(Connection conn, String delete, Loan loan) throws SQLException {
         PreparedStatement ps = conn.prepareStatement(delete);
         ps.setInt(1, loan.getId());
+
+        return ps;
+    }
+
+    /**********************************************************
+     *                                                        *
+     *                 EXPENSE STATEMENTS!                    *
+     *                                                        *
+     *********************************************************/
+
+    public boolean insertExpense(Expense expense, String user) {
+        String insert = "INSERT INTO Expenses (User, Name, Amount, EndDate) VALUES (?, ?, ?, ?);";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createInsertExpensePreparedStatement(conn, insert, expense, user)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private PreparedStatement createInsertExpensePreparedStatement(Connection conn, String insert, Expense expense, String user) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(insert);
+        ps.setString(1, user);
+        ps.setString(2, expense.getName());
+        ps.setInt(3, expense.getAmount());
+        ps.setLong(4, expense.getEndDate());
+
+        return ps;
+    }
+
+    public boolean updateExpense(Expense expense) {
+        String update = "UPDATE Expenses SET Name = ?, Amount = ?, EndDate = ? WHERE ID = ?";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createUpdateExpensePreparedStatement(conn, update, expense)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private PreparedStatement createUpdateExpensePreparedStatement(Connection conn, String update, Expense expense) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(update);
+        ps.setString(1, expense.getName());
+        ps.setInt(2, expense.getAmount());
+        ps.setLong(3, expense.getEndDate());
+        ps.setInt(4, expense.getId());
+
+        return ps;
+    }
+
+    public boolean deleteExpense(Expense expense) {
+        String delete = "DELETE FROM Expenses WHERE ID = ?;";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createDeleteExpensePreparedStatement(conn, delete, expense)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private PreparedStatement createDeleteExpensePreparedStatement(Connection conn, String delete, Expense expense) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(delete);
+        ps.setInt(1, expense.getId());
 
         return ps;
     }
