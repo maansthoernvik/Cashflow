@@ -32,8 +32,7 @@ public class SQLiteConnection {
 
             while(rs.next()) {
                 result.add(new Loan(rs.getInt("id"), rs.getString("Name"), rs.getInt("Amount"), rs.getDouble("InterestRate"),
-                        rs.getDouble("AmortizationRate"), rs.getInt("AmortizationAmount"),
-                        rs.getLong("NextPayment"), rs.getLong("BoundTo")));
+                        rs.getDouble("AmortizationRate"), rs.getLong("NextPayment"), rs.getLong("BoundTo")));
             }
 
             return result;
@@ -90,15 +89,14 @@ public class SQLiteConnection {
         ps.setInt(3, loan.getAmount());
         ps.setDouble(4, loan.getInterestRate());
         ps.setDouble(5, loan.getAmortizationRate());
-        ps.setInt(6, loan.getAmortizationAmount());
-        ps.setLong(7, loan.getNextPayment());
-        ps.setLong(8, loan.getBoundTo());
+        ps.setLong(6, loan.getNextPayment());
+        ps.setLong(7, loan.getBoundTo());
 
         return ps;
     }
 
     public boolean updateLoan(Loan loan) {
-        String update = "UPDATE Loans SET Name = ?, Amount = ?, InterestRate = ?, AmortizationRate = ?, AmortizationAmount = ?, " +
+        String update = "UPDATE Loans SET Name = ?, Amount = ?, InterestRate = ?, AmortizationRate = ?, " +
                 "NextPayment = ?, BoundTo = ? WHERE Id = ?;";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
@@ -118,10 +116,30 @@ public class SQLiteConnection {
         ps.setInt(2, loan.getAmount());
         ps.setDouble(3, loan.getInterestRate());
         ps.setDouble(4, loan.getAmortizationRate());
-        ps.setInt(5, loan.getAmortizationAmount());
-        ps.setLong(6, loan.getNextPayment());
-        ps.setLong(7, loan.getBoundTo());
-        ps.setInt(8, loan.getId());
+        ps.setLong(5, loan.getNextPayment());
+        ps.setLong(6, loan.getBoundTo());
+        ps.setInt(7, loan.getId());
+
+        return ps;
+    }
+
+    public boolean deleteLoan(Loan loan) {
+        String delete = "DELETE FROM Loans WHERE ID = ?;";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createDeleteLoanPreparedStatement(conn, delete, loan)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private PreparedStatement createDeleteLoanPreparedStatement(Connection conn, String delete, Loan loan) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(delete);
+        ps.setInt(1, loan.getId());
 
         return ps;
     }

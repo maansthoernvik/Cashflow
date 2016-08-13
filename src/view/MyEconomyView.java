@@ -65,16 +65,11 @@ public class MyEconomyView extends VBox {
 
         for (int i = 0; i < loans.size(); i++) {
             Loan temp = loans.get(i);
-            monthlyTotal += (temp.getAmount() * temp.getInterestRate()) / 12;
-            loanTotal += (temp.getAmount() * temp.getInterestRate()) / 12;
+            monthlyTotal += (temp.getAmount() * temp.getInterestRate() * 0.01) / 12;
+            loanTotal += (temp.getAmount() * temp.getInterestRate() * 0.01) / 12;
 
-            if (temp.getAmortizationRate() == 0) {
-                monthlyTotal += temp.getAmortizationAmount() / 12;
-                loanTotal += temp.getAmortizationAmount() / 12;
-            } else if (temp.getAmortizationRate() != 0) {
-                monthlyTotal += (temp.getAmount() * temp.getAmortizationRate()) / 12;
-                loanTotal += (temp.getAmount() * temp.getAmortizationRate()) / 12;
-            }
+            monthlyTotal += (temp.getAmount() * temp.getAmortizationRate() * 0.01) / 12;
+            loanTotal += (temp.getAmount() * temp.getAmortizationRate() * 0.01) / 12;
         }
 
         ArrayList<Expense> expenses;

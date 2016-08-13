@@ -15,29 +15,24 @@ public class Loan {
     private int amount;             // The loan amount
     private double interestRate;    // The current interest
     private double amortizationRate;
-    private int amortizationAmount;
     private long nextPayment;
     private long boundTo;
 
-    public Loan(String name, int amount, double interestRate, double amortizationRate, int amortizationAmount,
-                long nextPayment, long boundTo) {
+    public Loan(String name, int amount, double interestRate, double amortizationRate, long nextPayment, long boundTo) {
         this.name = name;
         this.amount = amount;
         this.interestRate = interestRate;
         this.amortizationRate = amortizationRate;
-        this.amortizationAmount = amortizationAmount;
         this.nextPayment = nextPayment;
         this.boundTo = boundTo;
     }
 
-    public Loan(int id, String name, int amount, double interestRate, double amortizationRate, int amortizationAmount,
-                long nextPayment, long boundTo) {
+    public Loan(int id, String name, int amount, double interestRate, double amortizationRate, long nextPayment, long boundTo) {
         this.id = id;
         this.name = name;
         this.amount = amount;
         this.interestRate = interestRate;
         this.amortizationRate = amortizationRate;
-        this.amortizationAmount = amortizationAmount;
         this.nextPayment = nextPayment;
         this.boundTo = boundTo;
     }
@@ -65,11 +60,6 @@ public class Loan {
     public double setAmortizationRate(double newRate) {
         amortizationRate = newRate;
         return amortizationRate;
-    }
-
-    public int setAmortizationAmount(int newAmount) {
-        amortizationAmount = newAmount;
-        return amortizationAmount;
     }
 
     public long setLastPayment(long newLastPayment) {
@@ -102,10 +92,6 @@ public class Loan {
         return amortizationRate;
     }
 
-    public int getAmortizationAmount() {
-        return amortizationAmount;
-    }
-
     public long getNextPayment() {
         return nextPayment;
     }
@@ -115,15 +101,8 @@ public class Loan {
     }
 
     public String toString() {
-        String amortization = "";
-        if (amortizationAmount == 0) {
-            amortization = amortizationRate + "%.";
-        } else {
-            amortization = amortizationAmount + "crowns per month.";
-        }
-
         return amount + "at " + interestRate + "% interest. Bound until " + boundTo + "\n" +
-                "Amortization is set to " + amortization +
-                "Last payment was made " + nextPayment;
+                "Amortization is set to " + amortizationRate + "%." +
+                "Next payment is due " + nextPayment;
     }
 }
