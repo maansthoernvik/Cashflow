@@ -80,8 +80,8 @@ public class SQLiteConnection {
      *********************************************************/
 
     public boolean insertLoan(Loan loan, String user) {
-        String insert = "INSERT INTO Loans (User, Name, Amount, InterestRate, AmortizationRate, AmortizationAmount, " +
-                "NextPayment, BoundTo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String insert = "INSERT INTO Loans (User, Name, Amount, InterestRate, AmortizationRate, " +
+                "NextPayment, BoundTo) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createInsertLoanPreparedStatement(conn, insert, loan, user)) {

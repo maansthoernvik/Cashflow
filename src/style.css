@@ -7,3 +7,13 @@
     -fx-text-box-border: red ;
     -fx-focus-color: red ;
 }
+
+.date-picker {
+    -fx-border-color: blue ;
+    -fx-focus-color: blue ;
+}
+
+.date-picker:error {
+    -fx-border-color: red ;
+    -fx-focus-color: red ;
+}

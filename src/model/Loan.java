@@ -1,7 +1,5 @@
 package model;
 
-import java.sql.Date;
-
 /**
  * Created by MTs on 03/08/16.
  *

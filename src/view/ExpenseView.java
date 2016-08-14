@@ -51,10 +51,8 @@ public class ExpenseView extends VBox {
         );
         refreshTableContent();
 
-        tfName = new ModdedTextField();
-        tfName.setUpValidation(Regex.NAME);
-        tfAmount = new ModdedTextField();
-        tfAmount.setUpValidation(Regex.AMOUNT);
+        tfName = new ModdedTextField(Regex.NAME);
+        tfAmount = new ModdedTextField(Regex.AMOUNT);
 
         dpEndDate = new DatePicker();
 

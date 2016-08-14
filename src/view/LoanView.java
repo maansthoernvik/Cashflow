@@ -1,5 +1,8 @@
 package view;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import model.Input.ModdedDatePicker;
 import model.Loan;
 import controller.SQLiteConnection;
 
@@ -28,19 +31,26 @@ public class LoanView extends VBox {
     private SQLiteConnection SQLiteConn;
     private Loan currentLoan;
 
+    private Label lblError;
+
     private TableView<Loan> tvLoans;
     private ModdedTextField tfName;
     private ModdedTextField tfAmount;
     private ModdedTextField tfInterestRate;
     private ModdedTextField tfAmortizationRate;
-    private DatePicker dpNextPayment;
-    private DatePicker dpBoundTo;
+    private ModdedDatePicker dpNextPayment;
+    private ModdedDatePicker dpBoundTo;
+
+    private CheckBox chebNextPayment;
+    private CheckBox chebBoundTo;
 
     public LoanView() {
         super();
         this.setAlignment(Pos.TOP_LEFT);
 
         SQLiteConn = new SQLiteConnection();
+
+        lblError = new Label("The following values have been entered incorrectly:\n");
 
         tvLoans = new TableView<>();
         tvLoans.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -57,17 +67,32 @@ public class LoanView extends VBox {
         );
         refreshTableContent();
 
-        tfName = new ModdedTextField();
-        tfName.setUpValidation(Regex.NAME);
-        tfAmount = new ModdedTextField();
-        tfAmount.setUpValidation(Regex.AMOUNT);
-        tfInterestRate = new ModdedTextField();
-        tfInterestRate.setUpValidation(Regex.PERCENTAGE);
-        tfAmortizationRate = new ModdedTextField();
-        tfAmortizationRate.setUpValidation(Regex.PERCENTAGE);
+        tfName = new ModdedTextField(Regex.NAME);
+        tfAmount = new ModdedTextField(Regex.AMOUNT);
+        tfInterestRate = new ModdedTextField(Regex.PERCENTAGE);
+        tfAmortizationRate = new ModdedTextField(Regex.PERCENTAGE);
 
-        dpNextPayment = new DatePicker();
-        dpBoundTo = new DatePicker();
+        dpNextPayment = new ModdedDatePicker(Regex.DATE);
+        dpBoundTo = new ModdedDatePicker(Regex.DATE);
+
+        chebNextPayment = new CheckBox("No payments");
+        chebNextPayment.setOnAction( actionEvent -> {
+            if (chebNextPayment.isSelected()) {
+                dpNextPayment.setDisable(true);
+                dpNextPayment.setValue(null);
+            } else {
+                dpNextPayment.setDisable(false);
+            }
+        });
+        chebBoundTo = new CheckBox("Unbound");
+        chebBoundTo.setOnAction( actionEvent -> {
+            if (chebBoundTo.isSelected()) {
+                dpBoundTo.setDisable(true);
+                dpBoundTo.setValue(null);
+            } else {
+                dpBoundTo.setDisable(false);
+            }
+        });
 
         Button btnSaveLoan = new Button("Save");
         Button btnUpdateLoan = new Button("Update");
@@ -75,27 +100,29 @@ public class LoanView extends VBox {
         Button btnDeleteLoan = new Button("Delete");
 
         btnSaveLoan.setOnMouseReleased( releaseEvent -> {
-            LocalDate nextPaymentDate = dpNextPayment.getValue() == null ? LocalDate.ofEpochDay(0) : dpNextPayment.getValue();
-            Calendar nextPaymentCal = Calendar.getInstance();
-            nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1, nextPaymentDate.getDayOfMonth());
+            if (inputValidation()) {
+                LocalDate nextPaymentDate = dpNextPayment.getValue() == null ? LocalDate.ofEpochDay(0) : dpNextPayment.getValue();
+                Calendar nextPaymentCal = Calendar.getInstance();
+                nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1, nextPaymentDate.getDayOfMonth());
 
-            LocalDate boundToDate = dpBoundTo.getValue() == null ? LocalDate.ofEpochDay(0) : dpBoundTo.getValue();
-            Calendar boundToCal = Calendar.getInstance();
-            boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth());
+                LocalDate boundToDate = dpBoundTo.getValue() == null ? LocalDate.ofEpochDay(0) : dpBoundTo.getValue();
+                Calendar boundToCal = Calendar.getInstance();
+                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth());
 
-            Loan insertedLoan = new Loan(tfName.getText(), Integer.parseInt(tfAmount.getText()),
-                    Double.parseDouble(tfInterestRate.getText()), Double.parseDouble(tfAmortizationRate.getText()),
-                    nextPaymentCal.getTimeInMillis(), boundToCal.getTimeInMillis());
+                Loan insertedLoan = new Loan(tfName.getText(), Integer.parseInt(tfAmount.getText()),
+                        Double.parseDouble(tfInterestRate.getText()), Double.parseDouble(tfAmortizationRate.getText()),
+                        nextPaymentCal.getTimeInMillis(), boundToCal.getTimeInMillis());
 
-            SQLiteConn.insertLoan(insertedLoan, "Alpha");
+                SQLiteConn.insertLoan(insertedLoan, "Alpha");
 
-            clearFields();
-            refreshTableContent();
+                clearFields();
+                refreshTableContent();
+            }
         });
 
         btnUpdateLoan.setDisable(true);
         btnUpdateLoan.setOnMouseReleased( releaseEvent -> {
-            if (currentLoan != null) {
+            if (inputValidation()) {
                 btnSaveLoan.setDisable(false);
                 btnUpdateLoan.setDisable(true);
                 btnClearFields.setDisable(true);
@@ -155,8 +182,24 @@ public class LoanView extends VBox {
                     tfAmount.setText("" + loan.getAmount());
                     tfInterestRate.setText("" + loan.getInterestRate());
                     tfAmortizationRate.setText("" + loan.getAmortizationRate());
-                    dpNextPayment.setValue(new Date(loan.getNextPayment()).toLocalDate());
-                    dpBoundTo.setValue(new Date(loan.getBoundTo()).toLocalDate());
+                    if (loan.getNextPayment() > 86400000) {
+                        dpNextPayment.setValue(new Date(loan.getNextPayment()).toLocalDate());
+                        chebNextPayment.setSelected(false);
+                        dpNextPayment.setDisable(false);
+                    } else {
+                        dpNextPayment.setValue(null);
+                        chebNextPayment.setSelected(true);
+                        dpNextPayment.setDisable(true);
+                    }
+                    if (loan.getBoundTo() > 86400000) {
+                        dpBoundTo.setValue(new Date(loan.getBoundTo()).toLocalDate());
+                        chebBoundTo.setSelected(false);
+                        dpBoundTo.setDisable(false);
+                    } else {
+                        dpBoundTo.setValue(null);
+                        chebBoundTo.setSelected(true);
+                        dpBoundTo.setDisable(true);
+                    }
 
                     btnSaveLoan.setDisable(true);
                     btnUpdateLoan.setDisable(false);
@@ -188,19 +231,33 @@ public class LoanView extends VBox {
         hbFifth.setAlignment(Pos.TOP_LEFT);
 
         HBox hbSixth = new HBox();
-        hbSixth.getChildren().addAll(dpNextPayment, dpBoundTo, btnUpdateLoan);
+        hbSixth.getChildren().addAll(dpNextPayment, chebNextPayment, dpBoundTo, chebBoundTo);
         hbSixth.setAlignment(Pos.TOP_LEFT);
 
         HBox hbSeventh = new HBox();
         hbSeventh.getChildren().addAll(btnSaveLoan, btnUpdateLoan, btnDeleteLoan, btnClearFields);
 
         this.getChildren().addAll(
-                tvLoans, hbFirst, hbSecond, hbThird, hbFourth, hbFifth, hbSixth, hbSeventh
+                tvLoans, hbFirst, hbSecond, hbThird, hbFourth, hbFifth, hbSixth, hbSeventh, lblError
         );
     }
 
     public Loan getCurrentLoan() {
         return currentLoan;
+    }
+
+    private boolean inputValidation() {
+        tfName.validate();
+        tfAmount.validate();
+        tfInterestRate.validate();
+        tfAmortizationRate.validate();
+        dpNextPayment.validate();
+        dpBoundTo.validate();
+
+        Boolean validity = tfName.validate() && tfAmount.validate() && tfInterestRate.validate() &&
+                tfAmortizationRate.validate() && dpNextPayment.validate() && dpBoundTo.validate() ? true : false;
+
+        return validity;
     }
 
     private TableView<Loan> refreshTableContent() {
@@ -222,6 +279,17 @@ public class LoanView extends VBox {
         tfAmortizationRate.clear();
         dpNextPayment.setValue(null);
         dpBoundTo.setValue(null);
+        dpNextPayment.setDisable(false);
+        dpBoundTo.setDisable(false);
+        chebNextPayment.setSelected(false);
+        chebBoundTo.setSelected(false);
+
+        tfName.reset();
+        tfAmount.reset();
+        tfInterestRate.reset();
+        tfAmortizationRate.reset();
+        dpNextPayment.reset();
+        dpBoundTo.reset();
 
         currentLoan = null;
     }

@@ -1,5 +1,8 @@
 package controller;
 
+import java.time.LocalDate;
+import java.util.Calendar;
+
 /**
  * Created by MTs on 09/08/16.
  *
@@ -9,6 +12,14 @@ package controller;
 public class InputChecker {
 
     public static void main(String[] args) {
+
+        // Date filter!
+        System.out.println("\nDates:");
+        String date = "9/18/2016";
+        String notDate = "111/10/2015";
+
+        System.out.println(date.matches("^([1-9]|1[012])/([1-9]|[12][0-9]|3[01])/(19|20)\\d\\d$"));
+        System.out.println(notDate.matches("^([1-9]|1[012])/([1-9]|[12][0-9]|3[01])/(19|20)\\d\\d$"));
 
         // Numeric only filter!
         System.out.println("\nNumeric:");

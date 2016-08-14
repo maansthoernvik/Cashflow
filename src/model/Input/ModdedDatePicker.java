@@ -3,36 +3,46 @@ package model.Input;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
-import javafx.scene.control.TextField;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.DatePicker;
+import javafx.scene.input.InputMethodEvent;
+import javafx.scene.input.KeyEvent;
+
+import java.time.LocalDate;
 
 /**
- * Created by MTs on 11/08/16.
+ * Created by MTs on 14/08/16.
  *
  *
  */
-
-public class ModdedTextField extends TextField {
+public class ModdedDatePicker extends DatePicker {
     private final PseudoClass error = PseudoClass.getPseudoClass("error");
     private Regex regex;
 
-    public ModdedTextField(Regex regex) {
+    public ModdedDatePicker(Regex regex) {
         super();
         setUpValidation(regex);
     }
 
     private void setUpValidation(Regex regex) {
         this.regex = regex;
-        textProperty().addListener(new ChangeListener<String>() {
+        valueProperty().addListener(new ChangeListener<LocalDate>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable,
-                                String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue, LocalDate newValue) {
                 validate();
             }
         });
     }
 
     public boolean validate() {
-        if (getText().matches(regex.getRegex())) {
+        if (getValue() == null) {
+            pseudoClassStateChanged(error, false);
+
+            return true;
+        }
+
+        if (getValue().toString().matches(regex.getRegex())) {
             pseudoClassStateChanged(error, false);
 
             return true;
