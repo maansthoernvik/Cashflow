@@ -31,8 +31,6 @@ public class LoanView extends VBox {
     private SQLiteConnection SQLiteConn;
     private Loan currentLoan;
 
-    private Label lblError;
-
     private TableView<Loan> tvLoans;
     private ModdedTextField tfName;
     private ModdedTextField tfAmount;
@@ -49,8 +47,6 @@ public class LoanView extends VBox {
         this.setAlignment(Pos.TOP_LEFT);
 
         SQLiteConn = new SQLiteConnection();
-
-        lblError = new Label("The following values have been entered incorrectly:\n");
 
         tvLoans = new TableView<>();
         tvLoans.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -126,7 +122,6 @@ public class LoanView extends VBox {
             if (inputValidation()) {
                 btnSaveLoan.setDisable(false);
                 btnUpdateLoan.setDisable(true);
-                btnClearFields.setDisable(true);
                 btnDeleteLoan.setDisable(true);
 
                 LocalDate nextPaymentDate = dpNextPayment.getValue() == null ? LocalDate.ofEpochDay(0) : dpNextPayment.getValue();
@@ -150,11 +145,9 @@ public class LoanView extends VBox {
             }
         });
 
-        btnClearFields.setDisable(true);
         btnClearFields.setOnMouseReleased( releaseEvent -> {
             btnSaveLoan.setDisable(false);
             btnUpdateLoan.setDisable(true);
-            btnClearFields.setDisable(true);
             btnDeleteLoan.setDisable(true);
 
             clearFields();
@@ -165,7 +158,6 @@ public class LoanView extends VBox {
         btnDeleteLoan.setOnMouseReleased( releaseEvent -> {
             btnSaveLoan.setDisable(false);
             btnUpdateLoan.setDisable(true);
-            btnClearFields.setDisable(true);
             btnDeleteLoan.setDisable(true);
 
             SQLiteConn.deleteLoan(currentLoan);
@@ -207,7 +199,6 @@ public class LoanView extends VBox {
 
                     btnSaveLoan.setDisable(true);
                     btnUpdateLoan.setDisable(false);
-                    btnClearFields.setDisable(false);
                     btnDeleteLoan.setDisable(false);
                 }
             });
@@ -242,7 +233,7 @@ public class LoanView extends VBox {
         hbSeventh.getChildren().addAll(btnSaveLoan, btnUpdateLoan, btnDeleteLoan, btnClearFields);
 
         this.getChildren().addAll(
-                tvLoans, hbFirst, hbSecond, hbThird, hbFourth, hbFifth, hbSixth, hbSeventh, lblError
+                tvLoans, hbFirst, hbSecond, hbThird, hbFourth, hbFifth, hbSixth, hbSeventh
         );
     }
 
@@ -290,10 +281,10 @@ public class LoanView extends VBox {
         tfInterestRate.clear();
         tfAmortizationRate.clear();
         dpNextPayment.setValue(null);
-        dpBoundTo.setValue(null);
         dpNextPayment.setDisable(false);
-        dpBoundTo.setDisable(false);
         chebNextPayment.setSelected(false);
+        dpBoundTo.setValue(null);
+        dpBoundTo.setDisable(false);
         chebBoundTo.setSelected(false);
 
         currentLoan = null;
