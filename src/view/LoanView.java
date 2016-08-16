@@ -116,6 +116,7 @@ public class LoanView extends VBox {
                 SQLiteConn.insertLoan(insertedLoan, "Alpha");
 
                 clearFields();
+                resetFields();
                 refreshTableContent();
             }
         });
@@ -144,6 +145,7 @@ public class LoanView extends VBox {
                 SQLiteConn.updateLoan(updatedLoan);
 
                 clearFields();
+                resetFields();
                 refreshTableContent();
             }
         });
@@ -156,6 +158,7 @@ public class LoanView extends VBox {
             btnDeleteLoan.setDisable(true);
 
             clearFields();
+            resetFields();
         });
 
         btnDeleteLoan.setDisable(true);
@@ -168,6 +171,7 @@ public class LoanView extends VBox {
             SQLiteConn.deleteLoan(currentLoan);
 
             clearFields();
+            resetFields();
             refreshTableContent();
         });
 
@@ -271,6 +275,14 @@ public class LoanView extends VBox {
         return tvLoans;
     }
 
+    private void resetFields() {
+        tfName.reset();
+        tfAmount.reset();
+        tfInterestRate.reset();
+        tfAmortizationRate.reset();
+        dpNextPayment.reset();
+        dpBoundTo.reset();
+    }
 
     private void clearFields() {
         tfName.clear();
@@ -283,13 +295,6 @@ public class LoanView extends VBox {
         dpBoundTo.setDisable(false);
         chebNextPayment.setSelected(false);
         chebBoundTo.setSelected(false);
-
-        tfName.reset();
-        tfAmount.reset();
-        tfInterestRate.reset();
-        tfAmortizationRate.reset();
-        dpNextPayment.reset();
-        dpBoundTo.reset();
 
         currentLoan = null;
     }
