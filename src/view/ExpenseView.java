@@ -1,5 +1,6 @@
 package view;
 
+import com.sun.tools.javac.comp.Check;
 import controller.SQLiteConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.Expense;
+import model.Input.ModdedDatePicker;
 import model.Input.ModdedTextField;
 import model.Input.Regex;
 
@@ -32,7 +34,9 @@ public class ExpenseView extends VBox {
     private TableView<Expense> tvExpenses;
     private ModdedTextField tfName;
     private ModdedTextField tfAmount;
-    private DatePicker dpEndDate;
+    private ModdedDatePicker dpEndDate;
+
+    private CheckBox chebEndDate;
 
     public ExpenseView() {
         super();
@@ -54,7 +58,17 @@ public class ExpenseView extends VBox {
         tfName = new ModdedTextField(Regex.NAME);
         tfAmount = new ModdedTextField(Regex.AMOUNT);
 
-        dpEndDate = new DatePicker();
+        dpEndDate = new ModdedDatePicker(Regex.DATE);
+
+        chebEndDate = new CheckBox("No end");
+        chebEndDate.setOnAction( actionEvent -> {
+            if (chebEndDate.isSelected()) {
+                dpEndDate.setDisable(true);
+                dpEndDate.setValue(null);
+            } else {
+                dpEndDate.setDisable(false);
+            }
+        });
 
         Button btnSaveExpense = new Button("Save");
         Button btnUpdateExpense = new Button("Update");
@@ -71,7 +85,7 @@ public class ExpenseView extends VBox {
 
             SQLiteConn.insertExpense(insertedExpense, "Alpha");
 
-            clearFields();
+            resetFields();
             refreshTableContent();
         });
 
@@ -92,7 +106,7 @@ public class ExpenseView extends VBox {
 
                 SQLiteConn.updateExpense(updatedExpense);
 
-                clearFields();
+                resetFields();
                 refreshTableContent();
             }
         });
@@ -101,22 +115,20 @@ public class ExpenseView extends VBox {
         btnClearFields.setOnMouseReleased( releaseEvent ->  {
             btnSaveExpense.setDisable(false);
             btnUpdateExpense.setDisable(true);
-            btnClearFields.setDisable(true);
             btnDeleteExpense.setDisable(true);
 
-            clearFields();
+            resetFields();
         });
 
         btnDeleteExpense.setDisable(true);
         btnDeleteExpense.setOnMouseReleased( releaseEvent -> {
             btnSaveExpense.setDisable(false);
             btnUpdateExpense.setDisable(true);
-            btnClearFields.setDisable(true);
             btnDeleteExpense.setDisable(true);
 
             SQLiteConn.deleteExpense(currentExpense);
 
-            clearFields();
+            resetFields();
             refreshTableContent();
         });
 
@@ -129,11 +141,18 @@ public class ExpenseView extends VBox {
 
                     tfName.setText(expense.getName());
                     tfAmount.setText("" + expense.getAmount());
-                    dpEndDate.setValue(new Date(expense.getEndDate()).toLocalDate());
+                    if (expense.getEndDate() > 86400000) {
+                        dpEndDate.setDisable(false);
+                        dpEndDate.setValue(new Date(expense.getEndDate()).toLocalDate());
+                        chebEndDate.setSelected(false);
+                    } else {
+                        dpEndDate.setDisable(true);
+                        dpEndDate.setValue(null);
+                        chebEndDate.setSelected(true);
+                    }
 
                     btnSaveExpense.setDisable(true);
                     btnUpdateExpense.setDisable(false);
-                    btnClearFields.setDisable(false);
                     btnDeleteExpense.setDisable(false);
                 }
             });
@@ -169,10 +188,14 @@ public class ExpenseView extends VBox {
         return tvExpenses;
     }
 
-    private void clearFields() {
-        tfName.clear();
-        tfAmount.clear();
-        dpEndDate.setValue(null);
+    private void resetFields() {
+        tfName.reset();
+        tfAmount.reset();
+
+        dpEndDate.reset();
+        dpEndDate.setDisable(false);
+
+        chebEndDate.setSelected(false);
 
         currentExpense = null;
     }

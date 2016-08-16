@@ -44,6 +44,7 @@ public class ModdedTextField extends TextField {
     }
 
     public void reset() {
+        clear();
         pseudoClassStateChanged(error, false);
     }
 }

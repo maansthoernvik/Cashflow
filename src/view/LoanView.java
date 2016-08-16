@@ -111,7 +111,6 @@ public class LoanView extends VBox {
 
                 SQLiteConn.insertLoan(insertedLoan, "Alpha");
 
-                clearFields();
                 resetFields();
                 refreshTableContent();
             }
@@ -139,7 +138,6 @@ public class LoanView extends VBox {
 
                 SQLiteConn.updateLoan(updatedLoan);
 
-                clearFields();
                 resetFields();
                 refreshTableContent();
             }
@@ -150,7 +148,6 @@ public class LoanView extends VBox {
             btnUpdateLoan.setDisable(true);
             btnDeleteLoan.setDisable(true);
 
-            clearFields();
             resetFields();
         });
 
@@ -162,7 +159,6 @@ public class LoanView extends VBox {
 
             SQLiteConn.deleteLoan(currentLoan);
 
-            clearFields();
             resetFields();
             refreshTableContent();
         });
@@ -179,22 +175,22 @@ public class LoanView extends VBox {
                     tfInterestRate.setText("" + loan.getInterestRate());
                     tfAmortizationRate.setText("" + loan.getAmortizationRate());
                     if (loan.getNextPayment() > 86400000) {
+                        dpNextPayment.setDisable(false);
                         dpNextPayment.setValue(new Date(loan.getNextPayment()).toLocalDate());
                         chebNextPayment.setSelected(false);
-                        dpNextPayment.setDisable(false);
                     } else {
+                        dpNextPayment.setDisable(true);
                         dpNextPayment.setValue(null);
                         chebNextPayment.setSelected(true);
-                        dpNextPayment.setDisable(true);
                     }
                     if (loan.getBoundTo() > 86400000) {
+                        dpBoundTo.setDisable(false);
                         dpBoundTo.setValue(new Date(loan.getBoundTo()).toLocalDate());
                         chebBoundTo.setSelected(false);
-                        dpBoundTo.setDisable(false);
                     } else {
+                        dpBoundTo.setDisable(true);
                         dpBoundTo.setValue(null);
                         chebBoundTo.setSelected(true);
-                        dpBoundTo.setDisable(true);
                     }
 
                     btnSaveLoan.setDisable(true);
@@ -271,20 +267,14 @@ public class LoanView extends VBox {
         tfAmount.reset();
         tfInterestRate.reset();
         tfAmortizationRate.reset();
-        dpNextPayment.reset();
-        dpBoundTo.reset();
-    }
 
-    private void clearFields() {
-        tfName.clear();
-        tfAmount.clear();
-        tfInterestRate.clear();
-        tfAmortizationRate.clear();
-        dpNextPayment.setValue(null);
+        dpNextPayment.reset();
         dpNextPayment.setDisable(false);
-        chebNextPayment.setSelected(false);
-        dpBoundTo.setValue(null);
+
+        dpBoundTo.reset();
         dpBoundTo.setDisable(false);
+
+        chebNextPayment.setSelected(false);
         chebBoundTo.setSelected(false);
 
         currentLoan = null;

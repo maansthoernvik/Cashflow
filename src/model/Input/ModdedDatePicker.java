@@ -54,6 +54,7 @@ public class ModdedDatePicker extends DatePicker {
     }
 
     public void reset() {
+        setValue(null);
         pseudoClassStateChanged(error, false);
     }
 }
