@@ -56,7 +56,7 @@ public class ExpenseView extends VBox {
         refreshTableContent();
 
         tfName = new ModdedTextField(Regex.NAME);
-        tfAmount = new ModdedTextField(Regex.AMOUNT);
+        tfAmount = new ModdedTextField(Regex.LESSERAMOUNT);
 
         dpEndDate = new ModdedDatePicker(Regex.DATE);
 
@@ -76,25 +76,26 @@ public class ExpenseView extends VBox {
         Button btnDeleteExpense = new Button("Delete");
 
         btnSaveExpense.setOnMouseReleased( releaseEvent -> {
-            LocalDate endDateDate = dpEndDate.getValue() == null ? LocalDate.ofEpochDay(0) : dpEndDate.getValue();
-            Calendar endDateCal = Calendar.getInstance();
-            endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth());
+            if (inputValidation()) {
+                LocalDate endDateDate = dpEndDate.getValue() == null ? LocalDate.ofEpochDay(0) : dpEndDate.getValue();
+                Calendar endDateCal = Calendar.getInstance();
+                endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth());
 
-            Expense insertedExpense = new Expense(tfName.getText(), Integer.parseInt(tfAmount.getText()),
-                    endDateCal.getTimeInMillis());
+                Expense insertedExpense = new Expense(tfName.getText(), Integer.parseInt(tfAmount.getText()),
+                        endDateCal.getTimeInMillis());
 
-            SQLiteConn.insertExpense(insertedExpense, "Alpha");
+                SQLiteConn.insertExpense(insertedExpense, "Alpha");
 
-            resetFields();
-            refreshTableContent();
+                resetFields();
+                refreshTableContent();
+            }
         });
 
         btnUpdateExpense.setDisable(true);
         btnUpdateExpense.setOnMouseReleased( releaseEvent -> {
-            if (currentExpense != null) {
+            if (inputValidation()) {
                 btnSaveExpense.setDisable(false);
                 btnUpdateExpense.setDisable(true);
-                btnClearFields.setDisable(true);
                 btnDeleteExpense.setDisable(true);
 
                 LocalDate endDateDate = dpEndDate.getValue() == null ? LocalDate.ofEpochDay(0) : dpEndDate.getValue();
@@ -111,7 +112,6 @@ public class ExpenseView extends VBox {
             }
         });
 
-        btnClearFields.setDisable(true);
         btnClearFields.setOnMouseReleased( releaseEvent ->  {
             btnSaveExpense.setDisable(false);
             btnUpdateExpense.setDisable(true);
@@ -168,13 +168,26 @@ public class ExpenseView extends VBox {
         hbSecond.setAlignment(Pos.TOP_LEFT);
 
         HBox hbThird = new HBox();
-        hbThird.getChildren().addAll(btnSaveExpense, btnUpdateExpense, btnClearFields, btnDeleteExpense);
+        hbThird.getChildren().addAll(dpEndDate, chebEndDate);
 
-        this.getChildren().addAll(tvExpenses, hbFirst, hbSecond, new Label("Ends:"), dpEndDate, hbThird);
+        HBox hbFourth = new HBox();
+        hbFourth.getChildren().addAll(btnSaveExpense, btnUpdateExpense, btnClearFields, btnDeleteExpense);
+
+        this.getChildren().addAll(tvExpenses, hbFirst, hbSecond, new Label("Ends:"), hbThird, hbFourth);
     }
 
     public Expense getCurrentExpense() {
         return currentExpense;
+    }
+
+    private boolean inputValidation() {
+        tfName.validate();
+        tfAmount.validate();
+        dpEndDate.validate();
+
+        Boolean validity = tfName.validate() && tfAmount.validate() && dpEndDate.validate();
+
+        return validity;
     }
 
     private TableView<Expense> refreshTableContent() {

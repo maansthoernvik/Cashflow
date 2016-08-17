@@ -246,7 +246,7 @@ public class LoanView extends VBox {
         dpBoundTo.validate();
 
         Boolean validity = tfName.validate() && tfAmount.validate() && tfInterestRate.validate() &&
-                tfAmortizationRate.validate() && dpNextPayment.validate() && dpBoundTo.validate() ? true : false;
+                tfAmortizationRate.validate() && dpNextPayment.validate() && dpBoundTo.validate();
 
         return validity;
     }

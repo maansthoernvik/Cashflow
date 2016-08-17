@@ -63,13 +63,12 @@ public class MyEconomyView extends VBox {
         ArrayList<Loan> loans;
         loans = SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE User = ?;", "Alpha");
 
-        for (int i = 0; i < loans.size(); i++) {
-            Loan temp = loans.get(i);
-            monthlyTotal += (temp.getAmount() * temp.getInterestRate() * 0.01) / 12;
-            loanTotal += (temp.getAmount() * temp.getInterestRate() * 0.01) / 12;
+        for (Loan loan : loans) {
+            monthlyTotal += (loan.getAmount() * loan.getInterestRate() * 0.01) / 12;
+            loanTotal += (loan.getAmount() * loan.getInterestRate() * 0.01) / 12;
 
-            monthlyTotal += (temp.getAmount() * temp.getAmortizationRate() * 0.01) / 12;
-            loanTotal += (temp.getAmount() * temp.getAmortizationRate() * 0.01) / 12;
+            monthlyTotal += (loan.getAmount() * loan.getAmortizationRate() * 0.01) / 12;
+            loanTotal += (loan.getAmount() * loan.getAmortizationRate() * 0.01) / 12;
         }
 
         ArrayList<Expense> expenses;
