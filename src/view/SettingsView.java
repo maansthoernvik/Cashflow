@@ -6,6 +6,8 @@ import javafx.scene.layout.VBox;
 
 /**
  * Created by MTs on 06/08/16.
+ *
+ *
  */
 
 public class SettingsView extends VBox {

@@ -3,10 +3,11 @@ package model;
 /**
  * Created by MTs on 03/08/16.
  *
- *
+ * Used to represent Loans.
  */
 
 public class Loan {
+
     private int id;
 
     private String name;
@@ -16,6 +17,17 @@ public class Loan {
     private long nextPayment;
     private long boundTo;
 
+    /**
+     * Constructor used to insert new loans.
+     *
+     * @param name of loan
+     * @param amount of loan
+     * @param interestRate of loan
+     * @param amortizationRate of loan
+     * @param nextPayment of loan
+     * @param boundTo of loan
+     */
+
     public Loan(String name, int amount, double interestRate, double amortizationRate, long nextPayment, long boundTo) {
         this.name = name;
         this.amount = amount;
@@ -24,6 +36,18 @@ public class Loan {
         this.nextPayment = nextPayment;
         this.boundTo = boundTo;
     }
+
+    /**
+     * Constructor used to alter old loans.
+     *
+     * @param id of loan
+     * @param name of loan
+     * @param amount of loan
+     * @param interestRate of loan
+     * @param amortizationRate of loan
+     * @param nextPayment of loan
+     * @param boundTo of loan
+     */
 
     public Loan(int id, String name, int amount, double interestRate, double amortizationRate, long nextPayment, long boundTo) {
         this.id = id;
@@ -35,68 +59,172 @@ public class Loan {
         this.boundTo = boundTo;
     }
 
+    /**
+     * Setter of loan ID.
+     *
+     * @param newId of loan
+     * @return new ID
+     */
+
+    @SuppressWarnings("unused")
     public int setId(int newId) {
         id = newId;
         return id;
     }
 
+    /**
+     * Setter of loan name.
+     *
+     * @param newName of loan
+     * @return new name
+     */
+
+    @SuppressWarnings("unused")
     public String setName(String newName) {
         name = newName;
         return name;
     }
 
-    public int setAmount(int change) {
-        amount += change;
+    /**
+     * Setter of loan amount.
+     *
+     * @param newAmount of loan
+     * @return new amount
+     */
+
+    @SuppressWarnings("unused")
+    public int setAmount(int newAmount) {
+        amount = newAmount;
         return amount;
     }
 
+    /**
+     * Setter of loan interest rate.
+     *
+     * @param newRate of interest of loan
+     * @return new interest rate
+     */
+
+    @SuppressWarnings("unused")
     public double setInterestRate(double newRate) {
         interestRate = newRate;
         return interestRate;
     }
 
+    /**
+     * Setter of loan amortization
+     *
+     * @param newRate of amortization of loan
+     * @return new amortization rate
+     */
+
+    @SuppressWarnings("unused")
     public double setAmortizationRate(double newRate) {
         amortizationRate = newRate;
         return amortizationRate;
     }
 
-    public long setLastPayment(long newLastPayment) {
-        nextPayment = newLastPayment;
+    /**
+     * Setter of next payment date of loan.
+     *
+     * @param newNextPayment of loan
+     * @return new next payment date
+     */
+
+    @SuppressWarnings("unused")
+    public long setLastPayment(long newNextPayment) {
+        nextPayment = newNextPayment;
         return nextPayment;
     }
 
-    public long setBoundTo(long newDate) {
-        boundTo = newDate;
+    /**
+     * Setter of bound to date of loan.
+     *
+     * @param newBoundTo of loan
+     * @return new bound to date
+     */
+
+    @SuppressWarnings("unused")
+    public long setBoundTo(long newBoundTo) {
+        boundTo = newBoundTo;
         return boundTo;
     }
+
+    /**
+     * Getter of loan ID.
+     *
+     * @return loan ID
+     */
 
     public int getId() {
         return id;
     }
 
+    /**
+     * Getter of loan name.
+     *
+     * @return loan name
+     */
+
     public String getName() {
         return name;
     }
+
+    /**
+     * Getter of loan amount.
+     *
+     * @return loan amount
+     */
 
     public int getAmount() {
         return amount;
     }
 
+    /**
+     * Getter of loan interest rate.
+     *
+     * @return loan interest rate
+     */
+
     public double getInterestRate() {
         return interestRate;
     }
+
+    /**
+     * Getter of loan amortization rate.
+     *
+     * @return loan amortization rate
+     */
 
     public double getAmortizationRate() {
         return amortizationRate;
     }
 
+    /**
+     * Getter of loan's next payment date.
+     *
+     * @return next payment date of loan
+     */
+
     public long getNextPayment() {
         return nextPayment;
     }
 
+    /**
+     * Getter of loan's bound to date.
+     *
+     * @return bound to date of loan
+     */
+
     public long getBoundTo() {
         return boundTo;
     }
+
+    /**
+     * Standard toString.
+     *
+     * @return string representation of loan
+     */
 
     public String toString() {
         return amount + "at " + interestRate + "% interest. Bound until " + boundTo + "\n" +

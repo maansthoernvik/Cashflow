@@ -1,7 +1,4 @@
-package controller;
-
-import java.time.LocalDate;
-import java.util.Calendar;
+package model;
 
 /**
  * Created by MTs on 09/08/16.

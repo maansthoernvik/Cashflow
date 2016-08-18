@@ -47,7 +47,6 @@ public class LoanView extends VBox {
     @SuppressWarnings("unchecked")
     public LoanView() {
         super();
-        this.setAlignment(Pos.TOP_LEFT);
 
         // Connection object for use with the SQLite database.
         SQLiteConn = new SQLiteConnection();
@@ -56,6 +55,7 @@ public class LoanView extends VBox {
         // If this is spelled wrong, the value will not be gotten.
 
         tvLoans = new TableView<>();
+        tvLoans.setEditable(true);
         tvLoans.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn<Loan, String> tcolName = new TableColumn<>("Name");
         tcolName.setCellValueFactory(new PropertyValueFactory<>("Name"));
@@ -119,7 +119,8 @@ public class LoanView extends VBox {
                 // 2. Create Calendar instance.
                 Calendar nextPaymentCal = Calendar.getInstance();
                 // 3. Set Calendar instance to date gotten from datepicker.
-                nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1, nextPaymentDate.getDayOfMonth());
+                nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
+                        nextPaymentDate.getDayOfMonth());
 
                 // 1. Create a local date.
                 LocalDate boundToDate = dpBoundTo.getValue() == null ?  LocalDate.ofEpochDay(0) :
@@ -129,7 +130,7 @@ public class LoanView extends VBox {
                 // 3. Set Calendar instance to date gotten from datepicker.
                 boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth());
 
-                // All fields are converted into their respective datatypes as all types are strings until this point.
+                // All fields are converted into their respective data types as all types are strings until this point.
                 // Doubles and its need to be parsed before submission into the DB. Calendar values are converted into
                 // longs by use of getTimeInMillis() method from the Calendar class.
                 Loan insertedLoan = new Loan(tfName.getText(), Integer.parseInt(tfAmount.getText()),
@@ -158,7 +159,8 @@ public class LoanView extends VBox {
                 LocalDate nextPaymentDate = dpNextPayment.getValue() == null ?  LocalDate.ofEpochDay(0) :
                                                                                 dpNextPayment.getValue();
                 Calendar nextPaymentCal = Calendar.getInstance();
-                nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1, nextPaymentDate.getDayOfMonth());
+                nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
+                        nextPaymentDate.getDayOfMonth());
 
                 LocalDate boundToDate = dpBoundTo.getValue() == null ?  LocalDate.ofEpochDay(0) :
                                                                         dpBoundTo.getValue();
@@ -170,7 +172,7 @@ public class LoanView extends VBox {
                         Double.parseDouble(tfAmortizationRate.getText()), nextPaymentCal.getTimeInMillis(),
                         boundToCal.getTimeInMillis());
 
-                // TODO - "Alpha" is to be replaced by the name of the current user, through a separate login class.
+                // No need to specify user here, the ID of the loan in question is used.
                 SQLiteConn.updateLoan(updatedLoan);
 
                 resetFields();
@@ -221,7 +223,7 @@ public class LoanView extends VBox {
                     tfAmortizationRate.setText("" + loan.getAmortizationRate());
 
                     // If the value of NextPayment is greater than 86 400 000 milliseconds, the date is greater than
-                    // epoch and the date shall be displayed. This is so since dates that are left empty are assinged
+                    // epoch and the date shall be displayed. This is so since dates that are left empty are assigned
                     // the epoch value. Otherwise, the date is simply set to null and checkbox is selected.
                     if (loan.getNextPayment() > 86400000) {
                         dpNextPayment.setDisable(false);
@@ -276,6 +278,7 @@ public class LoanView extends VBox {
      * @return currently loaded loan
      */
 
+    @SuppressWarnings("unused")
     public Loan getCurrentLoan() {
         return currentLoan;
     }
@@ -295,33 +298,25 @@ public class LoanView extends VBox {
         dpNextPayment.validate();
         dpBoundTo.validate();
 
-        // Load the validity of all fields into one variable.
-        Boolean validity = tfName.validate() && tfAmount.validate() && tfInterestRate.validate() &&
-                tfAmortizationRate.validate() && dpNextPayment.validate() && dpBoundTo.validate();
-
-        // Return validity variable.
-        return validity;
+        // Return validity.
+        return tfName.validate() && tfAmount.validate() && tfInterestRate.validate() && tfAmortizationRate.validate() &&
+                dpNextPayment.validate() && dpBoundTo.validate();
     }
 
     /**
      * Used to either populate the table view or update it when a new loan has been saved/updated/deleted.
-     *
-     * @return an updated table view with all of the database's saved loans.
      */
 
-    private TableView<Loan> refreshTableContent() {
+    private void refreshTableContent() {
         ObservableList<Loan> loans = FXCollections.observableArrayList(
                 SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE User = ?;", "Alpha")
         );
 
-        tvLoans.setEditable(true);
         tvLoans.setItems(loans);
-
-        return tvLoans;
     }
 
     /**
-     * Resets all input fields to their default values and checkboxes to their unchecked state.q
+     * Resets all input fields to their default values and checkboxes to their unchecked state.
      */
 
     private void resetFields() {
