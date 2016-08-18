@@ -1,7 +1,11 @@
 package view;
 
-import com.sun.tools.javac.comp.Check;
+import model.Expense;
+import model.Input.ModdedDatePicker;
+import model.Input.ModdedTextField;
+import model.Input.Regex;
 import controller.SQLiteConnection;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -9,21 +13,15 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import model.Expense;
-import model.Input.ModdedDatePicker;
-import model.Input.ModdedTextField;
-import model.Input.Regex;
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
  * Created by MTs on 06/08/16.
  *
- *
+ * This view enables the user to view and manage his or her expenses. Add new, update and delete.
  */
 
 public class ExpenseView extends VBox {
@@ -38,13 +36,22 @@ public class ExpenseView extends VBox {
 
     private CheckBox chebEndDate;
 
+    /**
+     * Default constructor for ExpenseViews, populating the VBox with all items the view contains.
+     */
+
+    @SuppressWarnings("unchecked")
     public ExpenseView() {
         super();
-        this.setAlignment(Pos.TOP_LEFT);
 
+        // Connection object for use with the SQLite database.
         SQLiteConn = new SQLiteConnection();
 
+        // For CellValueFactories it is extremely important to keep naming consistent with getters of the datatype.
+        // If this is spelled wrong, the value will not be gotten.
+
         tvExpenses = new TableView<>();
+        tvExpenses.setEditable(true);
         tvExpenses.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn<Expense, String> tcolName = new TableColumn<>("Name");
         tcolName.setCellValueFactory(new PropertyValueFactory<>("Name"));
@@ -54,6 +61,10 @@ public class ExpenseView extends VBox {
                 tcolName, tcolAmount
         );
         refreshTableContent();
+
+        // Textfields and datepickers are loaded with Regex values from the Enum class. This defines the type of data
+        // they will handle. If the wrong regex is entered, the border will turn red upon wrong data entered and you
+        // will not be able to save.
 
         tfName = new ModdedTextField(Regex.NAME);
         tfAmount = new ModdedTextField(Regex.LESSERAMOUNT);
@@ -70,34 +81,50 @@ public class ExpenseView extends VBox {
             }
         });
 
+        // Buttons for managing the expenses.
+
         Button btnSaveExpense = new Button("Save");
         Button btnUpdateExpense = new Button("Update");
         Button btnClearFields = new Button("Clear");
         Button btnDeleteExpense = new Button("Delete");
 
         btnSaveExpense.setOnMouseReleased( releaseEvent -> {
-            if (inputValidation()) {
+            if (inputValidation()) {    // If all input fields have correct values.
+                // The date entered can either be left empty (i.e not is use) or with an actual value. In either case,
+                // the values needs to be converted into milliseconds since epoch.
+
+                // 1. Create a local date.
                 LocalDate endDateDate = dpEndDate.getValue() == null ? LocalDate.ofEpochDay(0) : dpEndDate.getValue();
+                // 2. Create Calendar instance.
                 Calendar endDateCal = Calendar.getInstance();
+                // 3. Set Calendar instance to date gotten from datepicker.
                 endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth());
 
+                // All fields are converted into their respective data types as all types are strings until this point.
+                // Doubles and its need to be parsed before submission into the DB. Calendar values are converted into
+                // longs by use of getTimeInMillis() method from the Calendar class.
                 Expense insertedExpense = new Expense(tfName.getText(), Integer.parseInt(tfAmount.getText()),
                         endDateCal.getTimeInMillis());
 
+                // TODO - "Alpha" is to be replaced by the name of the current user, through a separate login class.
                 SQLiteConn.insertExpense(insertedExpense, "Alpha");
 
+                // Reset all field after submission into the DB.
                 resetFields();
                 refreshTableContent();
             }
         });
 
+        // Update button disabled by default, enabled when an expense is selected.
         btnUpdateExpense.setDisable(true);
         btnUpdateExpense.setOnMouseReleased( releaseEvent -> {
-            if (inputValidation()) {
+            if (inputValidation()) {    // If all input fields have correct values.
+                // Reset button status back to how it is when the expenseview is entered.
                 btnSaveExpense.setDisable(false);
                 btnUpdateExpense.setDisable(true);
                 btnDeleteExpense.setDisable(true);
 
+                // See saving process used for btnSaveExpense.
                 LocalDate endDateDate = dpEndDate.getValue() == null ? LocalDate.ofEpochDay(0) : dpEndDate.getValue();
                 Calendar endDateCal = Calendar.getInstance();
                 endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth());
@@ -105,6 +132,7 @@ public class ExpenseView extends VBox {
                 Expense updatedExpense = new Expense(currentExpense.getId(), currentExpense.getName(),
                         Integer.parseInt(tfAmount.getText()), endDateCal.getTimeInMillis());
 
+                // No need to specify user here, the ID of the expenese in question is used.
                 SQLiteConn.updateExpense(updatedExpense);
 
                 resetFields();
@@ -120,27 +148,39 @@ public class ExpenseView extends VBox {
             resetFields();
         });
 
+        // Delete button disabled by default, enabled when an expense is selected.
         btnDeleteExpense.setDisable(true);
         btnDeleteExpense.setOnMouseReleased( releaseEvent -> {
             btnSaveExpense.setDisable(false);
             btnUpdateExpense.setDisable(true);
             btnDeleteExpense.setDisable(true);
 
+            // No need to specify user here, the ID of the expense in question is used.
             SQLiteConn.deleteExpense(currentExpense);
 
             resetFields();
             refreshTableContent();
         });
 
+        // TableView populated by all expenses from the database.
         tvExpenses.setRowFactory( tv -> {
             TableRow<Expense> row = new TableRow<>();
-            row.setOnMouseClicked( clickEvent -> {
-                if ((clickEvent.getClickCount() == 1) && (!row.isEmpty())) {
-                    Expense expense = row.getItem();
-                    currentExpense = expense;
+            row.setOnMouseClicked( clickEvent -> {  // If an item is clicked.
+                if ((clickEvent.getClickCount() == 1) && (!row.isEmpty())) {    // Item was clicked once and the row is
+                                                                                // not empty.
+                    // Enable update and delete buttons and disable save.
+                    btnSaveExpense.setDisable(true);
+                    btnUpdateExpense.setDisable(false);
+                    btnDeleteExpense.setDisable(false);
 
+                    Expense expense = row.getItem();    // Load the loan from the row.
+                    currentExpense = expense;           // Assign the currently selected loan to global variable.
+
+                    // Set all expense fields to the values of the currently selected expense.
                     tfName.setText(expense.getName());
                     tfAmount.setText("" + expense.getAmount());
+
+                    // TODO - How shall end dates be handled for expenses?
                     if (expense.getEndDate() > 86400000) {
                         dpEndDate.setDisable(false);
                         dpEndDate.setValue(new Date(expense.getEndDate()).toLocalDate());
@@ -150,22 +190,19 @@ public class ExpenseView extends VBox {
                         dpEndDate.setValue(null);
                         chebEndDate.setSelected(true);
                     }
-
-                    btnSaveExpense.setDisable(true);
-                    btnUpdateExpense.setDisable(false);
-                    btnDeleteExpense.setDisable(false);
                 }
             });
             return row;
         });
 
+        // Creates HBoxes for different rows of this class (since >this< extends the VBox class) and then it is simply
+        // a matter of adding them all in order - hence the naming using numbers. Labels are added directly since there
+        // was no reason to instantiate them anywhere else.
         HBox hbFirst = new HBox();
         hbFirst.getChildren().addAll(new Label("Name:"), new Label("Amount:"));
-        hbFirst.setAlignment(Pos.TOP_LEFT);
 
         HBox hbSecond = new HBox();
         hbSecond.getChildren().addAll(tfName, tfAmount);
-        hbSecond.setAlignment(Pos.TOP_LEFT);
 
         HBox hbThird = new HBox();
         hbThird.getChildren().addAll(dpEndDate, chebEndDate);
@@ -173,33 +210,52 @@ public class ExpenseView extends VBox {
         HBox hbFourth = new HBox();
         hbFourth.getChildren().addAll(btnSaveExpense, btnUpdateExpense, btnClearFields, btnDeleteExpense);
 
+        // Adding all of the above HBoxes to >this< VBox.
         this.getChildren().addAll(tvExpenses, hbFirst, hbSecond, new Label("Ends:"), hbThird, hbFourth);
     }
 
+    /**
+     * Getter getter of the current expense.
+     *
+     * @return currently loaded expense
+     */
+
+    @SuppressWarnings("unused")
     public Expense getCurrentExpense() {
         return currentExpense;
     }
 
+    /**
+     * Used to validate all expense input fields of either an old expense or a new submission.
+     *
+     * @return boolean value representing the integrity of the entered expense values
+     */
+
     private boolean inputValidation() {
+        // This process is only used to ensure fields have their correct border color (either error red or normal blue).
         tfName.validate();
         tfAmount.validate();
         dpEndDate.validate();
 
-        Boolean validity = tfName.validate() && tfAmount.validate() && dpEndDate.validate();
-
-        return validity;
+        // Return validity.
+        return tfName.validate() && tfAmount.validate() && dpEndDate.validate();
     }
 
-    private TableView<Expense> refreshTableContent() {
+    /**
+     * Used to either populate the table view or update it when a new expense has been saved/updated/deleted.
+     */
+
+    private void refreshTableContent() {
         ObservableList<Expense> expenses = FXCollections.observableArrayList(
                 SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE User = ?", "Alpha")
         );
 
-        tvExpenses.setEditable(true);
         tvExpenses.setItems(expenses);
-
-        return tvExpenses;
     }
+
+    /**
+     * Resets all input fields to their default values and checkboxes to their unchecked state.
+     */
 
     private void resetFields() {
         tfName.reset();

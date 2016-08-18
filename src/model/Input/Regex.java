@@ -3,7 +3,7 @@ package model.Input;
 /**
  * Created by MTs on 12/08/16.
  *
- *
+ * Regular expressions for use with input validation.
  */
 
 public enum Regex {
