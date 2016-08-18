@@ -3,7 +3,6 @@ package controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
-import model.Main;
 import view.ExpenseView;
 import view.LoanView;
 import view.MyEconomyView;
@@ -20,18 +19,13 @@ public class MainWindowController {
 
     @FXML private SplitPane mainSplitPane;  // This splitpane is declared in the MainWindowView, hence the @FXML.
 
-    private MyEconomyView myEconomy;
-    private LoanView loans;
-    private ExpenseView expenses;
-    private SettingsView settings;
-
     /**
      * Handles the event for when the label "My Economy" is pressed. It sets the current content to that of the
      * MyEconomyView class.
      */
 
     public void handleLabelMyEconomy() {
-        myEconomy = new MyEconomyView();
+        MyEconomyView myEconomy = new MyEconomyView();
         setMainContent(myEconomy);
     }
 
@@ -41,7 +35,7 @@ public class MainWindowController {
      */
 
     public void handleLabelLoans() {
-        loans = new LoanView();
+        LoanView loans = new LoanView();
         setMainContent(loans);
     }
 
@@ -51,7 +45,7 @@ public class MainWindowController {
      */
 
     public void handleLabelExpenses() {
-        expenses = new ExpenseView();
+        ExpenseView expenses = new ExpenseView();
         setMainContent(expenses);
     }
 
@@ -61,7 +55,7 @@ public class MainWindowController {
      */
 
     public void handleLabelSettings() {
-        settings = new SettingsView();
+        SettingsView settings = new SettingsView();
         setMainContent(settings);
     }
 
@@ -69,7 +63,7 @@ public class MainWindowController {
      * Used to change the current content shown. It removes the first position item from the splitpane (which is the
      * content to the right of the separator, the left side has pos. 0) and then adds the VBox sent as a parameter.
      *
-     * @param newVBoxContent
+     * @param newVBoxContent to be shown in SplitPane
      */
 
     private void setMainContent(VBox newVBoxContent) {

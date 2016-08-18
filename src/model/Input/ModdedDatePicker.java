@@ -1,39 +1,52 @@
 package model.Input;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.DatePicker;
-import javafx.scene.input.InputMethodEvent;
-import javafx.scene.input.KeyEvent;
-
-import java.time.LocalDate;
 
 /**
  * Created by MTs on 14/08/16.
  *
- *
+ * Modified DatePicker class that now includes setting the color of the DatePickers borders, depending on what input is
+ * given. Validation ensures, before save/update, that the input has integrity so that no crap gets submitted into the
+ * DB.
  */
+
 public class ModdedDatePicker extends DatePicker {
-    private final PseudoClass error = PseudoClass.getPseudoClass("error");
-    private Regex regex;
+
+    private final PseudoClass error = PseudoClass.getPseudoClass("error");  // PseudoClass state is changed to show
+    private Regex regex;                                                    // that there is an error.
+
+    /**
+     * Constructor takes a regular expression as input to define what input the DatePicker will accept. In this case,
+     * Regex.DATE should be used.
+     *
+     * @param regex input format accepted
+     */
 
     public ModdedDatePicker(Regex regex) {
         super();
-        setUpValidation(regex);
+        setUpValidation(regex); // Sets what should happen upon input entered.
     }
 
+    /**
+     * Sets the validation if this DatePicker to check against the Regex expression used as a parameter in the
+     * constructor.
+     *
+     * @param regex regular expression to be used for validation
+     */
+
     private void setUpValidation(Regex regex) {
-        this.regex = regex;
-        valueProperty().addListener(new ChangeListener<LocalDate>() {
-            @Override
-            public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue, LocalDate newValue) {
-                validate();
-            }
+        this.regex = regex;     // Regex is saved to object variable.
+        valueProperty().addListener((observable, oldValue, newValue) -> {
+            validate();     // When DatePicker value is changed, perform validate() method.
         });
     }
+
+    /**
+     * Validates what has been input into the DatePicker.
+     *
+     * @return true if input is in accordance to the Regex or null
+     */
 
     public boolean validate() {
         if (getValue() == null) {
@@ -52,6 +65,10 @@ public class ModdedDatePicker extends DatePicker {
             return false;
         }
     }
+
+    /**
+     * Resets the DatePicker, sets value to default and removes error color by deactivating the PseudoClass error.
+     */
 
     public void reset() {
         setValue(null);
