@@ -1,5 +1,6 @@
 package view;
 
+import controller.AccountManager;
 import model.Expense;
 import model.Input.ModdedDatePicker;
 import model.Input.ModdedTextField;
@@ -246,7 +247,8 @@ public class ExpenseView extends VBox {
 
     private void refreshTableContent() {
         ObservableList<Expense> expenses = FXCollections.observableArrayList(
-                SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE User = ?", "Alpha")
+                SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?",
+                        AccountManager.getCurrentUser().getId())
         );
 
         tvExpenses.setItems(expenses);

@@ -1,6 +1,7 @@
 package controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
 import view.ExpenseView;
@@ -18,6 +19,11 @@ import view.SettingsView;
 public class MainWindowController {
 
     @FXML private SplitPane mainSplitPane;  // This splitpane is declared in the MainWindowView, hence the @FXML.
+    @FXML private Label lblLogout;
+
+    public void setUpLogout(AccountManager accManager) {
+        lblLogout.setOnMouseReleased( releaseEvent -> accManager.logout());
+    }
 
     /**
      * Handles the event for when the label "My Economy" is pressed. It sets the current content to that of the

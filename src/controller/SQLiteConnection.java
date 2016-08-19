@@ -3,6 +3,7 @@ package controller;
 import model.Expense;
 import model.Loan;
 
+import model.User;
 import org.sqlite.SQLiteConfig;
 
 import java.sql.*;
@@ -38,14 +39,14 @@ public class SQLiteConnection {
      * Queries the DB for all loans of the user sent as a parameter.
      *
      * @param query for loans
-     * @param user current user
+     * @param id current user's id
      * @return array list with all loans of the specified user
      */
 
-    public ArrayList<Loan> fetchLoans(String query, String user) {
+    public ArrayList<Loan> fetchLoans(String query, int id) {
         // Convert config to properties for use with the connection object.
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
-             PreparedStatement ps = createSelectPreparedStatement(conn, query, user);   // Separate method for creating
+             PreparedStatement ps = createSelectPreparedStatement(conn, query, id);   // Separate method for creating
              ResultSet rs = ps.executeQuery()) {                                        // the prepared statement.
             ArrayList<Loan> result = new ArrayList<>();
 
@@ -66,13 +67,13 @@ public class SQLiteConnection {
      * Queries the DB for all expenses of the user sent as a parameter.
      *
      * @param query for expenses
-     * @param user current user
+     * @param id current user's id
      * @return array list with all expenses of the specified user
      */
 
-    public ArrayList<Expense> fetchExpenses(String query, String user) {
+    public ArrayList<Expense> fetchExpenses(String query, int id) {
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
-             PreparedStatement ps = createSelectPreparedStatement(conn, query, user);
+             PreparedStatement ps = createSelectPreparedStatement(conn, query, id);
              ResultSet rs = ps.executeQuery()) {
             ArrayList<Expense> result = new ArrayList<>();
 
@@ -93,15 +94,44 @@ public class SQLiteConnection {
      *
      * @param conn connection object
      * @param query for either loans or other items
-     * @param user current user
+     * @param id current user's id
      * @return prepared query statement
      * @throws SQLException thrown
      */
 
-    private PreparedStatement createSelectPreparedStatement(Connection conn, String query, String user)
+    private PreparedStatement createSelectPreparedStatement(Connection conn, String query, int id)
             throws SQLException {
         PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, id);
+
+        return ps;
+    }
+
+    /**
+     *
+     */
+
+    public User fetchUser(String query, String user, String password) {
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createSelectUserPreparedStatement(conn, query, user, password);
+             ResultSet rs = ps.executeQuery()) {
+
+            return new User(rs.getInt("UserID"), rs.getString("Username"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     *
+     */
+
+    private PreparedStatement createSelectUserPreparedStatement(Connection conn, String query, String user,
+                                                                String password) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, user);
+        ps.setString(2, password);
 
         return ps;
     }
@@ -114,16 +144,16 @@ public class SQLiteConnection {
      * Inserts a new loan into the DB.
      *
      * @param loan to be inserted
-     * @param user current user
+     * @param id current user's id
      * @return true if successful
      */
 
-    public boolean insertLoan(Loan loan, String user) {
-        String insert = "INSERT INTO Loans (User, Name, Amount, InterestRate, AmortizationRate, " +
-                "NextPayment, BoundTo) VALUES (?, ?, ?, ?, ?, ?, ?);";
+    public boolean insertLoan(Loan loan, int id) {
+        String insert = "INSERT INTO Loans (Name, Amount, InterestRate, AmortizationRate, " +
+                "NextPayment, BoundTo, UserID) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
-             PreparedStatement ps = createInsertLoanPreparedStatement(conn, insert, loan, user)) {
+             PreparedStatement ps = createInsertLoanPreparedStatement(conn, insert, loan, id)) {
             ps.executeUpdate();
 
             return true;
@@ -139,21 +169,21 @@ public class SQLiteConnection {
      * @param conn connection
      * @param insert statement
      * @param loan to be inserted
-     * @param user current user
+     * @param id current user's id
      * @return prepared insert statement
      * @throws SQLException thrown
      */
 
-    private PreparedStatement createInsertLoanPreparedStatement(Connection conn, String insert, Loan loan, String user)
+    private PreparedStatement createInsertLoanPreparedStatement(Connection conn, String insert, Loan loan, int id)
             throws SQLException {
         PreparedStatement ps = conn.prepareStatement(insert);
-        ps.setString(1, user);
-        ps.setString(2, loan.getName());
-        ps.setInt(3, loan.getAmount());
-        ps.setDouble(4, loan.getInterestRate());
-        ps.setDouble(5, loan.getAmortizationRate());
-        ps.setLong(6, loan.getNextPayment());
-        ps.setLong(7, loan.getBoundTo());
+        ps.setString(1, loan.getName());
+        ps.setInt(2, loan.getAmount());
+        ps.setDouble(3, loan.getInterestRate());
+        ps.setDouble(4, loan.getAmortizationRate());
+        ps.setLong(5, loan.getNextPayment());
+        ps.setLong(6, loan.getBoundTo());
+        ps.setInt(7, id);
 
         return ps;
     }

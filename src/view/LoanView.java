@@ -1,5 +1,6 @@
 package view;
 
+import controller.AccountManager;
 import model.Input.ModdedDatePicker;
 import model.Loan;
 import model.Input.ModdedTextField;
@@ -136,8 +137,7 @@ public class LoanView extends VBox {
                         Double.parseDouble(tfInterestRate.getText()), Double.parseDouble(tfAmortizationRate.getText()),
                         nextPaymentCal.getTimeInMillis(), boundToCal.getTimeInMillis());
 
-                // TODO - "Alpha" is to be replaced by the name of the current user, through a separate login class.
-                SQLiteConn.insertLoan(insertedLoan, "Alpha");
+                SQLiteConn.insertLoan(insertedLoan, AccountManager.getCurrentUser().getId());
 
                 // Reset all field after submission into the DB.
                 resetFields();
@@ -308,7 +308,7 @@ public class LoanView extends VBox {
 
     private void refreshTableContent() {
         ObservableList<Loan> loans = FXCollections.observableArrayList(
-                SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE User = ?;", "Alpha")
+                SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE UserID = ?;", AccountManager.getCurrentUser().getId())
         );
 
         tvLoans.setItems(loans);

@@ -7,17 +7,17 @@
    <children>
        <SplitPane fx:id="mainSplitPane" dividerPositions="0.1" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="30">
          <items>
-            <VBox fx:id="mainVBoxMenu" minWidth="200" maxWidth="200">
+            <VBox fx:id="mainVBoxMenu" maxWidth="200" minWidth="200">
                <children>
-                  <Label fx:id="labelMyEconomy" onMouseReleased="#handleLabelMyEconomy" text="My economy" />
-                  <Label fx:id="labelLoans" onMouseReleased="#handleLabelLoans" text="Loans" />
-                  <Label fx:id="labelExpenses" onMouseReleased="#handleLabelExpenses" text="Expenses" />
-                  <Label fx:id="labelSettings" onMouseReleased="#handleLabelSettings" text="Settings" />
+                  <Label fx:id="lblMyEconomy" onMouseReleased="#handleLabelMyEconomy" text="My economy" />
+                  <Label fx:id="lblLoans" onMouseReleased="#handleLabelLoans" text="Loans" />
+                  <Label fx:id="lblExpenses" onMouseReleased="#handleLabelExpenses" text="Expenses" />
+                  <Label fx:id="lblSettings" onMouseReleased="#handleLabelSettings" text="Settings" />
+                  <Label fx:id="lblLogout" text="Logout" />
                </children></VBox>
              <VBox fx:id="emptyVBox" />
          </items></SplitPane>
-      <MenuBar fx:id="menuBar" prefHeight="30" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
-               AnchorPane.topAnchor="0" useSystemMenuBar="true">
+      <MenuBar fx:id="menuBar" prefHeight="30" useSystemMenuBar="true" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <menus>
           <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
             <items>

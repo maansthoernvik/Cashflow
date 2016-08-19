@@ -1,5 +1,6 @@
 package view;
 
+import controller.AccountManager;
 import controller.SQLiteConnection;
 import model.Expense;
 import model.Loan;
@@ -41,8 +42,8 @@ public class MyEconomyView extends VBox {
         int expenseTotal = 0;
 
         // Get all loans from the DB.
-        // TODO - "Alpha" is to be replaced by the name of the current user, through a separate login class.
-        ArrayList<Loan> loans = SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE User = ?;", "Alpha");
+        ArrayList<Loan> loans = SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE UserID = ?;",
+                AccountManager.getCurrentUser().getId());
 
         // For each loan gotten, add interest and amortization amounts to vars.
         for (Loan loan : loans) {
@@ -56,8 +57,8 @@ public class MyEconomyView extends VBox {
         }
 
         // Get all expenses from the DB.
-        // TODO - "Alpha" is to be replaced by the name of the current user, through a separate login class.
-        ArrayList<Expense> expenses = SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE User = ?;", "Alpha");
+        ArrayList<Expense> expenses = SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?;",
+                AccountManager.getCurrentUser().getId());
 
         // For each expense gotten, add amount to monthly and expense total.
         for (Expense expense : expenses) {

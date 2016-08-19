@@ -1,9 +1,11 @@
 package model;
 
+import controller.AccountManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
@@ -14,14 +16,13 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    private Stage primaryStage;
-
     public static void main(String[] args) {
         launch(args);
     }
 
     /**
-     * Overridden method from JavaFX 8. Starts the application with a new stage.
+     * Overridden method from JavaFX 8. Starts the application with a new stage. Loads the account manager to show the
+     * login view.
      *
      * @param primaryStage
      * @throws Exception
@@ -29,43 +30,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
+        Scene scene = new Scene(new StackPane());
 
-        // Create the main window.
-        mainWindow();
-    }
+        AccountManager accManager = new AccountManager(scene);
+        accManager.showLoginView();
 
-    /**
-     * This method loads the main window by use of an FXML file containing the custom layout of this application. It
-     * sets the scene and loads the scene into the current stage. By default, the application will be started in full-
-     * screen mode.
-     */
-
-    private void mainWindow() {
-        try {
-            // Load the FXML file which contains the main view.
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindowView.fxml"));
-            AnchorPane pane = loader.load();    // Attach crap from the FXML to a new anchor pane.
-
-            Scene scene = new Scene(pane);      // Insert the pane into the scene.
-            scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());    // Load stylesheets.
-
-            primaryStage.setScene(scene);       // Sets the current scene to what has been prepared.
-            primaryStage.setMaximized(true);    // Set the window to start maximized.
-            primaryStage.show();                // Show the finished stage.
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Getter for the primary stage.
-     *
-     * @return the primary stage
-     */
-
-    @SuppressWarnings("unused")
-    public Stage getPrimaryStage() {
-        return primaryStage;
+        primaryStage.setScene(scene);       // Sets the current scene to what has been prepared.
+        primaryStage.setMaximized(true);    // Set the window to start maximized.
+        primaryStage.show();                // Show the finished stage.
     }
 }
