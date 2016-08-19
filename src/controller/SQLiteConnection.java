@@ -50,7 +50,7 @@ public class SQLiteConnection {
             ArrayList<Loan> result = new ArrayList<>();
 
             while(rs.next()) {
-                result.add(new Loan(rs.getInt("id"), rs.getString("Name"), rs.getInt("Amount"),
+                result.add(new Loan(rs.getInt("LoanID"), rs.getString("Name"), rs.getInt("Amount"),
                         rs.getDouble("InterestRate"), rs.getDouble("AmortizationRate"), rs.getLong("NextPayment"),
                         rs.getLong("BoundTo")));
             }
@@ -77,7 +77,7 @@ public class SQLiteConnection {
             ArrayList<Expense> result = new ArrayList<>();
 
             while(rs.next()) {
-                result.add(new Expense(rs.getInt("id"), rs.getString("Name"), rs.getInt("Amount"),
+                result.add(new Expense(rs.getInt("ExpenseID"), rs.getString("Name"), rs.getInt("Amount"),
                         rs.getLong("EndDate")));
             }
 
@@ -167,7 +167,7 @@ public class SQLiteConnection {
 
     public boolean updateLoan(Loan loan) {
         String update = "UPDATE Loans SET Name = ?, Amount = ?, InterestRate = ?, AmortizationRate = ?, " +
-                "NextPayment = ?, BoundTo = ? WHERE Id = ?;";
+                "NextPayment = ?, BoundTo = ? WHERE LoanID = ?;";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createUpdateLoanPreparedStatement(conn, update, loan)) {
@@ -212,7 +212,7 @@ public class SQLiteConnection {
      */
 
     public boolean deleteLoan(Loan loan) {
-        String delete = "DELETE FROM Loans WHERE ID = ?;";
+        String delete = "DELETE FROM Loans WHERE LoanID = ?;";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createDeleteLoanPreparedStatement(conn, delete, loan)) {
@@ -299,7 +299,7 @@ public class SQLiteConnection {
      */
 
     public boolean updateExpense(Expense expense) {
-        String update = "UPDATE Expenses SET Name = ?, Amount = ?, EndDate = ? WHERE ID = ?";
+        String update = "UPDATE Expenses SET Name = ?, Amount = ?, EndDate = ? WHERE ExpenseID = ?";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createUpdateExpensePreparedStatement(conn, update, expense)) {
@@ -340,7 +340,7 @@ public class SQLiteConnection {
      */
 
     public boolean deleteExpense(Expense expense) {
-        String delete = "DELETE FROM Expenses WHERE ID = ?;";
+        String delete = "DELETE FROM Expenses WHERE ExpenseID = ?;";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createDeleteExpensePreparedStatement(conn, delete, expense)) {
