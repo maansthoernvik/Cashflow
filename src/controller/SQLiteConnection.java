@@ -281,15 +281,15 @@ public class SQLiteConnection {
      * Inserts a new expense into the DB.
      *
      * @param expense to insert
-     * @param user current user
+     * @param id current user's id
      * @return true if successful
      */
 
-    public boolean insertExpense(Expense expense, String user) {
-        String insert = "INSERT INTO Expenses (User, Name, Amount, EndDate) VALUES (?, ?, ?, ?);";
+    public boolean insertExpense(Expense expense, int id) {
+        String insert = "INSERT INTO Expenses (Name, Amount, EndDate, UserID) VALUES (?, ?, ?, ?);";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
-             PreparedStatement ps = createInsertExpensePreparedStatement(conn, insert, expense, user)) {
+             PreparedStatement ps = createInsertExpensePreparedStatement(conn, insert, expense, id)) {
             ps.executeUpdate();
 
             return true;
@@ -305,18 +305,18 @@ public class SQLiteConnection {
      * @param conn connection
      * @param insert statement
      * @param expense to be inserted
-     * @param user current user
+     * @param id current user's id
      * @return prepared insert statement
      * @throws SQLException thrown
      */
 
     private PreparedStatement createInsertExpensePreparedStatement(Connection conn, String insert, Expense expense,
-                                                                   String user) throws SQLException {
+                                                                   int id) throws SQLException {
         PreparedStatement ps = conn.prepareStatement(insert);
-        ps.setString(1, user);
-        ps.setString(2, expense.getName());
-        ps.setInt(3, expense.getAmount());
-        ps.setLong(4, expense.getEndDate());
+        ps.setString(1, expense.getName());
+        ps.setInt(2, expense.getAmount());
+        ps.setLong(3, expense.getEndDate());
+        ps.setInt(4, id);
 
         return ps;
     }
@@ -352,7 +352,8 @@ public class SQLiteConnection {
      * @throws SQLException thrown
      */
 
-    private PreparedStatement createUpdateExpensePreparedStatement(Connection conn, String update, Expense expense) throws SQLException {
+    private PreparedStatement createUpdateExpensePreparedStatement(Connection conn, String update, Expense expense)
+            throws SQLException {
         PreparedStatement ps = conn.prepareStatement(update);
         ps.setString(1, expense.getName());
         ps.setInt(2, expense.getAmount());

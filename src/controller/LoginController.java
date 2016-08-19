@@ -25,6 +25,8 @@ public class LoginController {
      */
 
     public void setUpAuthentication(AccountManager accManager) {
+        tfLogin.setText("alpha");
+        pwfLogin.setText("opq531");
         btnLogin.setOnMouseReleased( releaseEvent -> {
             User user = authenticate();
 

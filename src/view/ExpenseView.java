@@ -106,8 +106,7 @@ public class ExpenseView extends VBox {
                 Expense insertedExpense = new Expense(tfName.getText(), Integer.parseInt(tfAmount.getText()),
                         endDateCal.getTimeInMillis());
 
-                // TODO - "Alpha" is to be replaced by the name of the current user, through a separate login class.
-                SQLiteConn.insertExpense(insertedExpense, "Alpha");
+                SQLiteConn.insertExpense(insertedExpense, AccountManager.getCurrentUser().getId());
 
                 // Reset all field after submission into the DB.
                 resetFields();
