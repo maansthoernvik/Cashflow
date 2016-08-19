@@ -18,21 +18,29 @@ public class LoginController {
     @FXML private PasswordField pwfLogin;
     @FXML private Button btnLogin;
 
+    private AccountManager accountManager;
+
     /**
      *
-     * @param accManager
-     * @return
      */
 
-    public void setUpAuthentication(AccountManager accManager) {
+    public void setAccountManager(AccountManager accountManager) {
+        this.accountManager = accountManager;
+    }
+
+    /**
+     *
+     */
+
+    public void setUpAuthentication() {
         tfLogin.setText("alpha");
         pwfLogin.setText("opq531");
         btnLogin.setOnMouseReleased( releaseEvent -> {
             User user = authenticate();
 
             if (user.getId() > 0) {
-                accManager.setCurrentUser(user);
-                accManager.showMainView();
+                accountManager.setCurrentUser(user);
+                accountManager.showMainView();
             }
         });
     }

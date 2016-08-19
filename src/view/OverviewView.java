@@ -19,13 +19,13 @@ import java.util.ArrayList;
  * statistics.
  */
 
-public class MyEconomyView extends VBox {
+public class OverviewView extends VBox {
 
     /**
      * Default constructor for MyEconomyViews, populating the VBox with all items the view contains.
      */
 
-    public MyEconomyView() {
+    public OverviewView() {
         super();
 
         // Connection object for use with the SQLite database.

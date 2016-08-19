@@ -37,8 +37,11 @@ public class AccountManager {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
 
             scene.setRoot(loader.load());
+
             LoginController loginController = loader.getController();
-            loginController.setUpAuthentication(this);
+            loginController.setAccountManager(this);
+            loginController.setUpAuthentication();
+
             scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());    // Load stylesheets.
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,8 +60,10 @@ public class AccountManager {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainWindowView.fxml"));
 
             scene.setRoot(loader.load());
+
             MainWindowController mainWindowController = loader.getController();
-            mainWindowController.setUpLogout(this);
+            mainWindowController.setAccountManager(this);
+
             scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());    // Load stylesheets.
         } catch (Exception e) {
             e.printStackTrace();
