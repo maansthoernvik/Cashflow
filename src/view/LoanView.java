@@ -137,11 +137,18 @@ public class LoanView extends VBox {
                         Double.parseDouble(tfInterestRate.getText()), Double.parseDouble(tfAmortizationRate.getText()),
                         nextPaymentCal.getTimeInMillis(), boundToCal.getTimeInMillis());
 
-                SQLiteConn.insertLoan(insertedLoan, AccountManager.getCurrentUser().getId());
+                if (SQLiteConn.insertLoan(insertedLoan, AccountManager.getCurrentUser().getId())) {
+                    // Since a new loan has been inserted into the DB, all loans now need to be re-loaded into the
+                    // current users list of loans. This is because when inserted, the loans are not created with
+                    // their ID's, so a full value loan is not inserted into the list and it hence cannot be deleted
+                    // (without the loan's ID number).
+                    AccountManager.getCurrentUser().addAllLoans();
 
-                // Reset all field after submission into the DB.
-                resetFields();
-                refreshTableContent();
+                    // Reset all field after submission into the DB.
+                    resetFields();
+                    refreshTableContent();
+                }
+
             }
         });
 
@@ -172,10 +179,14 @@ public class LoanView extends VBox {
                         boundToCal.getTimeInMillis());
 
                 // No need to specify user here, the ID of the loan in question is used.
-                SQLiteConn.updateLoan(updatedLoan);
+                if (SQLiteConn.updateLoan(updatedLoan)) {
+                    // Update the loan in the users list of loans so that it corresponds to its updated values.
+                    AccountManager.getCurrentUser().updateLoan(currentLoan, updatedLoan);
 
-                resetFields();
-                refreshTableContent();
+                    resetFields();
+                    refreshTableContent();
+                }
+
             }
         });
 
@@ -195,10 +206,13 @@ public class LoanView extends VBox {
             btnDeleteLoan.setDisable(true);
 
             // No need to specify user here, the ID of the loan in question is used.
-            SQLiteConn.deleteLoan(currentLoan);
+            if (SQLiteConn.deleteLoan(currentLoan)) {
+                // Simply remove the loan from the users list of loans.
+                AccountManager.getCurrentUser().removeLoan(currentLoan);
 
-            resetFields();
-            refreshTableContent();
+                resetFields();
+                refreshTableContent();
+            }
         });
 
         // TableView populated by all loans from the database.
@@ -212,30 +226,29 @@ public class LoanView extends VBox {
                     btnUpdateLoan.setDisable(false);
                     btnDeleteLoan.setDisable(false);
 
-                    Loan loan = row.getItem();      // Load the loan from the row.
-                    currentLoan = loan;             // Assign the currently selected loan to global variable.
+                    currentLoan = row.getItem();             // Assign the currently selected loan to global variable.
 
                     // Set all loan fields to the values of the currently selected loan.
-                    tfName.setText(loan.getName());
-                    tfAmount.setText("" + loan.getAmount());
-                    tfInterestRate.setText("" + loan.getInterestRate());
-                    tfAmortizationRate.setText("" + loan.getAmortizationRate());
+                    tfName.setText(currentLoan.getName());
+                    tfAmount.setText("" + currentLoan.getAmount());
+                    tfInterestRate.setText("" + currentLoan.getInterestRate());
+                    tfAmortizationRate.setText("" + currentLoan.getAmortizationRate());
 
                     // If the value of NextPayment is greater than 86 400 000 milliseconds, the date is greater than
                     // epoch and the date shall be displayed. This is so since dates that are left empty are assigned
                     // the epoch value. Otherwise, the date is simply set to null and checkbox is selected.
-                    if (loan.getNextPayment() > 86400000) {
+                    if (currentLoan.getNextPayment() > 86400000) {
                         dpNextPayment.setDisable(false);
-                        dpNextPayment.setValue(new Date(loan.getNextPayment()).toLocalDate());
+                        dpNextPayment.setValue(new Date(currentLoan.getNextPayment()).toLocalDate());
                         chebNextPayment.setSelected(false);
                     } else {
                         dpNextPayment.setDisable(true);
                         dpNextPayment.setValue(null);
                         chebNextPayment.setSelected(true);
                     }
-                    if (loan.getBoundTo() > 86400000) {
+                    if (currentLoan.getBoundTo() > 86400000) {
                         dpBoundTo.setDisable(false);
-                        dpBoundTo.setValue(new Date(loan.getBoundTo()).toLocalDate());
+                        dpBoundTo.setValue(new Date(currentLoan.getBoundTo()).toLocalDate());
                         chebBoundTo.setSelected(false);
                     } else {
                         dpBoundTo.setDisable(true);
@@ -307,8 +320,9 @@ public class LoanView extends VBox {
      */
 
     private void refreshTableContent() {
+        // Get the current list of loans from the users list of loans.
         ObservableList<Loan> loans = FXCollections.observableArrayList(
-                SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE UserID = ?;", AccountManager.getCurrentUser().getId())
+                AccountManager.getCurrentUser().getLoans()
         );
 
         tvLoans.setItems(loans);
@@ -326,7 +340,6 @@ public class LoanView extends VBox {
 
         dpNextPayment.reset();
         dpNextPayment.setDisable(false);
-
         dpBoundTo.reset();
         dpBoundTo.setDisable(false);
 

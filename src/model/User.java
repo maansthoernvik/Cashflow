@@ -36,7 +36,6 @@ public class User {
 
     public void addAllLoans() {
         SQLiteConnection SQLiteConn = new SQLiteConnection();
-
         loans = SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
     }
 
@@ -46,6 +45,15 @@ public class User {
 
     public void addLoan(Loan loan) {
         loans.add(loan);
+    }
+
+    /**
+     *
+     */
+
+    public void updateLoan(Loan oldLoan, Loan newLoan) {
+        int i = expenses.indexOf(oldLoan);
+        loans.set(i, newLoan);
     }
 
     /**
@@ -71,7 +79,6 @@ public class User {
 
     public void addAllExpenses() {
         SQLiteConnection SQLiteConn = new SQLiteConnection();
-
         expenses = SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?", id);
     }
 

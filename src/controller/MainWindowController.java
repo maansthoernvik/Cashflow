@@ -1,17 +1,9 @@
 package controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import model.Expense;
-import model.Loan;
 import view.OverviewView;
-
-import java.util.ArrayList;
 
 /**
  * Created by MTs on 06/08/16.

@@ -222,7 +222,7 @@ public class ExpenseView extends VBox {
         hbFourth.getChildren().addAll(btnSaveExpense, btnUpdateExpense, btnClearFields, btnDeleteExpense);
 
         // Adding all of the above HBoxes to >this< VBox.
-        this.getChildren().addAll(tvExpenses, hbFirst, hbSecond, new Label("Ends:"), hbThird, hbFourth);
+        getChildren().addAll(tvExpenses, hbFirst, hbSecond, new Label("Ends:"), hbThird, hbFourth);
     }
 
     /**
@@ -259,7 +259,7 @@ public class ExpenseView extends VBox {
     private void refreshTableContent() {
         // Get the current list of expenses from the users list of expenses.
         ObservableList<Expense> expenses = FXCollections.observableArrayList(
-                        AccountManager.getCurrentUser().getExpenses()
+                AccountManager.getCurrentUser().getExpenses()
         );
 
         tvExpenses.setItems(expenses);

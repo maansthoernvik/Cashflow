@@ -85,13 +85,11 @@ public class OverviewView extends VBox {
             // Simply get the amounts.
             monthlyTotal += expense.getAmount();
             expenseTotal += expense.getAmount();
-            System.out.println(expense.getAmount());
         }
 
         // Set the textfields values to their corresponding calculated amounts.
         tfMonthlyBills.setText("" + monthlyTotal);
         tfLoans.setText("" + loanTotal);
         tfExpenses.setText("" + expenseTotal);
-        System.out.println(expenseTotal);
     }
 }
