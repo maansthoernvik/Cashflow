@@ -112,6 +112,7 @@ public class ExpenseView extends VBox {
                     // their ID's, so a full value expense is not inserted into the list and it hence cannot be deleted
                     // (without the expense's ID number).
                     AccountManager.getCurrentUser().addAllExpenses();
+
                     // Reset all field after submission into the DB.
                     resetFields();
                     refreshTableContent();
@@ -135,14 +136,16 @@ public class ExpenseView extends VBox {
 
                 Expense updatedExpense = new Expense(currentExpense.getId(), currentExpense.getName(),
                         Integer.parseInt(tfAmount.getText()), endDateCal.getTimeInMillis());
-                // Update the expense in the users list of expenses so that it corresponds to its updated values.
-                AccountManager.getCurrentUser().updateExpense(currentExpense, updatedExpense);
 
                 // No need to specify user here, the ID of the expense in question is used.
-                SQLiteConn.updateExpense(updatedExpense);
+                if (SQLiteConn.updateExpense(updatedExpense)) {
+                    // Update the expense in the users list of expenses so that it corresponds to its updated values.
+                    AccountManager.getCurrentUser().updateExpense(currentExpense, updatedExpense);
 
-                resetFields();
-                refreshTableContent();
+                    resetFields();
+                    refreshTableContent();
+                }
+
             }
         });
 
@@ -161,14 +164,14 @@ public class ExpenseView extends VBox {
             btnUpdateExpense.setDisable(true);
             btnDeleteExpense.setDisable(true);
 
-            // Simply remove the expense from the users list of expenses.
-            AccountManager.getCurrentUser().removeExpense(currentExpense);
-
             // No need to specify user here, the ID of the expense in question is used.
-            SQLiteConn.deleteExpense(currentExpense);
+            if (SQLiteConn.deleteExpense(currentExpense)) {
+                // Simply remove the expense from the users list of expenses.
+                AccountManager.getCurrentUser().removeExpense(currentExpense);
 
-            resetFields();
-            refreshTableContent();
+                resetFields();
+                refreshTableContent();
+            }
         });
 
         // TableView populated by all expenses from the database.
