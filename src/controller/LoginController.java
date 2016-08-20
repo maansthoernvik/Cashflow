@@ -38,7 +38,8 @@ public class LoginController {
         btnLogin.setOnMouseReleased( releaseEvent -> {
             User user = authenticate();
 
-            if (user.getId() > 0) {
+            // Fetch User will return null upon error.
+            if (user != null) {
                 accountManager.setCurrentUser(user);
                 accountManager.showMainView();
             }

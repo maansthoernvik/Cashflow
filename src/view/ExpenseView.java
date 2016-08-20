@@ -107,6 +107,11 @@ public class ExpenseView extends VBox {
                         endDateCal.getTimeInMillis());
 
                 SQLiteConn.insertExpense(insertedExpense, AccountManager.getCurrentUser().getId());
+                // Since a new expense has been inserted into the DB, all expenses now need to be re-loaded into the
+                // current users list of expenses. This is because when inserted, the expenses are not created with
+                // their ID's, so a full value expense is not inserted into the list and it hence cannot be deleted
+                // (without the expense's ID number).
+                AccountManager.getCurrentUser().addAllExpenses();
 
                 // Reset all field after submission into the DB.
                 resetFields();
@@ -130,8 +135,10 @@ public class ExpenseView extends VBox {
 
                 Expense updatedExpense = new Expense(currentExpense.getId(), currentExpense.getName(),
                         Integer.parseInt(tfAmount.getText()), endDateCal.getTimeInMillis());
+                // Update the expense in the users list of expenses so that it corresponds to its updated values.
+                AccountManager.getCurrentUser().updateExpense(currentExpense, updatedExpense);
 
-                // No need to specify user here, the ID of the expenese in question is used.
+                // No need to specify user here, the ID of the expense in question is used.
                 SQLiteConn.updateExpense(updatedExpense);
 
                 resetFields();
@@ -154,6 +161,9 @@ public class ExpenseView extends VBox {
             btnUpdateExpense.setDisable(true);
             btnDeleteExpense.setDisable(true);
 
+            // Simply remove the expense from the users list of expenses.
+            AccountManager.getCurrentUser().removeExpense(currentExpense);
+
             // No need to specify user here, the ID of the expense in question is used.
             SQLiteConn.deleteExpense(currentExpense);
 
@@ -172,17 +182,16 @@ public class ExpenseView extends VBox {
                     btnUpdateExpense.setDisable(false);
                     btnDeleteExpense.setDisable(false);
 
-                    Expense expense = row.getItem();    // Load the loan from the row.
-                    currentExpense = expense;           // Assign the currently selected loan to global variable.
+                    currentExpense = row.getItem();     // Assign the currently selected loan to global variable.
 
                     // Set all expense fields to the values of the currently selected expense.
-                    tfName.setText(expense.getName());
-                    tfAmount.setText("" + expense.getAmount());
+                    tfName.setText(currentExpense.getName());
+                    tfAmount.setText("" + currentExpense.getAmount());
 
                     // TODO - How shall end dates be handled for expenses?
-                    if (expense.getEndDate() > 86400000) {
+                    if (currentExpense.getEndDate() > 86400000) {
                         dpEndDate.setDisable(false);
-                        dpEndDate.setValue(new Date(expense.getEndDate()).toLocalDate());
+                        dpEndDate.setValue(new Date(currentExpense.getEndDate()).toLocalDate());
                         chebEndDate.setSelected(false);
                     } else {
                         dpEndDate.setDisable(true);
@@ -245,9 +254,9 @@ public class ExpenseView extends VBox {
      */
 
     private void refreshTableContent() {
+        // Get the current list of expenses from the users list of expenses.
         ObservableList<Expense> expenses = FXCollections.observableArrayList(
-                SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?",
-                        AccountManager.getCurrentUser().getId())
+                        AccountManager.getCurrentUser().getExpenses()
         );
 
         tvExpenses.setItems(expenses);

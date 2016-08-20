@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class OverviewView extends VBox {
 
     /**
-     * Default constructor for MyEconomyViews, populating the VBox with all items the view contains.
+     * Default constructor for OverviewViews, populating the VBox with all items the view contains.
      */
 
     public OverviewView() {
@@ -42,8 +42,7 @@ public class OverviewView extends VBox {
         int expenseTotal = 0;
 
         // Get all loans from the DB.
-        ArrayList<Loan> loans = SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE UserID = ?;",
-                AccountManager.getCurrentUser().getId());
+        ArrayList<Loan> loans = AccountManager.getCurrentUser().getLoans();
 
         // For each loan gotten, add interest and amortization amounts to vars.
         for (Loan loan : loans) {
@@ -57,8 +56,7 @@ public class OverviewView extends VBox {
         }
 
         // Get all expenses from the DB.
-        ArrayList<Expense> expenses = SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?;",
-                AccountManager.getCurrentUser().getId());
+        ArrayList<Expense> expenses = AccountManager.getCurrentUser().getExpenses();
 
         // For each expense gotten, add amount to monthly and expense total.
         for (Expense expense : expenses) {

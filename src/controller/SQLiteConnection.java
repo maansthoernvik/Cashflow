@@ -377,6 +377,8 @@ public class SQLiteConnection {
              PreparedStatement ps = createDeleteExpensePreparedStatement(conn, delete, expense)) {
             ps.executeUpdate();
 
+            System.out.println("Hello from Sqliteconn." + expense.getId());
+
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
