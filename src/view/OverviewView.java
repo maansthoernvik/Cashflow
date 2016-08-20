@@ -2,6 +2,7 @@ package view;
 
 import controller.AccountManager;
 import controller.SQLiteConnection;
+import javafx.scene.text.Text;
 import model.Expense;
 import model.Loan;
 
@@ -21,6 +22,10 @@ import java.util.ArrayList;
 
 public class OverviewView extends VBox {
 
+    private TextField tfMonthlyBills;
+    private TextField tfLoans;
+    private TextField tfExpenses;
+
     /**
      * Default constructor for OverviewViews, populating the VBox with all items the view contains.
      */
@@ -28,14 +33,31 @@ public class OverviewView extends VBox {
     public OverviewView() {
         super();
 
-        // Connection object for use with the SQLite database.
-        SQLiteConnection SQLiteConn = new SQLiteConnection();
-
         // Textfields to contain bill information of various kinds.
-        TextField tfMonthlyBills = new TextField();
-        TextField tfLoans = new TextField();
-        TextField tfExpenses = new TextField();
+        tfMonthlyBills = new TextField();
+        tfLoans = new TextField();
+        tfExpenses = new TextField();
 
+        // Populate text fields.
+        refreshOverview();
+
+        // Creates HBoxes for different rows of this class (since >this< extends the VBox class) and then it is simply
+        // a matter of adding them all in order - hence the naming using numbers. Labels are added directly since there
+        // was no reason to instantiate them anywhere else.
+        HBox hbFirst = new HBox();
+        hbFirst.getChildren().addAll(tfMonthlyBills, new Label("crowns per month"));
+
+        HBox hbSecond = new HBox();
+        hbSecond.getChildren().addAll(new Label("Loans:"), new Label("Expenses:"));
+
+        HBox hbThird = new HBox();
+        hbThird.getChildren().addAll(tfLoans, new Label("crowns per month"), tfExpenses, new Label("crowns per month"));
+
+        // Adding all of the above HBoxes to >this< VBox.
+        this.getChildren().addAll(new Label("Total"), hbFirst, hbSecond, hbThird);
+    }
+
+    public void refreshOverview() {
         // Variables for temporarily saving information.
         int monthlyTotal = 0;
         int loanTotal = 0;
@@ -63,26 +85,13 @@ public class OverviewView extends VBox {
             // Simply get the amounts.
             monthlyTotal += expense.getAmount();
             expenseTotal += expense.getAmount();
+            System.out.println(expense.getAmount());
         }
 
         // Set the textfields values to their corresponding calculated amounts.
         tfMonthlyBills.setText("" + monthlyTotal);
         tfLoans.setText("" + loanTotal);
         tfExpenses.setText("" + expenseTotal);
-
-        // Creates HBoxes for different rows of this class (since >this< extends the VBox class) and then it is simply
-        // a matter of adding them all in order - hence the naming using numbers. Labels are added directly since there
-        // was no reason to instantiate them anywhere else.
-        HBox hbFirst = new HBox();
-        hbFirst.getChildren().addAll(tfMonthlyBills, new Label("crowns per month"));
-
-        HBox hbSecond = new HBox();
-        hbSecond.getChildren().addAll(new Label("Loans:"), new Label("Expenses:"));
-
-        HBox hbThird = new HBox();
-        hbThird.getChildren().addAll(tfLoans, new Label("crowns per month"), tfExpenses, new Label("crowns per month"));
-
-        // Adding all of the above HBoxes to >this< VBox.
-        this.getChildren().addAll(new Label("Total"), hbFirst, hbSecond, hbThird);
+        System.out.println(expenseTotal);
     }
 }

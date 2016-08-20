@@ -106,16 +106,16 @@ public class ExpenseView extends VBox {
                 Expense insertedExpense = new Expense(tfName.getText(), Integer.parseInt(tfAmount.getText()),
                         endDateCal.getTimeInMillis());
 
-                SQLiteConn.insertExpense(insertedExpense, AccountManager.getCurrentUser().getId());
-                // Since a new expense has been inserted into the DB, all expenses now need to be re-loaded into the
-                // current users list of expenses. This is because when inserted, the expenses are not created with
-                // their ID's, so a full value expense is not inserted into the list and it hence cannot be deleted
-                // (without the expense's ID number).
-                AccountManager.getCurrentUser().addAllExpenses();
-
-                // Reset all field after submission into the DB.
-                resetFields();
-                refreshTableContent();
+                if (SQLiteConn.insertExpense(insertedExpense, AccountManager.getCurrentUser().getId())) {
+                    // Since a new expense has been inserted into the DB, all expenses now need to be re-loaded into the
+                    // current users list of expenses. This is because when inserted, the expenses are not created with
+                    // their ID's, so a full value expense is not inserted into the list and it hence cannot be deleted
+                    // (without the expense's ID number).
+                    AccountManager.getCurrentUser().addAllExpenses();
+                    // Reset all field after submission into the DB.
+                    resetFields();
+                    refreshTableContent();
+                }
             }
         });
 

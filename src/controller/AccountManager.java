@@ -63,6 +63,7 @@ public class AccountManager {
 
             MainWindowController mainWindowController = loader.getController();
             mainWindowController.setAccountManager(this);
+            mainWindowController.setUpdateOverview();
 
             scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());    // Load stylesheets.
         } catch (Exception e) {
