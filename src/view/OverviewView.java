@@ -73,8 +73,8 @@ public class OverviewView extends VBox {
             monthlyTotal += (loan.getAmount() * loan.getInterestRate() * 0.01) / 12;
             loanTotal += (loan.getAmount() * loan.getInterestRate() * 0.01) / 12;
 
-            monthlyTotal += (loan.getAmount() * loan.getAmortizationRate() * 0.01) / 12;
-            loanTotal += (loan.getAmount() * loan.getAmortizationRate() * 0.01) / 12;
+            monthlyTotal += loan.getAmortizationAmount();
+            loanTotal += loan.getAmortizationAmount();
         }
 
         // Get all expenses from the DB.

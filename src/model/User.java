@@ -52,7 +52,7 @@ public class User {
      */
 
     public void updateLoan(Loan oldLoan, Loan newLoan) {
-        int i = expenses.indexOf(oldLoan);
+        int i = loans.indexOf(oldLoan);
         loans.set(i, newLoan);
     }
 

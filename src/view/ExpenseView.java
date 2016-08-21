@@ -1,11 +1,11 @@
 package view;
 
 import controller.AccountManager;
+import controller.SQLiteConnection;
 import model.Expense;
 import model.Input.ModdedDatePicker;
 import model.Input.ModdedTextField;
 import model.Input.Regex;
-import controller.SQLiteConnection;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -219,7 +219,7 @@ public class ExpenseView extends VBox {
         hbThird.getChildren().addAll(dpEndDate, chebEndDate);
 
         HBox hbFourth = new HBox();
-        hbFourth.getChildren().addAll(btnSaveExpense, btnUpdateExpense, btnClearFields, btnDeleteExpense);
+        hbFourth.getChildren().addAll(btnSaveExpense, btnUpdateExpense, btnDeleteExpense, btnClearFields);
 
         // Adding all of the above HBoxes to >this< VBox.
         getChildren().addAll(tvExpenses, hbFirst, hbSecond, new Label("Ends:"), hbThird, hbFourth);
