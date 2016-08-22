@@ -94,11 +94,12 @@ public class ExpenseView extends VBox {
                 // the values needs to be converted into milliseconds since epoch.
 
                 // 1. Create a local date.
-                LocalDate endDateDate = dpEndDate.getValue() == null ? LocalDate.ofEpochDay(0) : dpEndDate.getValue();
+                LocalDate endDateDate = dpEndDate.getValue() == null ? new Date(0).toLocalDate() : dpEndDate.getValue();
                 // 2. Create Calendar instance.
                 Calendar endDateCal = Calendar.getInstance();
                 // 3. Set Calendar instance to date gotten from datepicker.
-                endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth());
+                endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth(), 0,
+                        0, 0);
 
                 // All fields are converted into their respective data types as all types are strings until this point.
                 // Doubles and its need to be parsed before submission into the DB. Calendar values are converted into
@@ -130,9 +131,10 @@ public class ExpenseView extends VBox {
                 btnDeleteExpense.setDisable(true);
 
                 // See saving process used for btnSaveExpense.
-                LocalDate endDateDate = dpEndDate.getValue() == null ? LocalDate.ofEpochDay(0) : dpEndDate.getValue();
+                LocalDate endDateDate = dpEndDate.getValue() == null ? new Date(0).toLocalDate() : dpEndDate.getValue();
                 Calendar endDateCal = Calendar.getInstance();
-                endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth());
+                endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth(), 0,
+                        0, 0);
 
                 Expense updatedExpense = new Expense(currentExpense.getId(), currentExpense.getName(),
                         Integer.parseInt(tfAmount.getText()), endDateCal.getTimeInMillis());

@@ -1,14 +1,14 @@
 package model;
 
-import model.DateTime.CurrentDate;
+import model.DateTime.TimeTracking;
 
 import java.util.Timer;
 
 public class Tester {
 
     public static void main(String[] args) {
-        //Timer dateUpdater = new Timer();
-        //dateUpdater.schedule(new CurrentDate(), 0, 5000);
+        Timer dateUpdater = new Timer();
+        dateUpdater.schedule(new TimeTracking(), 0, 5000);
 
         User user = new User(1, "Name");
         user.addAllLoans();

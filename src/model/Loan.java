@@ -132,7 +132,7 @@ public class Loan {
      */
 
     @SuppressWarnings("unused")
-    public long setLastPayment(long newNextPayment) {
+    public long setNextPayment(long newNextPayment) {
         nextPayment = newNextPayment;
         return nextPayment;
     }

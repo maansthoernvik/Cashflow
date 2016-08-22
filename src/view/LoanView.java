@@ -113,21 +113,22 @@ public class LoanView extends VBox {
                 // the values needs to be converted into milliseconds since epoch.
 
                 // 1. Create a local date.
-                LocalDate nextPaymentDate = dpNextPayment.getValue() == null ?  LocalDate.ofEpochDay(0) :
+                LocalDate nextPaymentDate = dpNextPayment.getValue() == null ? new Date(0).toLocalDate() :
                                                                                 dpNextPayment.getValue();
                 // 2. Create Calendar instance.
                 Calendar nextPaymentCal = Calendar.getInstance();
                 // 3. Set Calendar instance to date gotten from datepicker.
                 nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
-                        nextPaymentDate.getDayOfMonth());
+                        nextPaymentDate.getDayOfMonth(), 0, 0, 0);
 
                 // 1. Create a local date.
-                LocalDate boundToDate = dpBoundTo.getValue() == null ?  LocalDate.ofEpochDay(0) :
+                LocalDate boundToDate = dpBoundTo.getValue() == null ? new Date(0).toLocalDate() :
                                                                         dpBoundTo.getValue();
                 // 2. Create Calendar instance.
                 Calendar boundToCal = Calendar.getInstance();
                 // 3. Set Calendar instance to date gotten from datepicker.
-                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth());
+                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 0,
+                        0, 0);
 
                 // All fields are converted into their respective data types as all types are strings until this point.
                 // Doubles and its need to be parsed before submission into the DB. Calendar values are converted into
@@ -161,16 +162,17 @@ public class LoanView extends VBox {
                 btnDeleteLoan.setDisable(true);
 
                 // See saving process used for btnSaveLoan.
-                LocalDate nextPaymentDate = dpNextPayment.getValue() == null ?  LocalDate.ofEpochDay(0) :
+                LocalDate nextPaymentDate = dpNextPayment.getValue() == null ? new Date(0).toLocalDate() :
                                                                                 dpNextPayment.getValue();
                 Calendar nextPaymentCal = Calendar.getInstance();
                 nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
-                        nextPaymentDate.getDayOfMonth());
+                        nextPaymentDate.getDayOfMonth(), 0, 0, 0);
 
-                LocalDate boundToDate = dpBoundTo.getValue() == null ?  LocalDate.ofEpochDay(0) :
+                LocalDate boundToDate = dpBoundTo.getValue() == null ? new Date(0).toLocalDate() :
                                                                         dpBoundTo.getValue();
                 Calendar boundToCal = Calendar.getInstance();
-                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth());
+                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 0,
+                        0, 0);
 
                 Loan updatedLoan = new Loan(currentLoan.getId(), tfName.getText(),
                         Integer.parseInt(tfAmount.getText()), Double.parseDouble(tfInterestRate.getText()),
@@ -236,6 +238,7 @@ public class LoanView extends VBox {
                     // If the value of NextPayment is greater than 86 400 000 milliseconds, the date is greater than
                     // epoch and the date shall be displayed. This is so since dates that are left empty are assigned
                     // the epoch value. Otherwise, the date is simply set to null and checkbox is selected.
+                    // TODO make it so that is check for dates between 86400000 and now(), if in this range then do smthing.
                     if (currentLoan.getNextPayment() > 86400000) {
                         dpNextPayment.setDisable(false);
                         dpNextPayment.setValue(new Date(currentLoan.getNextPayment()).toLocalDate());
