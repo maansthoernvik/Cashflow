@@ -2,11 +2,12 @@ package model;
 
 import controller.AccountManager;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import model.DateTime.TimeTracking;
+
+import java.util.Timer;
 
 /**
  * Created by MTs on 06/08/16.
@@ -34,6 +35,9 @@ public class Main extends Application {
 
         AccountManager accManager = new AccountManager(scene);
         accManager.showLoginView();
+
+        Timer dateUpdater = new Timer();
+        dateUpdater.schedule(new TimeTracking(), 0, 5000);
 
         primaryStage.setScene(scene);       // Sets the current scene to what has been prepared.
         primaryStage.setMaximized(true);    // Set the window to start maximized.

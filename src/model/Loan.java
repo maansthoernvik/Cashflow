@@ -13,7 +13,7 @@ public class Loan {
     private String name;
     private int amount;             // The loan amount
     private double interestRate;    // The current interest
-    private double amortizationRate;
+    private int amortizationAmount;
     private long nextPayment;
     private long boundTo;
 
@@ -23,16 +23,16 @@ public class Loan {
      * @param name of loan
      * @param amount of loan
      * @param interestRate of loan
-     * @param amortizationRate of loan
+     * @param amortizationAmount of loan
      * @param nextPayment of loan
      * @param boundTo of loan
      */
 
-    public Loan(String name, int amount, double interestRate, double amortizationRate, long nextPayment, long boundTo) {
+    public Loan(String name, int amount, double interestRate, int amortizationAmount, long nextPayment, long boundTo) {
         this.name = name;
         this.amount = amount;
         this.interestRate = interestRate;
-        this.amortizationRate = amortizationRate;
+        this.amortizationAmount = amortizationAmount;
         this.nextPayment = nextPayment;
         this.boundTo = boundTo;
     }
@@ -44,17 +44,17 @@ public class Loan {
      * @param name of loan
      * @param amount of loan
      * @param interestRate of loan
-     * @param amortizationRate of loan
+     * @param amortizationAmount of loan
      * @param nextPayment of loan
      * @param boundTo of loan
      */
 
-    public Loan(int id, String name, int amount, double interestRate, double amortizationRate, long nextPayment, long boundTo) {
+    public Loan(int id, String name, int amount, double interestRate, int amortizationAmount, long nextPayment, long boundTo) {
         this.id = id;
         this.name = name;
         this.amount = amount;
         this.interestRate = interestRate;
-        this.amortizationRate = amortizationRate;
+        this.amortizationAmount = amortizationAmount;
         this.nextPayment = nextPayment;
         this.boundTo = boundTo;
     }
@@ -114,14 +114,14 @@ public class Loan {
     /**
      * Setter of loan amortization
      *
-     * @param newRate of amortization of loan
+     * @param newAmortizationAmount of amortization of loan
      * @return new amortization rate
      */
 
     @SuppressWarnings("unused")
-    public double setAmortizationRate(double newRate) {
-        amortizationRate = newRate;
-        return amortizationRate;
+    public double setAmortizationAmount(int newAmortizationAmount) {
+        amortizationAmount = newAmortizationAmount;
+        return amortizationAmount;
     }
 
     /**
@@ -132,7 +132,7 @@ public class Loan {
      */
 
     @SuppressWarnings("unused")
-    public long setLastPayment(long newNextPayment) {
+    public long setNextPayment(long newNextPayment) {
         nextPayment = newNextPayment;
         return nextPayment;
     }
@@ -196,8 +196,8 @@ public class Loan {
      * @return loan amortization rate
      */
 
-    public double getAmortizationRate() {
-        return amortizationRate;
+    public int getAmortizationAmount() {
+        return amortizationAmount;
     }
 
     /**
@@ -227,8 +227,8 @@ public class Loan {
      */
 
     public String toString() {
-        return amount + "at " + interestRate + "% interest. Bound until " + boundTo + "\n" +
-                "Amortization is set to " + amortizationRate + "%." +
+        return amount + " at " + interestRate + " % interest. Bound until " + boundTo + "\n" +
+                "Amortization is set to " + amortizationAmount + ".\n" +
                 "Next payment is due " + nextPayment;
     }
 }

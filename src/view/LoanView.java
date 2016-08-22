@@ -33,7 +33,7 @@ public class LoanView extends VBox {
     private ModdedTextField tfName;
     private ModdedTextField tfAmount;
     private ModdedTextField tfInterestRate;
-    private ModdedTextField tfAmortizationRate;
+    private ModdedTextField tfAmortizationAmount;
     private ModdedDatePicker dpNextPayment;
     private ModdedDatePicker dpBoundTo;
 
@@ -63,21 +63,20 @@ public class LoanView extends VBox {
         tcolAmount.setCellValueFactory(new PropertyValueFactory<>("Amount"));
         TableColumn<Loan, Double> tcolInterestRate = new TableColumn<>("Interest rate");
         tcolInterestRate.setCellValueFactory(new PropertyValueFactory<>("InterestRate"));
-        TableColumn<Loan, Double> tcolAmortizationRate = new TableColumn<>("Amortization rate");
-        tcolAmortizationRate.setCellValueFactory(new PropertyValueFactory<>("AmortizationRate"));
+        TableColumn<Loan, Integer> tcolAmortizationAmount = new TableColumn<>("Amortization amount");
+        tcolAmortizationAmount.setCellValueFactory(new PropertyValueFactory<>("AmortizationAmount"));
         tvLoans.getColumns().addAll(
-                tcolName, tcolAmount, tcolInterestRate, tcolAmortizationRate
+                tcolName, tcolAmount, tcolInterestRate, tcolAmortizationAmount
         );
         refreshTableContent();
 
         // Textfields and datepickers are loaded with Regex values from the Enum class. This defines the type of data
         // they will handle. If the wrong regex is entered, the border will turn red upon wrong data entered and you
         // will not be able to save.
-
         tfName = new ModdedTextField(Regex.NAME);
         tfAmount = new ModdedTextField(Regex.AMOUNT);
         tfInterestRate = new ModdedTextField(Regex.PERCENTAGE);
-        tfAmortizationRate = new ModdedTextField(Regex.PERCENTAGE);
+        tfAmortizationAmount = new ModdedTextField(Regex.LESSERAMOUNT);
 
         dpNextPayment = new ModdedDatePicker(Regex.DATE);
         dpBoundTo = new ModdedDatePicker(Regex.DATE);
@@ -114,27 +113,28 @@ public class LoanView extends VBox {
                 // the values needs to be converted into milliseconds since epoch.
 
                 // 1. Create a local date.
-                LocalDate nextPaymentDate = dpNextPayment.getValue() == null ?  LocalDate.ofEpochDay(0) :
+                LocalDate nextPaymentDate = dpNextPayment.getValue() == null ? new Date(0).toLocalDate() :
                                                                                 dpNextPayment.getValue();
                 // 2. Create Calendar instance.
                 Calendar nextPaymentCal = Calendar.getInstance();
                 // 3. Set Calendar instance to date gotten from datepicker.
                 nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
-                        nextPaymentDate.getDayOfMonth());
+                        nextPaymentDate.getDayOfMonth(), 0, 0, 0);
 
                 // 1. Create a local date.
-                LocalDate boundToDate = dpBoundTo.getValue() == null ?  LocalDate.ofEpochDay(0) :
+                LocalDate boundToDate = dpBoundTo.getValue() == null ? new Date(0).toLocalDate() :
                                                                         dpBoundTo.getValue();
                 // 2. Create Calendar instance.
                 Calendar boundToCal = Calendar.getInstance();
                 // 3. Set Calendar instance to date gotten from datepicker.
-                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth());
+                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 0,
+                        0, 0);
 
                 // All fields are converted into their respective data types as all types are strings until this point.
                 // Doubles and its need to be parsed before submission into the DB. Calendar values are converted into
                 // longs by use of getTimeInMillis() method from the Calendar class.
                 Loan insertedLoan = new Loan(tfName.getText(), Integer.parseInt(tfAmount.getText()),
-                        Double.parseDouble(tfInterestRate.getText()), Double.parseDouble(tfAmortizationRate.getText()),
+                        Double.parseDouble(tfInterestRate.getText()), Integer.parseInt(tfAmortizationAmount.getText()),
                         nextPaymentCal.getTimeInMillis(), boundToCal.getTimeInMillis());
 
                 if (SQLiteConn.insertLoan(insertedLoan, AccountManager.getCurrentUser().getId())) {
@@ -162,20 +162,21 @@ public class LoanView extends VBox {
                 btnDeleteLoan.setDisable(true);
 
                 // See saving process used for btnSaveLoan.
-                LocalDate nextPaymentDate = dpNextPayment.getValue() == null ?  LocalDate.ofEpochDay(0) :
+                LocalDate nextPaymentDate = dpNextPayment.getValue() == null ? new Date(0).toLocalDate() :
                                                                                 dpNextPayment.getValue();
                 Calendar nextPaymentCal = Calendar.getInstance();
                 nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
-                        nextPaymentDate.getDayOfMonth());
+                        nextPaymentDate.getDayOfMonth(), 0, 0, 0);
 
-                LocalDate boundToDate = dpBoundTo.getValue() == null ?  LocalDate.ofEpochDay(0) :
+                LocalDate boundToDate = dpBoundTo.getValue() == null ? new Date(0).toLocalDate() :
                                                                         dpBoundTo.getValue();
                 Calendar boundToCal = Calendar.getInstance();
-                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth());
+                boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 0,
+                        0, 0);
 
                 Loan updatedLoan = new Loan(currentLoan.getId(), tfName.getText(),
                         Integer.parseInt(tfAmount.getText()), Double.parseDouble(tfInterestRate.getText()),
-                        Double.parseDouble(tfAmortizationRate.getText()), nextPaymentCal.getTimeInMillis(),
+                        Integer.parseInt(tfAmortizationAmount.getText()), nextPaymentCal.getTimeInMillis(),
                         boundToCal.getTimeInMillis());
 
                 // No need to specify user here, the ID of the loan in question is used.
@@ -232,11 +233,12 @@ public class LoanView extends VBox {
                     tfName.setText(currentLoan.getName());
                     tfAmount.setText("" + currentLoan.getAmount());
                     tfInterestRate.setText("" + currentLoan.getInterestRate());
-                    tfAmortizationRate.setText("" + currentLoan.getAmortizationRate());
+                    tfAmortizationAmount.setText("" + currentLoan.getAmortizationAmount());
 
                     // If the value of NextPayment is greater than 86 400 000 milliseconds, the date is greater than
                     // epoch and the date shall be displayed. This is so since dates that are left empty are assigned
                     // the epoch value. Otherwise, the date is simply set to null and checkbox is selected.
+                    // TODO make it so that is check for dates between 86400000 and now(), if in this range then do smthing.
                     if (currentLoan.getNextPayment() > 86400000) {
                         dpNextPayment.setDisable(false);
                         dpNextPayment.setValue(new Date(currentLoan.getNextPayment()).toLocalDate());
@@ -268,9 +270,9 @@ public class LoanView extends VBox {
         HBox hbSecond = new HBox();
         hbSecond.getChildren().addAll(tfName, tfAmount);
         HBox hbThird = new HBox();
-        hbThird.getChildren().addAll(new Label("Interest rate:"), new Label("Amortization rate:"));
+        hbThird.getChildren().addAll(new Label("Interest rate:"), new Label("Amortization amount:"));
         HBox hbFourth = new HBox();
-        hbFourth.getChildren().addAll(tfInterestRate, tfAmortizationRate);
+        hbFourth.getChildren().addAll(tfInterestRate, tfAmortizationAmount);
         HBox hbFifth = new HBox();
         hbFifth.getChildren().addAll(new Label("Next payment:"), new Label("Bound to:"));
         HBox hbSixth = new HBox();
@@ -306,12 +308,12 @@ public class LoanView extends VBox {
         tfName.validate();
         tfAmount.validate();
         tfInterestRate.validate();
-        tfAmortizationRate.validate();
+        tfAmortizationAmount.validate();
         dpNextPayment.validate();
         dpBoundTo.validate();
 
         // Return validity.
-        return tfName.validate() && tfAmount.validate() && tfInterestRate.validate() && tfAmortizationRate.validate() &&
+        return tfName.validate() && tfAmount.validate() && tfInterestRate.validate() && tfAmortizationAmount.validate() &&
                 dpNextPayment.validate() && dpBoundTo.validate();
     }
 
@@ -336,7 +338,7 @@ public class LoanView extends VBox {
         tfName.reset();
         tfAmount.reset();
         tfInterestRate.reset();
-        tfAmortizationRate.reset();
+        tfAmortizationAmount.reset();
 
         dpNextPayment.reset();
         dpNextPayment.setDisable(false);
