@@ -7,7 +7,7 @@ package model.Input;
  */
 
 public enum Regex {
-    NAME("^[a-zA-Z0-9- ]{1,20}$"),
+    NAME("^[a-zA-Z\\å\\ä\\ö0-9- ]{1,20}$"),
     AMOUNT("^[0-9]{3,9}$"),
     LESSERAMOUNT("^[0-9]{1,9}$"),
     PERCENTAGE("^[0-9]{1,3}(\\.[0-9]{1,3})?$"),

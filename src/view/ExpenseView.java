@@ -136,7 +136,7 @@ public class ExpenseView extends VBox {
                 endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth(), 0,
                         0, 0);
 
-                Expense updatedExpense = new Expense(currentExpense.getId(), currentExpense.getName(),
+                Expense updatedExpense = new Expense(currentExpense.getId(), tfName.getText(),
                         Integer.parseInt(tfAmount.getText()), endDateCal.getTimeInMillis());
 
                 // No need to specify user here, the ID of the expense in question is used.

@@ -4,7 +4,6 @@ import controller.SQLiteConnection;
 import model.DateTime.TimeTracking;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,7 +44,7 @@ public class User {
 
         for (Loan loan : loans) {
             if (loan.getNextPayment() > 86400000 && loan.getNextPayment() < TimeTracking.getCurrentDate()) {
-                while (loan.getNextPayment() > 86400000 && loan.getNextPayment() < TimeTracking.getCurrentDate()) {
+                while (loan.getNextPayment() < TimeTracking.getCurrentDate()) {
                     loan.setAmount(loan.getAmount() - loan.getAmortizationAmount());
 
                     LocalDate nextPaymentDate = new Date(loan.getNextPayment()).toLocalDate();
@@ -53,8 +52,6 @@ public class User {
                     int year = nextPaymentDate.getYear();
                     int month = nextPaymentDate.getMonthValue();
                     int day = nextPaymentDate.getDayOfMonth();
-
-                    System.out.println(month);
 
                     boolean isLeapYear = TimeTracking.isLeapYear(year);
 
@@ -105,12 +102,12 @@ public class User {
                             year += 1;
                             month = 1;
                     }
+
                     Calendar nextPaymentCal = Calendar.getInstance();
                     nextPaymentCal.set(year, month - 1, day, 0, 0, 0);
                     loan.setNextPayment(nextPaymentCal.getTimeInMillis());
                 }
                 SQLiteConn.updateLoan(loan);
-                System.out.println("SQL update");
             }
         }
     }
