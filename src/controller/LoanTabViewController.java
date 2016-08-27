@@ -61,7 +61,6 @@ public class LoanTabViewController {
         dpNextPayment.setUpValidation(Regex.DATE);
         dpBoundTo.setUpValidation(Regex.DATE);
 
-        chebBoundTo.setText("Unbound");
         chebBoundTo.setOnAction( actionEvent -> {
             if (chebBoundTo.isSelected()) {
                 dpBoundTo.setDisable(true);
@@ -71,7 +70,6 @@ public class LoanTabViewController {
             }
         });
 
-        chebNextPayment.setText("No payments");
         chebNextPayment.setOnAction( actionEvent -> {
             if (chebNextPayment.isSelected()) {
                 dpNextPayment.setDisable(true);
