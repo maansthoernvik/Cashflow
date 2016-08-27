@@ -8,19 +8,13 @@
     <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
              AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <Tab fx:id="overview" text="Overview">
-            <content>
-                <fx:include fx:id="overviewTabView" source="OverviewTabView.fxml"/>
-            </content>
+            <fx:include fx:id="overviewTabView" source="OverviewTabView.fxml"/>
         </Tab>
         <Tab fx:id="loans" text="Loans">
-            <content>
-                <fx:include fx:id="loanTabView" source="LoanTabView.fxml"/>
-            </content>
+            <fx:include fx:id="loanTabView" maxHeight="-Infinity" minHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" source="LoanTabView.fxml"/>
         </Tab>
         <Tab fx:id="expenses" text="Expenses">
-            <content>
-                <fx:include fx:id="expenseTabView" source="ExpenseTabView.fxml"/>
-            </content>
+            <fx:include fx:id="expenseTabView" maxHeight="-Infinity" minHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity"  source="ExpenseTabView.fxml"/>
         </Tab>
     </TabPane>
 </AnchorPane>
