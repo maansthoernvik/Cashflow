@@ -16,6 +16,12 @@ import java.util.Timer;
 
 public class ChillBillsDesktop extends Application {
 
+    /**
+     * Mejn
+     *
+     * @param args
+     */
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -32,14 +38,14 @@ public class ChillBillsDesktop extends Application {
     public void start(Stage primaryStage) throws Exception {
         Scene scene = new Scene(new StackPane());
 
-        AccountManager accManager = new AccountManager(scene);
+        AccountManager accManager = new AccountManager(scene, primaryStage);
         accManager.showLoginView();
 
         Timer dateUpdater = new Timer();
         dateUpdater.schedule(new TimeTracking(), 0, 5000);
 
         primaryStage.setScene(scene);       // Sets the current scene to what has been prepared.
-        primaryStage.setMaximized(true);    // Set the window to start maximized.
+        primaryStage.centerOnScreen();      // Centers the fucking thing.
         primaryStage.show();                // Show the finished stage.
     }
 }

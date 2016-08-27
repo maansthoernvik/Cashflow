@@ -31,10 +31,11 @@ public class LoginController {
     }
 
     /**
-     *
+     * Automatically called due to its name
      */
 
-    public void setUpAuthentication() {
+    @SuppressWarnings("unused")
+    public void initialize() {
         tfLogin.setText("alpha");
         pwfLogin.setText("opq531");
         btnLogin.setOnMouseReleased( releaseEvent -> {
