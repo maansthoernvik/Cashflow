@@ -218,12 +218,12 @@ public class LoanTabViewController {
      */
 
     public void handleDelete() {
-        btnSave.setDisable(false);
-        btnUpdate.setDisable(true);
-        btnDelete.setDisable(true);
-
         // No need to specify user here, the ID of the loan in question is used.
         if (new SQLiteConnection().deleteLoan(currentLoan)) {
+            btnSave.setDisable(false);
+            btnUpdate.setDisable(true);
+            btnDelete.setDisable(true);
+
             // Simply remove the loan from the users list of loans.
             AccountManager.getCurrentUser().removeLoan(currentLoan);
 

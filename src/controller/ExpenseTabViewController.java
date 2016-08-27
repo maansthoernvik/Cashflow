@@ -173,12 +173,12 @@ public class ExpenseTabViewController {
      */
 
     public void handleDelete() {
-        btnSave.setDisable(false);
-        btnUpdate.setDisable(true);
-        btnDelete.setDisable(true);
-
         // No need to specify user here, the ID of the expense in question is used.
         if (new SQLiteConnection().deleteExpense(currentExpense)) {
+            btnSave.setDisable(false);
+            btnUpdate.setDisable(true);
+            btnDelete.setDisable(true);
+
             // Simply remove the expense from the users list of expenses.
             AccountManager.getCurrentUser().removeExpense(currentExpense);
 
