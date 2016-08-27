@@ -1,4 +1,4 @@
-package model.Input;
+package model.input;
 
 import javafx.css.PseudoClass;
 import javafx.scene.control.TextField;
@@ -23,9 +23,8 @@ public class ModdedTextField extends TextField {
      * @param regex input format accepted
      */
 
-    public ModdedTextField(Regex regex) {
+    public ModdedTextField() {
         super();
-        setUpValidation(regex); // Sets what should happen upon input entered.
     }
 
     /**
@@ -35,7 +34,7 @@ public class ModdedTextField extends TextField {
      * @param regex regular expression to be used for validation
      */
 
-    private void setUpValidation(Regex regex) {
+    public void setUpValidation(Regex regex) {
         this.regex = regex;     // Regex is saved to object variable.
         textProperty().addListener((observable, oldValue, newValue) -> {
             validate();     // When TextField value is changed, perform validate() method.

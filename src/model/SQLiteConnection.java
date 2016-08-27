@@ -1,9 +1,9 @@
-package controller;
+package model;
 
-import model.Expense;
-import model.Loan;
+import model.objects.Expense;
 
-import model.User;
+import model.objects.Loan;
+import model.objects.User;
 import org.sqlite.SQLiteConfig;
 
 import java.sql.*;

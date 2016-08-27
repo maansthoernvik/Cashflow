@@ -1,11 +1,10 @@
 package model;
 
-import controller.AccountManager;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import model.DateTime.TimeTracking;
+import model.time.TimeTracking;
 
 import java.util.Timer;
 
@@ -15,7 +14,7 @@ import java.util.Timer;
  * ZIS IS ZE MAIN CLAAZ!
  */
 
-public class Main extends Application {
+public class ChillBillsDesktop extends Application {
 
     public static void main(String[] args) {
         launch(args);

@@ -1,4 +1,4 @@
-package model.Input;
+package model.input;
 
 import javafx.css.PseudoClass;
 import javafx.scene.control.DatePicker;
@@ -19,13 +19,10 @@ public class ModdedDatePicker extends DatePicker {
     /**
      * Constructor takes a regular expression as input to define what input the DatePicker will accept. In this case,
      * Regex.DATE should be used.
-     *
-     * @param regex input format accepted
      */
 
-    public ModdedDatePicker(Regex regex) {
+    public ModdedDatePicker() {
         super();
-        setUpValidation(regex); // Sets what should happen upon input entered.
     }
 
     /**
@@ -35,7 +32,7 @@ public class ModdedDatePicker extends DatePicker {
      * @param regex regular expression to be used for validation
      */
 
-    private void setUpValidation(Regex regex) {
+    public void setUpValidation(Regex regex) {
         this.regex = regex;     // Regex is saved to object variable.
         valueProperty().addListener((observable, oldValue, newValue) -> {
             validate();     // When DatePicker value is changed, perform validate() method.

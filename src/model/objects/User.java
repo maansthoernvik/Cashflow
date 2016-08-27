@@ -1,7 +1,9 @@
-package model;
+package model.objects;
 
-import controller.SQLiteConnection;
-import model.DateTime.TimeTracking;
+import model.SQLiteConnection;
+import model.objects.Expense;
+import model.objects.Loan;
+import model.time.TimeTracking;
 
 import java.sql.Date;
 import java.time.LocalDate;

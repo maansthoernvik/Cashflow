@@ -3,24 +3,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import view.OverviewView?>
-<?import view.LoanView?>
-<?import view.ExpenseView?>
-<?import view.SettingsView?>
-
-<AnchorPane fx:id="mainAnchorPane" minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
-    <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="30.0">
-        <Tab fx:id="overviewTab" text="Overview">
-            <OverviewView fx:id="overviewVBox" />
+<AnchorPane minHeight="400.0" minWidth="600.0" xmlns:fx="http://www.w3.org/2001/XInclude"
+            fx:controller="controller.MainWindowController">
+    <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+             AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+        <Tab fx:id="overview" text="Overview">
+            <content>
+                <fx:include fx:id="overviewTabView" source="OverviewTabView.fxml"/>
+            </content>
         </Tab>
-        <Tab fx:id="loanTab" text="Loans">
-            <LoanView fx:id="loanVBox" />
+        <Tab fx:id="loans" text="Loans">
+            <content>
+                <fx:include fx:id="loanTabView" source="LoanTabView.fxml"/>
+            </content>
         </Tab>
-        <Tab fx:id="expenseTab" text="Expenses">
-            <ExpenseView fx:id="expenseVBox" />
-        </Tab>
-        <Tab fx:id="settingsTab" text="Settings">
-            <SettingsView fx:id="settingsVBox" />
+        <Tab fx:id="expenses" text="Expenses">
+            <content>
+                <fx:include fx:id="expenseTabView" source="ExpenseTabView.fxml"/>
+            </content>
         </Tab>
     </TabPane>
 </AnchorPane>
