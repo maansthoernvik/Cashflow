@@ -61,7 +61,7 @@ public class LoanTabViewController {
         dpNextPayment.setUpValidation(Regex.DATE);
         dpBoundTo.setUpValidation(Regex.DATE);
 
-        chebBoundTo.setText("No payments");
+        chebBoundTo.setText("Unbound");
         chebBoundTo.setOnAction( actionEvent -> {
             if (chebBoundTo.isSelected()) {
                 dpBoundTo.setDisable(true);
@@ -71,7 +71,7 @@ public class LoanTabViewController {
             }
         });
 
-        chebNextPayment.setText("Unbound");
+        chebNextPayment.setText("No payments");
         chebNextPayment.setOnAction( actionEvent -> {
             if (chebNextPayment.isSelected()) {
                 dpNextPayment.setDisable(true);
@@ -205,7 +205,6 @@ public class LoanTabViewController {
 
                 // Update the loan in the users list of loans so that it corresponds to its updated values.
                 AccountManager.getCurrentUser().updateLoan(currentLoan, updatedLoan);
-                AccountManager.getCurrentUser().addAllLoans();
 
                 resetFields();
                 refreshTableContent();
