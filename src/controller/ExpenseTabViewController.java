@@ -142,11 +142,6 @@ public class ExpenseTabViewController {
 
     public void handleUpdate() {
         if (inputValidation()) {    // If all input fields have correct values.
-            // Reset button status back to how it is when the expenseview is entered.
-            btnSave.setDisable(false);
-            btnUpdate.setDisable(true);
-            btnDelete.setDisable(true);
-
             // See saving process used for btnSaveExpense.
             LocalDate endDateDate = dpEndDate.getValue() == null ? new Date(0).toLocalDate() : dpEndDate.getValue();
             Calendar endDateCal = Calendar.getInstance();
@@ -158,6 +153,11 @@ public class ExpenseTabViewController {
 
             // No need to specify user here, the ID of the expense in question is used.
             if (new SQLiteConnection().updateExpense(updatedExpense)) {
+                // Reset button status back to how it is when the expenseview is entered.
+                btnSave.setDisable(false);
+                btnUpdate.setDisable(true);
+                btnDelete.setDisable(true);
+
                 // Update the expense in the users list of expenses so that it corresponds to its updated values.
                 AccountManager.getCurrentUser().updateExpense(currentExpense, updatedExpense);
 
