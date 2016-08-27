@@ -1,6 +1,8 @@
-package controller;
+package model;
 
-import model.User;
+import controller.LoginController;
+import controller.MainWindowController;
+import model.objects.User;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -63,7 +65,6 @@ public class AccountManager {
 
             MainWindowController mainWindowController = loader.getController();
             mainWindowController.setAccountManager(this);
-            mainWindowController.setUpdateOverview();
 
             scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());    // Load stylesheets.
         } catch (Exception e) {

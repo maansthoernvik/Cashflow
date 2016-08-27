@@ -1,4 +1,4 @@
-package model;
+package model.objects;
 
 /**
  * Created by MTs on 03/08/16.

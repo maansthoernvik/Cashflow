@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+
+<TabPane fx:id="tabPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://www.w3.org/2001/XInclude"
+         fx:controller="testing.controller.MainTestController">
+    <tabs>
+        <Tab fx:id="fooTab" text="FooTab">
+            <content>
+                <fx:include fx:id="fooTabPage" source="fooTabPage.fxml"/>
+            </content>
+        </Tab>
+        <Tab fx:id="barTab" text="BarTab">
+            <content>
+                <fx:include fx:id="barTabPage" source="barTabPage.fxml"/>
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>

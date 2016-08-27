@@ -1,8 +1,4 @@
-package model;
-
-import model.DateTime.TimeTracking;
-
-import java.util.Timer;
+package testing.model;
 
 public class Tester {
 

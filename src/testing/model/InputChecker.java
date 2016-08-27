@@ -1,4 +1,4 @@
-package model;
+package testing.model;
 
 /**
  * Created by MTs on 09/08/16.

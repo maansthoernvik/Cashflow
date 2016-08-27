@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import model.User;
+import model.AccountManager;
+import model.SQLiteConnection;
+import model.objects.User;
 
 /**
  * Created by MTs on 19/08/16.

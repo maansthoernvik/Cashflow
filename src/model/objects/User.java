@@ -1,7 +1,9 @@
-package model;
+package model.objects;
 
-import controller.SQLiteConnection;
-import model.DateTime.TimeTracking;
+import model.SQLiteConnection;
+import model.objects.Expense;
+import model.objects.Loan;
+import model.time.TimeTracking;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -42,6 +44,14 @@ public class User {
         SQLiteConnection SQLiteConn = new SQLiteConnection();
         loans = SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
 
+        checkPaymentDates();
+    }
+
+    /**
+     *
+     */
+
+    private void checkPaymentDates() {
         for (Loan loan : loans) {
             if (loan.getNextPayment() > 86400000 && loan.getNextPayment() < TimeTracking.getCurrentDate()) {
                 while (loan.getNextPayment() < TimeTracking.getCurrentDate()) {
@@ -107,7 +117,7 @@ public class User {
                     nextPaymentCal.set(year, month - 1, day, 0, 0, 0);
                     loan.setNextPayment(nextPaymentCal.getTimeInMillis());
                 }
-                SQLiteConn.updateLoan(loan);
+                new SQLiteConnection().updateLoan(loan);
             }
         }
     }
@@ -118,6 +128,8 @@ public class User {
 
     public void addLoan(Loan loan) {
         loans.add(loan);
+
+        checkPaymentDates();
     }
 
     /**
@@ -127,6 +139,8 @@ public class User {
     public void updateLoan(Loan oldLoan, Loan newLoan) {
         int i = loans.indexOf(oldLoan);
         loans.set(i, newLoan);
+
+        checkPaymentDates();
     }
 
     /**

@@ -1,4 +1,4 @@
-package model.Input;
+package model.input;
 
 /**
  * Created by MTs on 12/08/16.

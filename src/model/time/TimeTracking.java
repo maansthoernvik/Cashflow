@@ -1,4 +1,4 @@
-package model.DateTime;
+package model.time;
 
 import java.util.Calendar;
 import java.util.TimerTask;
