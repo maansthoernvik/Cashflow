@@ -25,6 +25,7 @@ import java.util.Calendar;
  */
 
 public class ExpenseTabViewController {
+
     private Expense currentExpense;
 
     @FXML private TableView<Expense> tvExpenses;

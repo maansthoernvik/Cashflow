@@ -205,6 +205,7 @@ public class LoanTabViewController {
 
                 // Update the loan in the users list of loans so that it corresponds to its updated values.
                 AccountManager.getCurrentUser().updateLoan(currentLoan, updatedLoan);
+                AccountManager.getCurrentUser().addAllLoans();
 
                 resetFields();
                 refreshTableContent();
