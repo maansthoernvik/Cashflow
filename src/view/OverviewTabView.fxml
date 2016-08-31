@@ -102,5 +102,9 @@
                 </Label>
             </HBox>
         </VBox>
+
+        <Separator GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="4">
+            <padding><Insets top="10" bottom="10" /></padding>
+        </Separator>
     </GridPane>
 </VBox>

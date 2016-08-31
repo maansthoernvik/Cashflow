@@ -11,62 +11,88 @@
 <?import model.input.ModdedDatePicker?>
 <?import model.input.ModdedTextField?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoanTabViewController">
-    <TableView fx:id="tvLoans" editable="true" prefWidth="1000">
-        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
-        <columns>
-            <TableColumn text="Name">
-                <cellValueFactory>
-                    <PropertyValueFactory property="Name" />
-                </cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Amount">
-                <cellValueFactory>
-                    <PropertyValueFactory property="Amount" />
-                </cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Interest rate">
-                <cellValueFactory>
-                    <PropertyValueFactory property="InterestRate" />
-                </cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Amortization amount">
-                <cellValueFactory>
-                    <PropertyValueFactory property="AmortizationAmount" />
-                </cellValueFactory>
-            </TableColumn>
-        </columns>
-    </TableView>
-    <HBox>
-        <Label text="Name:" />
-        <Label text="Amount:" />
-    </HBox>
-    <HBox>
-        <ModdedTextField fx:id="tfName" />
-        <ModdedTextField fx:id="tfAmount" />
-    </HBox>
-    <HBox>
-        <Label text="Interest rate:" />
-        <Label text="Amortization amount:" />
-    </HBox>
-    <HBox>
-        <ModdedTextField fx:id="tfInterestRate" />
-        <ModdedTextField fx:id="tfAmortizationAmount" />
-    </HBox>
-    <HBox>
-        <Label text="Next Payment:" />
-        <Label text="Bound to:" />
-    </HBox>
-    <HBox>
-        <ModdedDatePicker fx:id="dpNextPayment" />
-        <CheckBox fx:id="chebNextPayment" text="No payments" />
-        <ModdedDatePicker fx:id="dpBoundTo" />
-        <CheckBox fx:id="chebBoundTo" text="Unbound" />
-    </HBox>
-    <HBox>
-        <Button fx:id="btnSave" onMouseReleased="#handleSave" text="Save" />
-        <Button fx:id="btnUpdate" onMouseReleased="#handleUpdate" text="Update" />
-        <Button fx:id="btnDelete" onMouseReleased="#handleDelete" text="Delete" />
-        <Button fx:id="btnClear" onMouseReleased="#handleClear" text="Clear" />
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.control.Separator?>
+<VBox xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.LoanTabViewController" nodeOrientation="LEFT_TO_RIGHT">
+    <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT">
+        <padding><Insets bottom="25" left="25" right="25" top="25" /></padding>
+
+        <GridPane alignment="TOP_CENTER" hgap="10" vgap="3" nodeOrientation="LEFT_TO_RIGHT">
+            <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label text="Amount:" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+            <ModdedTextField fx:id="tfName" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="150" minWidth="150"
+                             maxHeight="30" minHeight="30" />
+            <ModdedTextField fx:id="tfAmount" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="150"
+                             minWidth="150" maxHeight="30" minHeight="30" />
+
+            <Label text="Interest rate:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <Label text="Amortization amount:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <ModdedTextField fx:id="tfInterestRate" GridPane.columnIndex="0" GridPane.rowIndex="3" maxWidth="150"
+                             minWidth="150" maxHeight="30" minHeight="30" />
+            <ModdedTextField fx:id="tfAmortizationAmount" GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="150"
+                             minWidth="150" maxHeight="30" minHeight="30" />
+
+            <Label text="Next Payment:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <Label text="Bound to:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+            <ModdedDatePicker fx:id="dpNextPayment" GridPane.columnIndex="0" GridPane.rowIndex="5" maxWidth="150"
+                              minWidth="150" maxHeight="30" minHeight="30" />
+            <ModdedDatePicker fx:id="dpBoundTo" GridPane.columnIndex="1" GridPane.rowIndex="5" maxWidth="150"
+                              minWidth="150" maxHeight="30" minHeight="30" />
+
+            <CheckBox fx:id="chebNextPayment" text="No payments" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <CheckBox fx:id="chebBoundTo" text="Unbound" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+            <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" >
+                <padding><Insets bottom="5" top="10" /></padding>
+            </Separator>
+
+            <HBox GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="8">
+                <Button fx:id="btnSave" onMouseReleased="#handleSave" text="Save" maxWidth="75" minWidth="75"
+                        maxHeight="50" minHeight="50" />
+                <Button fx:id="btnUpdate" onMouseReleased="#handleUpdate" text="Update" maxWidth="75" minWidth="75"
+                        maxHeight="50" minHeight="50" />
+                <Button fx:id="btnDelete" onMouseReleased="#handleDelete" text="Delete" maxWidth="75" minWidth="75"
+                        maxHeight="50" minHeight="50" />
+                <Button fx:id="btnClear" onMouseReleased="#handleClear" text="Clear" maxWidth="75" minWidth="75"
+                        maxHeight="50" minHeight="50" />
+            </HBox>
+        </GridPane>
+
+        <Separator orientation="VERTICAL" >
+            <padding><Insets left="25" right="25" /></padding>
+        </Separator>
+
+        <TableView fx:id="tvLoans" editable="true" maxWidth="500" minWidth="500" maxHeight="500" minHeight="500" >
+
+            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+            <columns>
+                <TableColumn text="Name">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="Name" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Amount">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="Amount" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Interest rate">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="InterestRate" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Amortization amount">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="AmortizationAmount" />
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
     </HBox>
 </VBox>

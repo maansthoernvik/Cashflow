@@ -11,10 +11,11 @@
             <fx:include fx:id="overviewTabView" source="OverviewTabView.fxml"/>
         </Tab>
         <Tab fx:id="loans" text="Loans">
-            <fx:include fx:id="loanTabView" maxHeight="-Infinity" minHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" source="LoanTabView.fxml"/>
+            <fx:include fx:id="loanTabView" source="LoanTabView.fxml"/>
         </Tab>
         <Tab fx:id="expenses" text="Expenses">
-            <fx:include fx:id="expenseTabView" maxHeight="-Infinity" minHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity"  source="ExpenseTabView.fxml"/>
+            <fx:include fx:id="expenseTabView" maxHeight="-Infinity" minHeight="-Infinity" maxWidth="-Infinity"
+                        minWidth="-Infinity"  source="ExpenseTabView.fxml"/>
         </Tab>
     </TabPane>
 </AnchorPane>
