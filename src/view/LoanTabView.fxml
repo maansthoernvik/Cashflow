@@ -6,15 +6,18 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.Separator?>
+
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+
 <?import model.input.ModdedDatePicker?>
 <?import model.input.ModdedTextField?>
 
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.geometry.Insets?>
 
-<?import javafx.scene.control.Separator?>
+<?import javafx.scene.text.Font?>
 <VBox xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controller.LoanTabViewController" nodeOrientation="LEFT_TO_RIGHT">
     <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT">
@@ -25,17 +28,33 @@
             <Label text="Amount:" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
             <ModdedTextField fx:id="tfName" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="150" minWidth="150"
-                             maxHeight="30" minHeight="30" />
+                             maxHeight="30" minHeight="30" >
+                <font>
+                    <Font size="15"/>
+                </font>
+            </ModdedTextField>
             <ModdedTextField fx:id="tfAmount" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="150"
-                             minWidth="150" maxHeight="30" minHeight="30" />
+                             minWidth="150" maxHeight="30" minHeight="30" >
+                <font>
+                    <Font size="15"/>
+                </font>
+            </ModdedTextField>
 
             <Label text="Interest rate:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
             <Label text="Amortization amount:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
             <ModdedTextField fx:id="tfInterestRate" GridPane.columnIndex="0" GridPane.rowIndex="3" maxWidth="150"
-                             minWidth="150" maxHeight="30" minHeight="30" />
+                             minWidth="150" maxHeight="30" minHeight="30" >
+                <font>
+                    <Font size="15"/>
+                </font>
+            </ModdedTextField>
             <ModdedTextField fx:id="tfAmortizationAmount" GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="150"
-                             minWidth="150" maxHeight="30" minHeight="30" />
+                             minWidth="150" maxHeight="30" minHeight="30" >
+                <font>
+                    <Font size="15"/>
+                </font>
+            </ModdedTextField>
 
             <Label text="Next Payment:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
             <Label text="Bound to:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
@@ -53,13 +72,13 @@
             </Separator>
 
             <HBox GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="8">
-                <Button fx:id="btnSave" onMouseReleased="#handleSave" text="Save" maxWidth="75" minWidth="75"
+                <Button fx:id="btnSave" text="Save" onMouseReleased="#handleSave" maxWidth="75" minWidth="75"
                         maxHeight="50" minHeight="50" />
-                <Button fx:id="btnUpdate" onMouseReleased="#handleUpdate" text="Update" maxWidth="75" minWidth="75"
+                <Button fx:id="btnUpdate" text="Update" onMouseReleased="#handleUpdate" maxWidth="75" minWidth="75"
                         maxHeight="50" minHeight="50" />
-                <Button fx:id="btnDelete" onMouseReleased="#handleDelete" text="Delete" maxWidth="75" minWidth="75"
+                <Button fx:id="btnDelete" text="Delete" onMouseReleased="#handleDelete" maxWidth="75" minWidth="75"
                         maxHeight="50" minHeight="50" />
-                <Button fx:id="btnClear" onMouseReleased="#handleClear" text="Clear" maxWidth="75" minWidth="75"
+                <Button fx:id="btnClear" text="Clear" onMouseReleased="#handleClear" maxWidth="75" minWidth="75"
                         maxHeight="50" minHeight="50" />
             </HBox>
         </GridPane>
@@ -69,25 +88,24 @@
         </Separator>
 
         <TableView fx:id="tvLoans" editable="true" maxWidth="500" minWidth="500" maxHeight="500" minHeight="500" >
-
             <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
             <columns>
-                <TableColumn text="Name">
+                <TableColumn text="Name" maxWidth="100" minWidth="100" >
                     <cellValueFactory>
                         <PropertyValueFactory property="Name" />
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Amount">
+                <TableColumn text="Amount" maxWidth="100" minWidth="100" >
                     <cellValueFactory>
                         <PropertyValueFactory property="Amount" />
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Interest rate">
+                <TableColumn text="Interest rate" maxWidth="125" minWidth="125" >
                     <cellValueFactory>
                         <PropertyValueFactory property="InterestRate" />
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Amortization amount">
+                <TableColumn text="Amortization amount" maxWidth="175" minWidth="175" >
                     <cellValueFactory>
                         <PropertyValueFactory property="AmortizationAmount" />
                     </cellValueFactory>
