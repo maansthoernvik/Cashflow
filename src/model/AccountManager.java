@@ -2,6 +2,7 @@ package model;
 
 import controller.LoginController;
 import controller.MainWindowController;
+import javafx.stage.Stage;
 import model.objects.User;
 
 import javafx.fxml.FXMLLoader;
@@ -17,6 +18,7 @@ import java.io.IOException;
 public class AccountManager {
 
     private Scene scene;
+    private Stage primaryStage;
 
     private static User currentUser;
 
@@ -25,8 +27,9 @@ public class AccountManager {
      * @param scene
      */
 
-    public AccountManager(Scene scene) {
+    public AccountManager(Scene scene, Stage primaryStage) {
         this.scene = scene;
+        this.primaryStage = primaryStage;
     }
 
     /**
@@ -42,7 +45,6 @@ public class AccountManager {
 
             LoginController loginController = loader.getController();
             loginController.setAccountManager(this);
-            loginController.setUpAuthentication();
 
             scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());    // Load stylesheets.
         } catch (IOException e) {
@@ -65,6 +67,7 @@ public class AccountManager {
 
             MainWindowController mainWindowController = loader.getController();
             mainWindowController.setAccountManager(this);
+            primaryStage.setMaximized(true);
 
             scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());    // Load stylesheets.
         } catch (Exception e) {
