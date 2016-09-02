@@ -18,60 +18,69 @@
 <?import javafx.geometry.Insets?>
 
 <?import javafx.scene.text.Font?>
+
 <VBox xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controller.LoanTabViewController" nodeOrientation="LEFT_TO_RIGHT">
-    <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT">
+      fx:controller="controller.LoanTabViewController" nodeOrientation="LEFT_TO_RIGHT" >
+    <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" >
         <padding><Insets bottom="25" left="25" right="25" top="25" /></padding>
 
-        <GridPane alignment="TOP_CENTER" hgap="10" vgap="3" nodeOrientation="LEFT_TO_RIGHT">
-            <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <Label text="Amount:" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <GridPane alignment="TOP_CENTER" hgap="10" vgap="10" nodeOrientation="LEFT_TO_RIGHT" >
 
-            <ModdedTextField fx:id="tfName" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="150" minWidth="150"
-                             maxHeight="30" minHeight="30" >
-                <font>
-                    <Font size="15"/>
-                </font>
-            </ModdedTextField>
-            <ModdedTextField fx:id="tfAmount" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="150"
-                             minWidth="150" maxHeight="30" minHeight="30" >
-                <font>
-                    <Font size="15"/>
-                </font>
-            </ModdedTextField>
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" >
+                <Label text="Name:" />
+                <ModdedTextField fx:id="tfName" maxWidth="150" minWidth="150" maxHeight="30" minHeight="30" >
+                    <font>
+                        <Font size="15"/>
+                    </font>
+                </ModdedTextField>
+            </VBox>
 
-            <Label text="Interest rate:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <Label text="Amortization amount:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" >
+                <Label text="Amount:" />
+                <ModdedTextField fx:id="tfAmount" maxWidth="150" minWidth="150" maxHeight="30" minHeight="30" >
+                    <font>
+                        <Font size="15"/>
+                    </font>
+                </ModdedTextField>
+            </VBox>
 
-            <ModdedTextField fx:id="tfInterestRate" GridPane.columnIndex="0" GridPane.rowIndex="3" maxWidth="150"
-                             minWidth="150" maxHeight="30" minHeight="30" >
-                <font>
-                    <Font size="15"/>
-                </font>
-            </ModdedTextField>
-            <ModdedTextField fx:id="tfAmortizationAmount" GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="150"
-                             minWidth="150" maxHeight="30" minHeight="30" >
-                <font>
-                    <Font size="15"/>
-                </font>
-            </ModdedTextField>
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <Label text="Interest rate:" />
+                <ModdedTextField fx:id="tfInterestRate" maxWidth="150" minWidth="150" maxHeight="30" minHeight="30" >
+                    <font>
+                        <Font size="15"/>
+                    </font>
+                </ModdedTextField>
+            </VBox>
 
-            <Label text="Next Payment:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-            <Label text="Bound to:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <Label text="Amortization amount:" />
+                <ModdedTextField fx:id="tfAmortizationAmount" maxWidth="150" minWidth="150" maxHeight="30" minHeight="30" >
+                    <font>
+                        <Font size="15"/>
+                    </font>
+                </ModdedTextField>
+            </VBox>
 
-            <ModdedDatePicker fx:id="dpNextPayment" GridPane.columnIndex="0" GridPane.rowIndex="5" maxWidth="150"
-                              minWidth="150" maxHeight="30" minHeight="30" />
-            <ModdedDatePicker fx:id="dpBoundTo" GridPane.columnIndex="1" GridPane.rowIndex="5" maxWidth="150"
-                              minWidth="150" maxHeight="30" minHeight="30" />
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="2" >
+                <Label text="Next Payment:" />
+                <ModdedDatePicker fx:id="dpNextPayment" maxWidth="150" minWidth="150" maxHeight="30" minHeight="30" />
+            </VBox>
 
-            <CheckBox fx:id="chebNextPayment" text="No payments" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-            <CheckBox fx:id="chebBoundTo" text="Unbound" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <CheckBox fx:id="chebNextPayment" text="No payments" GridPane.columnIndex="0" GridPane.rowIndex="3" />
 
-            <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" >
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="2" >
+                <Label text="Bound to:" />
+                <ModdedDatePicker fx:id="dpBoundTo" maxWidth="150" minWidth="150" maxHeight="30" minHeight="30" />
+            </VBox>
+
+            <CheckBox fx:id="chebBoundTo" text="Unbound" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+            <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4" >
                 <padding><Insets bottom="5" top="10" /></padding>
             </Separator>
 
-            <HBox GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="8">
+            <HBox GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5">
                 <Button fx:id="btnSave" text="Save" onMouseReleased="#handleSave" maxWidth="75" minWidth="75"
                         maxHeight="50" minHeight="50" />
                 <Button fx:id="btnUpdate" text="Update" onMouseReleased="#handleUpdate" maxWidth="75" minWidth="75"
@@ -105,7 +114,7 @@
                         <PropertyValueFactory property="InterestRate" />
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Amortization amount" maxWidth="175" minWidth="175" >
+                <TableColumn text="Amortization amount" maxWidth="173" minWidth="173" >
                     <cellValueFactory>
                         <PropertyValueFactory property="AmortizationAmount" />
                     </cellValueFactory>

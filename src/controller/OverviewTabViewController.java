@@ -2,6 +2,7 @@ package controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import model.AccountManager;
 import model.objects.Expense;
 import model.objects.Loan;
@@ -15,8 +16,11 @@ import java.util.ArrayList;
  */
 
 public class OverviewTabViewController {
+
     @FXML private TextField tfTotal;
     @FXML private TextField tfLoans;
+    @FXML private TextField tfRent;
+    @FXML private TextField tfFood;
     @FXML private TextField tfExpenses;
 
     /**
@@ -27,6 +31,8 @@ public class OverviewTabViewController {
         // Variables for temporarily saving information.
         int monthlyTotal = 0;
         int loanTotal = 0;
+        int rent = 0;
+        int food = 0;
         int expenseTotal = 0;
 
         // Get all loans from the DB.
@@ -43,6 +49,16 @@ public class OverviewTabViewController {
             loanTotal += loan.getAmortizationAmount();
         }
 
+        if (AccountManager.getCurrentUser().getRent() != null) {
+            rent = AccountManager.getCurrentUser().getRent().getAmount();
+        }
+        monthlyTotal += rent;
+
+        if (AccountManager.getCurrentUser().getRent() != null) {
+            food = AccountManager.getCurrentUser().getFood().getAmount();
+        }
+        monthlyTotal += food;
+
         // Get all expenses from the DB.
         ArrayList<Expense> expenses = AccountManager.getCurrentUser().getExpenses();
 
@@ -56,6 +72,8 @@ public class OverviewTabViewController {
         // Set the textfields values to their corresponding calculated amounts.
         tfTotal.setText("" + monthlyTotal);
         tfLoans.setText("" + loanTotal);
+        tfRent.setText("" + rent);
+        tfFood.setText("" + food);
         tfExpenses.setText("" + expenseTotal);
     }
 }

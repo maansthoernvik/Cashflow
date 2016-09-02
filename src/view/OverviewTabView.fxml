@@ -65,7 +65,7 @@
                 </font>
             </Label>
             <HBox alignment="BOTTOM_LEFT">
-                <TextField fx:id="tfExpenses" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
+                <TextField fx:id="tfRent" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
                            minWidth="200">
                     <font>
                         <Font size="20"/>
@@ -82,13 +82,13 @@
 
         <VBox GridPane.columnIndex="2" GridPane.rowIndex="3">
             <padding><Insets left="20"/></padding>
-            <Label text="Other">
+            <Label text="Food">
                 <font>
                     <Font size="18" />
                 </font>
             </Label>
             <HBox alignment="BOTTOM_LEFT">
-                <TextField fx:id="tfOther" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
+                <TextField fx:id="tfFood" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
                            minWidth="200">
                     <font>
                         <Font size="20"/>
@@ -103,7 +103,29 @@
             </HBox>
         </VBox>
 
-        <Separator GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="4">
+        <VBox GridPane.columnIndex="0" GridPane.rowIndex="4">
+            <Label text="Other">
+                <font>
+                    <Font size="18" />
+                </font>
+            </Label>
+            <HBox alignment="BOTTOM_LEFT">
+                <TextField fx:id="tfExpenses" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
+                           minWidth="200">
+                    <font>
+                        <Font size="20"/>
+                    </font>
+                </TextField>
+                <Label text="kr/month">
+                    <padding><Insets left="5" /></padding>
+                    <font>
+                        <Font size="18" />
+                    </font>
+                </Label>
+            </HBox>
+        </VBox>
+
+        <Separator GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="5">
             <padding><Insets top="10" bottom="10" /></padding>
         </Separator>
     </GridPane>

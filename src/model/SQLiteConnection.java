@@ -1,9 +1,7 @@
 package model;
 
-import model.objects.Expense;
+import model.objects.*;
 
-import model.objects.Loan;
-import model.objects.User;
 import org.sqlite.SQLiteConfig;
 
 import java.sql.*;
@@ -50,7 +48,7 @@ public class SQLiteConnection {
              ResultSet rs = ps.executeQuery()) {                                        // the prepared statement.
             ArrayList<Loan> result = new ArrayList<>();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 result.add(new Loan(rs.getInt("LoanID"), rs.getString("Name"), rs.getInt("Amount"),
                         rs.getDouble("InterestRate"), rs.getInt("AmortizationAmount"), rs.getLong("NextPayment"),
                         rs.getLong("BoundTo")));
@@ -77,9 +75,57 @@ public class SQLiteConnection {
              ResultSet rs = ps.executeQuery()) {
             ArrayList<Expense> result = new ArrayList<>();
 
-            while(rs.next()) {
+            while (rs.next()) {
                 result.add(new Expense(rs.getInt("ExpenseID"), rs.getString("Name"), rs.getInt("Amount"),
                         rs.getLong("EndDate")));
+            }
+
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param query
+     * @param id
+     * @return
+     */
+
+    public Rent fetchRent(String query, int id) {
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createSelectPreparedStatement(conn, query, id);
+             ResultSet rs = ps.executeQuery()) {
+            Rent result = null;
+
+            while (rs.next()) {
+                result = new Rent(rs.getInt("RentID"), rs.getInt("Amount"));
+            }
+
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param query
+     * @param id
+     * @return
+     */
+
+    public Food fetchFood(String query, int id) {
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createSelectPreparedStatement(conn, query, id);
+             ResultSet rs = ps.executeQuery()) {
+            Food result = null;
+
+            while (rs.next()) {
+                result = new Food(rs.getInt("FoodID"), rs.getInt("Amount"));
             }
 
             return result;
@@ -132,6 +178,173 @@ public class SQLiteConnection {
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, user);
         ps.setString(2, password);
+
+        return ps;
+    }
+
+    // *                                                        *
+    // *                 RENT STATEMENTS!                       *
+    // *                                                        *
+
+    /**
+     *
+     * @param rent
+     * @param id
+     * @return
+     */
+
+    public boolean insertRent(Rent rent, int id) {
+        String insert = "INSERT INTO Rent (Amount, UserID) VALUES (?, ?);";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createInsertRentPreparedStatement(conn, insert, rent, id)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param conn
+     * @param insert
+     * @param rent
+     * @param id
+     * @return
+     * @throws SQLException
+     */
+
+    private PreparedStatement createInsertRentPreparedStatement(Connection conn, String insert, Rent rent, int id)
+            throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(insert);
+        ps.setInt(1, rent.getAmount());
+        ps.setInt(2, id);
+
+        return ps;
+    }
+
+    /**
+     *
+     * @param rent
+     * @param id
+     * @return
+     */
+
+    public boolean updateRent(Rent rent, int id) {
+        String update = "UPDATE Rent SET Amount = ? WHERE UserID = ?;";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createUpdateRentPreparedStatement(conn, update, rent, id)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param conn
+     * @param update
+     * @param rent
+     * @param id
+     * @return
+     * @throws SQLException
+     */
+
+    private PreparedStatement createUpdateRentPreparedStatement(Connection conn, String update, Rent rent, int id)
+            throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(update);
+        ps.setInt(1, rent.getAmount());
+        ps.setInt(2, id);
+
+        return ps;
+    }
+
+    // *                                                        *
+    // *                 FOOD STATEMENTS!                       *
+    // *                                                        *
+
+    /**
+     *
+     * @param food
+     * @param id
+     * @return
+     */
+
+    public boolean insertFood(Food food, int id) {
+        String insert = "INSERT INTO Food (Amount, UserID) VALUES (?, ?);";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createInsertFoodPreparedStatement(conn, insert, food, id)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param conn
+     * @param insert
+     * @param food
+     * @param id
+     * @return
+     */
+
+    private PreparedStatement createInsertFoodPreparedStatement(Connection conn, String insert, Food food, int id)
+            throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(insert);
+        ps.setInt(1, food.getAmount());
+        ps.setInt(2, id);
+
+        return ps;
+    }
+
+    /**
+     *
+     * @param food
+     * @param id
+     * @return
+     */
+
+    public boolean updateFood(Food food, int id) {
+        String update = "UPDATE Food SET Amount = ? WHERE UserID = ?;";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createUpdateFoodPreparedStatement(conn, update, food, id)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param conn
+     * @param update
+     * @param food
+     * @param id
+     * @return
+     * @throws SQLException
+     */
+
+    private PreparedStatement createUpdateFoodPreparedStatement(Connection conn, String update, Food food, int id)
+            throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(update);
+        ps.setInt(1, food.getAmount());
+        ps.setInt(2, id);
 
         return ps;
     }

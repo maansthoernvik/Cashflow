@@ -39,6 +39,10 @@ public class MainWindowController {
                 overviewTabViewController.refreshOverview();
             } else if (newTab == loans) {
                 loanTabViewController.refreshTableContent();
+            } else if (newTab == expenses) {
+                expenseTabViewController.refreshTableContent();
+                expenseTabViewController.refreshRent();
+                expenseTabViewController.refreshFood();
             }
         });
     }
