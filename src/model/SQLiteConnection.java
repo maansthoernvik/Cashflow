@@ -113,7 +113,7 @@ public class SQLiteConnection {
 
     /**
      *
-     * @param s
+     * @param query
      * @param id
      * @return
      */
