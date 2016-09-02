@@ -13,6 +13,8 @@ import model.SQLiteConnection;
 import model.input.ModdedDatePicker;
 import model.input.ModdedTextField;
 import model.input.Regex;
+import model.objects.Food;
+import model.objects.Rent;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -32,6 +34,8 @@ public class ExpenseTabViewController {
 
     @FXML private ModdedTextField tfName;
     @FXML private ModdedTextField tfAmount;
+    @FXML private ModdedTextField tfRent;
+    @FXML private ModdedTextField tfFood;
 
     @FXML private ModdedDatePicker dpEndDate;
 
@@ -52,7 +56,9 @@ public class ExpenseTabViewController {
         btnDelete.setDisable(true);
 
         tfName.setUpValidation(Regex.NAME);
-        tfAmount.setUpValidation(Regex.LESSERAMOUNT);
+        tfAmount.setUpValidation(Regex.AMOUNT);
+        tfRent.setUpValidation(Regex.AMOUNT);
+        tfFood.setUpValidation(Regex.AMOUNT);
 
         dpEndDate.setUpValidation(Regex.DATE);
 
@@ -97,6 +103,8 @@ public class ExpenseTabViewController {
             });
             return row;
         });
+        refreshRent();
+        refreshFood();
         refreshTableContent();
     }
 
@@ -104,8 +112,58 @@ public class ExpenseTabViewController {
      *
      */
 
+    public void handleRent() {
+        if (rentValidation()) {
+            Rent newRent = new Rent(Integer.parseInt(tfRent.getText()));
+
+            if (AccountManager.getCurrentUser().getRent() == null) {
+                if (new SQLiteConnection().insertRent(newRent, AccountManager.getCurrentUser().getId())) {
+                    AccountManager.getCurrentUser().addRent();
+
+                    tfRent.setText("" + AccountManager.getCurrentUser().getRent().getAmount());
+                }
+            } else {
+                if (new SQLiteConnection().updateRent(newRent, AccountManager.getCurrentUser().getId())) {
+                    AccountManager.getCurrentUser().updateRent(newRent.getAmount());
+
+                    tfRent.setText("" + AccountManager.getCurrentUser().getRent().getAmount());
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     */
+
+    public void handleFood() {
+        if (foodValidation()) {
+            Food newFood = new Food(Integer.parseInt(tfFood.getText()));
+
+            if (AccountManager.getCurrentUser().getFood() == null) {
+                if (new SQLiteConnection().insertFood(newFood, AccountManager.getCurrentUser().getId())) {
+                    AccountManager.getCurrentUser().addFood();
+
+                    tfFood.setText("" + AccountManager.getCurrentUser().getFood().getAmount());
+                    refreshFood();
+                }
+            } else {
+                if (new SQLiteConnection().updateFood(newFood, AccountManager.getCurrentUser().getId())) {
+                    AccountManager.getCurrentUser().updateFood(newFood.getAmount());
+
+                    tfFood.setText("" + AccountManager.getCurrentUser().getRent().getAmount());
+                    refreshFood();
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     */
+
     public void handleSave() {
-        if (inputValidation()) {    // If all input fields have correct values.
+        if (expenseValidation()) {    // If all input fields have correct values.
             // The date entered can either be left empty (i.e not is use) or with an actual value. In either case,
             // the values needs to be converted into milliseconds since epoch.
 
@@ -142,7 +200,7 @@ public class ExpenseTabViewController {
      */
 
     public void handleUpdate() {
-        if (inputValidation()) {    // If all input fields have correct values.
+        if (expenseValidation()) {    // If all input fields have correct values.
             // See saving process used for btnSaveExpense.
             LocalDate endDateDate = dpEndDate.getValue() == null ? new Date(0).toLocalDate() : dpEndDate.getValue();
             Calendar endDateCal = Calendar.getInstance();
@@ -201,12 +259,34 @@ public class ExpenseTabViewController {
     }
 
     /**
+     *
+     * @return
+     */
+
+    private boolean rentValidation() {
+        tfRent.validate();
+
+        return tfRent.validate();
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    private boolean foodValidation() {
+        tfFood.validate();
+
+        return tfFood.validate();
+    }
+
+    /**
      * Used to validate all expense input fields of either an old expense or a new submission.
      *
      * @return boolean value representing the integrity of the entered expense values
      */
 
-    private boolean inputValidation() {
+    private boolean expenseValidation() {
         // This process is only used to ensure fields have their correct border color (either error red or normal blue).
         tfName.validate();
         tfAmount.validate();
@@ -220,13 +300,41 @@ public class ExpenseTabViewController {
      * Used to either populate the table view or update it when a new expense has been saved/updated/deleted.
      */
 
-    private void refreshTableContent() {
+    public void refreshTableContent() {
         // Get the current list of expenses from the users list of expenses.
         ObservableList<Expense> expenses = FXCollections.observableArrayList(
                 AccountManager.getCurrentUser().getExpenses()
         );
 
         tvExpenses.setItems(expenses);
+    }
+
+    /**
+     *
+     */
+
+    public void refreshRent() {
+        Rent rent = AccountManager.getCurrentUser().getRent();
+
+        if (rent != null) {
+            tfRent.setText("" + rent.getAmount());
+        } else {
+            tfRent.setText("0");
+        }
+    }
+
+    /**
+     *
+     */
+
+    public void refreshFood() {
+        Food food = AccountManager.getCurrentUser().getFood();
+
+        if (food != null) {
+            tfFood.setText("" + food.getAmount());
+        } else {
+            tfFood.setText("0");
+        }
     }
 
     /**

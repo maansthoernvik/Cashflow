@@ -32,18 +32,39 @@
                         <Font size="25" />
                     </font>
                 </Label>
-                <ModdedTextField fx:id="tfRent" maxWidth="305" minWidth="305" maxHeight="50" minHeight="50" >
-                    <font>
-                        <Font size="35" />
-                    </font>
-                </ModdedTextField>
+                <HBox>
+                    <ModdedTextField fx:id="tfRent" maxWidth="230" minWidth="230" maxHeight="50" minHeight="50" >
+                        <font>
+                            <Font size="35" />
+                        </font>
+                    </ModdedTextField>
+                    <Button fx:id="btnRent" text="Update" onMouseReleased="#handleRent" maxWidth="75" minWidth="75"
+                            maxHeight="50" minHeight="50" />
+                </HBox>
             </VBox>
 
-            <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" >
+            <VBox GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                <Label text="Food:" >
+                    <font>
+                        <Font size="25" />
+                    </font>
+                </Label>
+                <HBox>
+                    <ModdedTextField fx:id="tfFood" maxWidth="230" minWidth="230" maxHeight="50" minHeight="50" >
+                        <font>
+                            <Font size="35" />
+                        </font>
+                    </ModdedTextField>
+                    <Button fx:id="btnFood" text="Update" onMouseReleased="#handleFood" maxWidth="75" minWidth="75"
+                            maxHeight="50" minHeight="50" />
+                </HBox>
+            </VBox>
+
+            <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2" >
                 <padding><Insets bottom="5" top="10" /></padding>
             </Separator>
 
-            <VBox GridPane.columnIndex="0" GridPane.rowIndex="2" >
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="3" >
                 <Label text="Name:" />
                 <ModdedTextField fx:id="tfName" maxWidth="150" minWidth="150" maxHeight="30" minHeight="30" >
                     <font>
@@ -52,7 +73,7 @@
                 </ModdedTextField>
             </VBox>
 
-            <VBox GridPane.columnIndex="1" GridPane.rowIndex="2" >
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="3" >
                 <Label text="Amount:" />
                 <ModdedTextField fx:id="tfAmount" maxWidth="150" minWidth="150" maxHeight="30" minHeight="30" >
                     <font>
@@ -61,18 +82,18 @@
                 </ModdedTextField>
             </VBox>
 
-            <VBox GridPane.columnIndex="0" GridPane.rowIndex="3" >
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="4" >
                 <Label text="Ends:" />
                 <ModdedDatePicker fx:id="dpEndDate" maxWidth="150" minWidth="150" maxHeight="30" minHeight="30" />
             </VBox>
 
-            <CheckBox fx:id="chebEndDate" text="Ends" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <CheckBox fx:id="chebEndDate" text="Ends" GridPane.columnIndex="0" GridPane.rowIndex="5" />
 
-            <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5" >
+            <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6" >
                 <padding><Insets bottom="5" top="10" /></padding>
             </Separator>
 
-            <HBox GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6" >
+            <HBox GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" >
                 <Button fx:id="btnSave" text="Save" onMouseReleased="#handleSave" maxWidth="75" minWidth="75"
                         maxHeight="50" minHeight="50" />
                 <Button fx:id="btnUpdate" text="Update" onMouseReleased="#handleUpdate" maxWidth="75" minWidth="75"

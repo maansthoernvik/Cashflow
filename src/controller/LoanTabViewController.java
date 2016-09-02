@@ -56,7 +56,7 @@ public class LoanTabViewController {
         tfName.setUpValidation(Regex.NAME);
         tfAmount.setUpValidation(Regex.AMOUNT);
         tfInterestRate.setUpValidation(Regex.PERCENTAGE);
-        tfAmortizationAmount.setUpValidation(Regex.LESSERAMOUNT);
+        tfAmortizationAmount.setUpValidation(Regex.AMOUNT);
 
         dpNextPayment.setUpValidation(Regex.DATE);
         dpBoundTo.setUpValidation(Regex.DATE);

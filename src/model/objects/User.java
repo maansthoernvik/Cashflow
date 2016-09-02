@@ -22,6 +22,8 @@ public class User {
     private String name;
     private ArrayList<Loan> loans;
     private ArrayList<Expense> expenses;
+    private Rent rent;
+    private Food food;
 
     /**
      *
@@ -34,6 +36,8 @@ public class User {
         this.name = name;
         addAllLoans();
         addAllExpenses();
+        addRent();
+        addFood();
     }
 
     /**
@@ -206,6 +210,60 @@ public class User {
 
     /**
      *
+     */
+
+    public void addRent() {
+        SQLiteConnection SQLiteConn = new SQLiteConnection();
+        rent = SQLiteConn.fetchRent("SELECT * FROM Rent WHERE UserID = ?" , id);
+    }
+
+    /**
+     *
+     * @param newAmount
+     */
+
+    public void updateRent(int newAmount) {
+        rent.setAmount(newAmount);
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    public Rent getRent() {
+        return rent;
+    }
+
+    /**
+     *
+     */
+
+    public void addFood() {
+        SQLiteConnection SQLiteConn = new SQLiteConnection();
+        food = SQLiteConn.fetchFood("SELECT * FROM Food WHERE UserID = ?;", id);
+    }
+
+    /**
+     *
+     * @param newAmount
+     */
+
+    public void updateFood(int newAmount) {
+        food.setAmount(newAmount);
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    public Food getFood() {
+        return food;
+    }
+
+    /**
+     *
      * @param newId
      * @return
      */
@@ -239,10 +297,4 @@ public class User {
     public String getName() {
         return name;
     }
-
-    /**
-     *
-     */
-
-
 }
