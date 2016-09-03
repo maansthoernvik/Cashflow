@@ -3,7 +3,7 @@ package model.objects;
 /**
  * Created by MTs on 03/09/16.
  *
- *
+ * Food object to represent cost of ones food.
  */
 
 public class Food {
@@ -13,8 +13,9 @@ public class Food {
     private int amount;
 
     /**
+     * Basic constructor to create a food object with no id.
      *
-     * @param amount
+     * @param amount cost of food
      */
 
     public Food(int amount) {
@@ -22,9 +23,10 @@ public class Food {
     }
 
     /**
+     * Food already present in db, id number available.
      *
-     * @param id
-     * @param amount
+     * @param id of food entry
+     * @param amount cost of food
      */
 
     public Food(int id, int amount) {
@@ -33,9 +35,10 @@ public class Food {
     }
 
     /**
+     * Sets the id of the food entry.
      *
-     * @param newId
-     * @return
+     * @param newId number
+     * @return new ID number
      */
 
     public int setId(int newId) {
@@ -44,9 +47,10 @@ public class Food {
     }
 
     /**
+     * Sets the amount spent on food.
      *
-     * @param newAmount
-     * @return
+     * @param newAmount spent on food
+     * @return the new amount
      */
 
     public int setAmount(int newAmount) {
@@ -55,8 +59,9 @@ public class Food {
     }
 
     /**
+     * Get id of food entry.
      *
-     * @return
+     * @return id of food entry
      */
 
     public int getId() {
@@ -64,8 +69,9 @@ public class Food {
     }
 
     /**
+     * Get amount spent on food.
      *
-     * @return
+     * @return amount spent on food
      */
 
     public int getAmount() {

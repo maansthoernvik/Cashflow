@@ -1,14 +1,12 @@
 package model.objects;
 
-import model.SQLiteConnection;
-import model.objects.Expense;
-import model.objects.Loan;
-import model.time.TimeTracking;
-
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import model.SQLiteConnection;
+import model.time.TimeTracking;
 
 /**
  * Created by MTs on 19/08/16.
@@ -26,9 +24,10 @@ public class User {
     private Food food;
 
     /**
+     * Creates a user object and populates it with the users current loans, expenses and so on.
      *
-     * @param id
-     * @param name
+     * @param id of user entry
+     * @param name username
      */
 
     public User(int id, String name) {
@@ -41,34 +40,45 @@ public class User {
     }
 
     /**
-     *
+     * Adds all loans of the user in the DB to the array list loans.
      */
 
     public void addAllLoans() {
         SQLiteConnection SQLiteConn = new SQLiteConnection();
         loans = SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
 
+        // Loan payment dates are checked upon retrieval to see if amortization amounts need to be deducted in order
+        // to display the correct amounts.
         checkPaymentDates();
     }
 
     /**
-     *
+     * Used to check the payment dates of all loans and deduct amortization amount for them to be correctly represented
+     * in the application.
      */
 
     private void checkPaymentDates() {
         for (Loan loan : loans) {
+            // If the next payment date is after the epoch day, but before today's date - continue.
             if (loan.getNextPayment() > 86400000 && loan.getNextPayment() < TimeTracking.getCurrentDate()) {
+                // As long as the next payment date is before the current date - continue.
                 while (loan.getNextPayment() < TimeTracking.getCurrentDate()) {
+                    // Deduct amortization amount.
                     loan.setAmount(loan.getAmount() - loan.getAmortizationAmount());
 
+                    // Change the next payment date by first getting the current one:
                     LocalDate nextPaymentDate = new Date(loan.getNextPayment()).toLocalDate();
 
-                    int year = nextPaymentDate.getYear();
-                    int month = nextPaymentDate.getMonthValue();
-                    int day = nextPaymentDate.getDayOfMonth();
+                    int year = nextPaymentDate.getYear();           // Old next payment year.
+                    int month = nextPaymentDate.getMonthValue();    // Old next payment month.
+                    int day = nextPaymentDate.getDayOfMonth();      // Old next payment day.
 
+                    // Is it a leap year?
                     boolean isLeapYear = TimeTracking.isLeapYear(year);
 
+                    // Depending on what month it is, there will be different payment days.
+                    // TODO - If the next payment day is set to 30, make it carry over so that if it passes february it
+                    // TODO - is set to 28/29 and then in the next month it is set back to 30!
                     switch (month) {
                         case 1:
                             month = 2;
@@ -121,13 +131,13 @@ public class User {
                     nextPaymentCal.set(year, month - 1, day, 0, 0, 0);
                     loan.setNextPayment(nextPaymentCal.getTimeInMillis());
                 }
-                new SQLiteConnection().updateLoan(loan);
+                new SQLiteConnection().updateLoan(loan);    // Updates the loan after while loop comes to an end.
             }
         }
     }
 
     /**
-     *
+     * Add a loan to the User's list of loans.
      */
 
     public void addLoan(Loan loan) {
@@ -137,7 +147,7 @@ public class User {
     }
 
     /**
-     *
+     * Update an existing loan is the user's list of loans.
      */
 
     public void updateLoan(Loan oldLoan, Loan newLoan) {
@@ -148,7 +158,7 @@ public class User {
     }
 
     /**
-     *
+     * Remove a loan from the user's list of loans.
      */
 
     public void removeLoan(Loan loan) {
@@ -157,7 +167,9 @@ public class User {
     }
 
     /**
+     * Getter for user's loans.
      *
+     * @return an arraylist of all user's loans
      */
 
     public ArrayList<Loan> getLoans() {
@@ -165,7 +177,7 @@ public class User {
     }
 
     /**
-     *
+     * Adds all expenses of the user in the DB to the array list of expenses.
      */
 
     public void addAllExpenses() {
@@ -174,8 +186,9 @@ public class User {
     }
 
     /**
+     * Adds an expense to the user's list of expenses.
      *
-     * @param expense
+     * @param expense added
      */
 
     public void addExpense(Expense expense) {
@@ -183,7 +196,7 @@ public class User {
     }
 
     /**
-     *
+     * Updates an existing expense by taking the old one and replacing it with a new one.
      */
 
     public void updateExpense(Expense oldExpense, Expense newExpense) {
@@ -192,7 +205,7 @@ public class User {
     }
 
     /**
-     *
+     * Deletes an expense from the user's list of expenses.
      */
 
     public void removeExpense(Expense expense) {
@@ -201,7 +214,9 @@ public class User {
     }
 
     /**
+     * Getter for user's expenses.
      *
+     * @return all the user's expenses as an array list
      */
 
     public ArrayList<Expense> getExpenses() {
@@ -209,7 +224,7 @@ public class User {
     }
 
     /**
-     *
+     * Initializes the rent object of the user.
      */
 
     public void addRent() {
@@ -218,8 +233,9 @@ public class User {
     }
 
     /**
+     * Updates the current rent cost of the user's rent object.
      *
-     * @param newAmount
+     * @param newAmount of rent
      */
 
     public void updateRent(int newAmount) {
@@ -227,8 +243,9 @@ public class User {
     }
 
     /**
+     * Getter of user's Rent.
      *
-     * @return
+     * @return user's rent
      */
 
     public Rent getRent() {
@@ -236,7 +253,7 @@ public class User {
     }
 
     /**
-     *
+     * Initializes the food object of the user.
      */
 
     public void addFood() {
@@ -245,8 +262,9 @@ public class User {
     }
 
     /**
+     * Updates the current food cost of the user's food object.
      *
-     * @param newAmount
+     * @param newAmount cost of food
      */
 
     public void updateFood(int newAmount) {
@@ -254,8 +272,9 @@ public class User {
     }
 
     /**
+     * Getter of user's food object.
      *
-     * @return
+     * @return user's food object
      */
 
     public Food getFood() {
@@ -263,9 +282,10 @@ public class User {
     }
 
     /**
+     * Setter for user id.
      *
-     * @param newId
-     * @return
+     * @param newId of user
+     * @return new id number
      */
 
     public int setId(int newId) {
@@ -274,7 +294,10 @@ public class User {
     }
 
     /**
+     * Setter for user name.
      *
+     * @param newName of user
+     * @return new username
      */
 
     public String setName(String newName) {
@@ -283,7 +306,9 @@ public class User {
     }
 
     /**
+     * Getter for user id.
      *
+     * @return user's id
      */
 
     public int getId() {
@@ -291,7 +316,9 @@ public class User {
     }
 
     /**
+     * Getter for user name.
      *
+     * @return user's name
      */
 
     public String getName() {
