@@ -1,34 +1,35 @@
 package controller;
 
+import javafx.fxml.FXML;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import model.AccountManager;
-import model.objects.Expense;
-import model.SQLiteConnection;
-import model.input.ModdedDatePicker;
-import model.input.ModdedTextField;
-import model.input.Regex;
-import model.objects.Food;
-import model.objects.Rent;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Calendar;
 
+import model.AccountManager;
+import model.SQLiteConnection;
+import model.input.ModdedDatePicker;
+import model.input.ModdedTextField;
+import model.input.Regex;
+import model.objects.Expense;
+import model.objects.Food;
+import model.objects.Rent;
+
 /**
  * Created by MTs on 26/08/16.
  *
- *
+ * This is the expense tab's controller.
  */
 
 public class ExpenseTabViewController {
 
-    private Expense currentExpense;
+    private Expense currentExpense;                 // To keep track of which expense is currently selected.
 
     @FXML private TableView<Expense> tvExpenses;
 
@@ -47,14 +48,17 @@ public class ExpenseTabViewController {
     @FXML private Button btnClear;
 
     /**
-     * This method is automatically called due to its name
+     * Automatically called when this controllers associated FXML is injected in the MainWindowView's fx:include.
      */
 
     @SuppressWarnings("unused")
     public void initialize() {
+        // Default setting is disabled since you should not be able to update/delete an expense when nothing is
+        // selected.
         btnUpdate.setDisable(true);
         btnDelete.setDisable(true);
 
+        // Sets up what type of input is accepted. See Regex class for details of regular expression.
         tfName.setUpValidation(Regex.NAME);
         tfAmount.setUpValidation(Regex.AMOUNT);
         tfRent.setUpValidation(Regex.AMOUNT);
@@ -64,7 +68,7 @@ public class ExpenseTabViewController {
 
         chebEndDate.setText("No end");
         chebEndDate.setOnAction( actionEvent -> {
-            if (chebEndDate.isSelected()) {
+            if (chebEndDate.isSelected()) {     // When checkbox is selected, datepicker is disabled.
                 dpEndDate.setDisable(true);
                 dpEndDate.setValue(null);
             } else {
@@ -77,7 +81,7 @@ public class ExpenseTabViewController {
             TableRow<Expense> row = new TableRow<>();
             row.setOnMouseClicked( clickEvent -> {  // If an item is clicked.
                 if ((clickEvent.getClickCount() == 1) && (!row.isEmpty())) {    // Item was clicked once and the row is
-                    // not empty.
+                                                                                // not empty.
                     // Enable update and delete buttons and disable save.
                     btnSave.setDisable(true);
                     btnUpdate.setDisable(false);
@@ -103,63 +107,55 @@ public class ExpenseTabViewController {
             });
             return row;
         });
+        // Populate all fields with values gotten from the current user (from AccountManager).
         refreshRent();
         refreshFood();
         refreshTableContent();
     }
 
     /**
-     *
+     * Handles the update rent button.
      */
 
     public void handleRent() {
-        if (rentValidation()) {
-            Rent newRent = new Rent(Integer.parseInt(tfRent.getText()));
+        if (rentValidation()) {     // If and only if all fields have correct input (according to Regex.x).
+            Rent newRent = new Rent(Integer.parseInt(tfRent.getText()));    // Create a rent object and load value.
 
-            if (AccountManager.getCurrentUser().getRent() == null) {
-                if (new SQLiteConnection().insertRent(newRent, AccountManager.getCurrentUser().getId())) {
-                    AccountManager.getCurrentUser().addRent();
-
-                    tfRent.setText("" + AccountManager.getCurrentUser().getRent().getAmount());
+            if (AccountManager.getCurrentUser().getRent() == null) {        // Has the user previously saved rent?: no.
+                if (new SQLiteConnection().insertRent(newRent, AccountManager.getCurrentUser().getId())) {  // Insert.
+                    AccountManager.getCurrentUser().addRent();              // Add user objects rent variable.
                 }
             } else {
-                if (new SQLiteConnection().updateRent(newRent, AccountManager.getCurrentUser().getId())) {
-                    AccountManager.getCurrentUser().updateRent(newRent.getAmount());
-
-                    tfRent.setText("" + AccountManager.getCurrentUser().getRent().getAmount());
+                if (new SQLiteConnection().updateRent(newRent, AccountManager.getCurrentUser().getId())) {  // Update.
+                    AccountManager.getCurrentUser().updateRent(newRent.getAmount());    // Update user objects rent.
                 }
             }
         }
     }
 
     /**
-     *
+     * Handles the update food button.
      */
 
     public void handleFood() {
+        // See procedure for saving and updating rent above.
         if (foodValidation()) {
             Food newFood = new Food(Integer.parseInt(tfFood.getText()));
 
             if (AccountManager.getCurrentUser().getFood() == null) {
                 if (new SQLiteConnection().insertFood(newFood, AccountManager.getCurrentUser().getId())) {
                     AccountManager.getCurrentUser().addFood();
-
-                    tfFood.setText("" + AccountManager.getCurrentUser().getFood().getAmount());
-                    refreshFood();
                 }
             } else {
                 if (new SQLiteConnection().updateFood(newFood, AccountManager.getCurrentUser().getId())) {
                     AccountManager.getCurrentUser().updateFood(newFood.getAmount());
-
-                    tfFood.setText("" + AccountManager.getCurrentUser().getRent().getAmount());
-                    refreshFood();
                 }
             }
         }
     }
 
     /**
-     *
+     * Handles save button.
      */
 
     public void handleSave() {
@@ -167,7 +163,7 @@ public class ExpenseTabViewController {
             // The date entered can either be left empty (i.e not is use) or with an actual value. In either case,
             // the values needs to be converted into milliseconds since epoch.
 
-            // 1. Create a local date.
+            // 1. Create a local date, new Date(0) creates an epoch date.
             LocalDate endDateDate = dpEndDate.getValue() == null ? new Date(0).toLocalDate() : dpEndDate.getValue();
             // 2. Create Calendar instance.
             Calendar endDateCal = Calendar.getInstance();
@@ -196,7 +192,7 @@ public class ExpenseTabViewController {
     }
 
     /**
-     *
+     * Handles the update button for expenses.
      */
 
     public void handleUpdate() {
@@ -228,7 +224,7 @@ public class ExpenseTabViewController {
     }
 
     /**
-     *
+     * Handles the delete button.
      */
 
     public void handleDelete() {
@@ -247,7 +243,7 @@ public class ExpenseTabViewController {
     }
 
     /**
-     *
+     * Handles the clear button.
      */
 
     public void handleClear() {
@@ -259,8 +255,9 @@ public class ExpenseTabViewController {
     }
 
     /**
+     * Check if value of rent field is valid.
      *
-     * @return
+     * @return true if value of rent field is valid
      */
 
     private boolean rentValidation() {
@@ -270,8 +267,9 @@ public class ExpenseTabViewController {
     }
 
     /**
+     * Checks validity of food field.
      *
-     * @return
+     * @return true if value of food field is valid.
      */
 
     private boolean foodValidation() {
@@ -310,7 +308,7 @@ public class ExpenseTabViewController {
     }
 
     /**
-     *
+     * Populates or re-populates the rent field.
      */
 
     public void refreshRent() {
@@ -324,7 +322,7 @@ public class ExpenseTabViewController {
     }
 
     /**
-     *
+     * Populates or re-populates the food field.
      */
 
     public void refreshFood() {

@@ -1,9 +1,16 @@
 package controller;
 
+import javafx.fxml.FXML;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Calendar;
 
 import model.AccountManager;
 import model.SQLiteConnection;
@@ -12,20 +19,16 @@ import model.input.ModdedTextField;
 import model.input.Regex;
 import model.objects.Loan;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.Calendar;
-
 /**
  * Created by MTs on 26/08/16.
  *
- *
+ * This is the loan tab's controller.
  */
 
 public class LoanTabViewController {
 
-    private Loan currentLoan;
-
+    private Loan currentLoan;                           // To keep track of what loan has been selected in the table
+                                                        // view and what loan should be updated/deleted based on this.
     @FXML private TableView<Loan> tvLoans;
 
     @FXML private ModdedTextField tfName;
@@ -45,24 +48,26 @@ public class LoanTabViewController {
     @FXML private Button btnClear;
 
     /**
-     *
+     * Automatically called when this controllers associated FXML is injected in the MainWindowView's fx:include.
      */
 
     @SuppressWarnings("unused")
     public void initialize() {
+        // Buttons to update and delete are disabled by default since no loan has been selected when the tab is opened.
         btnUpdate.setDisable(true);
         btnDelete.setDisable(true);
 
-        tfName.setUpValidation(Regex.NAME);
-        tfAmount.setUpValidation(Regex.AMOUNT);
-        tfInterestRate.setUpValidation(Regex.PERCENTAGE);
+        // Set up what type of input is expected for the different input fields.
+        tfName.setUpValidation(Regex.NAME);                 // Accepts characters and numbers.
+        tfAmount.setUpValidation(Regex.AMOUNT);             // Accepts numbers up to 10~ digits.
+        tfInterestRate.setUpValidation(Regex.PERCENTAGE);   // Accepts up to three digits (0-100%).
         tfAmortizationAmount.setUpValidation(Regex.AMOUNT);
 
-        dpNextPayment.setUpValidation(Regex.DATE);
-        dpBoundTo.setUpValidation(Regex.DATE);
+        dpNextPayment.setUpValidation(Regex.DATE);          // Only accepts input in the correct date form. See Regex
+        dpBoundTo.setUpValidation(Regex.DATE);              // class for details.
 
         chebBoundTo.setOnAction( actionEvent -> {
-            if (chebBoundTo.isSelected()) {
+            if (chebBoundTo.isSelected()) {         // If checkbox is selected, disable datepicker and null its value.
                 dpBoundTo.setDisable(true);
                 dpBoundTo.setValue(null);
             } else {
@@ -71,7 +76,7 @@ public class LoanTabViewController {
         });
 
         chebNextPayment.setOnAction( actionEvent -> {
-            if (chebNextPayment.isSelected()) {
+            if (chebNextPayment.isSelected()) {     // If checkbox is selected, disable datepicker and null its value.
                 dpNextPayment.setDisable(true);
                 dpNextPayment.setValue(null);
             } else {
@@ -83,7 +88,7 @@ public class LoanTabViewController {
             TableRow<Loan> row = new TableRow<>();
             row.setOnMouseClicked( clickEvent -> {  // If an item is clicked.
                 if ((clickEvent.getClickCount() == 1) && (!row.isEmpty())) {    // Item was clicked once and the row is
-                    // not empty.
+                                                                                // not empty.
                     // Enable update and delete buttons and disable save.
                     btnSave.setDisable(true);
                     btnUpdate.setDisable(false);
@@ -103,30 +108,31 @@ public class LoanTabViewController {
                     // TODO make it so that is check for dates between 86400000 and now(), if in this range then do...
                     if (currentLoan.getNextPayment() > 86400000) {
                         dpNextPayment.setDisable(false);
-                        dpNextPayment.setValue(new Date(currentLoan.getNextPayment()).toLocalDate());
                         chebNextPayment.setSelected(false);
+                        dpNextPayment.setValue(new Date(currentLoan.getNextPayment()).toLocalDate());
                     } else {
                         dpNextPayment.setDisable(true);
-                        dpNextPayment.setValue(null);
                         chebNextPayment.setSelected(true);
+                        dpNextPayment.setValue(null);
                     }
                     if (currentLoan.getBoundTo() > 86400000) {
                         dpBoundTo.setDisable(false);
-                        dpBoundTo.setValue(new Date(currentLoan.getBoundTo()).toLocalDate());
                         chebBoundTo.setSelected(false);
+                        dpBoundTo.setValue(new Date(currentLoan.getBoundTo()).toLocalDate());
                     } else {
                         dpBoundTo.setDisable(true);
-                        dpBoundTo.setValue(null);
                         chebBoundTo.setSelected(true);
+                        dpBoundTo.setValue(null);
                     }
                 }
             });
             return row;
         });
+        refreshTableContent();      // Populate table with all available loans.
     }
 
     /**
-     *
+     * Handles the save button.
      */
 
     public void handleSave() {
@@ -134,12 +140,12 @@ public class LoanTabViewController {
             // The date entered can either be left empty (i.e not is use) or with an actual value. In either case,
             // the values needs to be converted into milliseconds since epoch.
 
-            // 1. Create a local date.
+            // 1. Create a local date, new Date(0) creates an epoch date object.
             LocalDate nextPaymentDate = dpNextPayment.getValue() == null ? new Date(0).toLocalDate() :
                     dpNextPayment.getValue();
             // 2. Create Calendar instance.
             Calendar nextPaymentCal = Calendar.getInstance();
-            // 3. Set Calendar instance to date gotten from datepicker.
+            // 3. Set Calendar instance to date gotten from datepicker, monthValue is set 0 for january, hence - 1.
             nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
                     nextPaymentDate.getDayOfMonth(), 0, 0, 0);
 
@@ -167,13 +173,13 @@ public class LoanTabViewController {
 
                 // Reset all field after submission into the DB.
                 resetFields();
-                refreshTableContent();
+                refreshTableContent();      // Re-populate table view to view newly inserted loan.
             }
         }
     }
 
     /**
-     *
+     * Handles the update button.
      */
 
     public void handleUpdate() {
@@ -204,15 +210,14 @@ public class LoanTabViewController {
                 // Update the loan in the users list of loans so that it corresponds to its updated values.
                 AccountManager.getCurrentUser().updateLoan(currentLoan, updatedLoan);
 
-                resetFields();
-                refreshTableContent();
+                resetFields();              // Empty fields after an update.
+                refreshTableContent();      // Re-populate table view to get updated values.
             }
-
         }
     }
 
     /**
-     *
+     * Handles the delete button.
      */
 
     public void handleDelete() {
@@ -222,16 +227,16 @@ public class LoanTabViewController {
             btnUpdate.setDisable(true);
             btnDelete.setDisable(true);
 
-            // Simply remove the loan from the users list of loans.
+            // Simply remove the loan from the users list of loans as well.
             AccountManager.getCurrentUser().removeLoan(currentLoan);
 
             resetFields();
-            refreshTableContent();
+            refreshTableContent();      // Re-populate table view to remove deleted loan from there.
         }
     }
 
     /**
-     *
+     * Handles the clear button.
      */
 
     public void handleClear() {

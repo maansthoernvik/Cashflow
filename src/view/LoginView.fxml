@@ -15,8 +15,8 @@
     Depth of node hierarchy is denoted with levels, 0 being top.-->
 
 <!--Start of Level 0-->
-<GridPane alignment="CENTER" hgap="3.0" vgap="10.0" maxHeight="250.0" maxWidth="400.0" minHeight="250.0" minWidth="400.0"
-          nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/8.0.40"
+<GridPane alignment="CENTER" hgap="3.0" vgap="10.0" maxWidth="400.0" minWidth="400.0" maxHeight="250.0"
+          minHeight="250.0" nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/8.0.40"
           xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
     <padding><Insets bottom="25" left="25" right="25" top="25" /></padding>
 
@@ -36,8 +36,9 @@
     <PasswordField fx:id="pwfLogin" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="2"
                    GridPane.halignment="LEFT" />
     <!--Grid row 3-->
-    <Button fx:id="btnLogin" text="Enter" mnemonicParsing="false" GridPane.columnIndex="0" GridPane.rowIndex="3"
-            GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+    <Button fx:id="btnLogin" text="Enter" onMouseReleased="#handleLogin" mnemonicParsing="false"
+            GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER"
+            GridPane.valignment="CENTER" />
 </GridPane>
 <!--End of Level 0-->
 
