@@ -1,20 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
 
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+
+<!--This FXML creates the main window of the application, containing a TabPane.
+    Depth of node hierarchy is denoted with levels, 0 being top.-->
+
+<!--Start of Level 0-->
 <AnchorPane minHeight="400.0" minWidth="600.0" xmlns:fx="http://www.w3.org/2001/XInclude"
             fx:controller="controller.MainWindowController">
+    <!--All tabs get their content from included FXML files with their own, separate controllers with the same name as
+        the file, concatenated with "Controller" at the end of the file name-->
+    <!--Start of Level 1-->
     <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
              AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+        <!--Start of Level 2-->
+        <!--First Tab of TabPane-->
         <Tab fx:id="overview" text="Overview">
             <fx:include fx:id="overviewTabView" source="OverviewTabView.fxml"/>
         </Tab>
+        <!--Second Tab of TabPane-->
         <Tab fx:id="loans" text="Loans">
             <fx:include fx:id="loanTabView" source="LoanTabView.fxml"/>
         </Tab>
+        <!--Third Tab of TabPane-->
         <Tab fx:id="expenses" text="Expenses">
             <fx:include fx:id="expenseTabView" source="ExpenseTabView.fxml"/>
         </Tab>
+        <!--End of Level 2-->
     </TabPane>
+    <!--End of Level 1-->
 </AnchorPane>
+<!--End of Level 0-->
