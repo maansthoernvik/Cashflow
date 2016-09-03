@@ -1,18 +1,20 @@
 package model;
 
+import javafx.fxml.FXMLLoader;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+
+import java.io.IOException;
+
+import model.objects.User;
 import controller.LoginController;
 import controller.MainWindowController;
-import javafx.stage.Stage;
-import model.objects.User;
-
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import java.io.IOException;
 
 /**
  * Created by MTs on 19/08/16.
  *
- *
+ * The account manager is initialized with the start of the main class ChillBillsDesktop and keeps track of who is
+ * logged in. It manages switching between the login and application view.
  */
 
 public class AccountManager {
@@ -20,11 +22,13 @@ public class AccountManager {
     private Scene scene;
     private Stage primaryStage;
 
-    private static User currentUser;
+    private static User currentUser;    // Static since only one user can be logged in at any point in time.
 
     /**
+     * Saves the current scene and stage as class variables to manipulate when new content needs to be shown.
      *
-     * @param scene
+     * @param scene current
+     * @param primaryStage current
      */
 
     public AccountManager(Scene scene, Stage primaryStage) {
@@ -33,7 +37,7 @@ public class AccountManager {
     }
 
     /**
-     *
+     * When called, shows a small window with fields for user to provide login information.
      */
 
     public void showLoginView() {
@@ -41,10 +45,10 @@ public class AccountManager {
             // Load the FXML file which contains the login view.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
 
-            scene.setRoot(loader.load());
+            scene.setRoot(loader.load());   // Set the root node of the scene to what has been loaded from the FXML.
 
-            LoginController loginController = loader.getController();
-            loginController.setAccountManager(this);
+            LoginController loginController = loader.getController();   // Get the controller class.
+            loginController.setAccountManager(this);                    // Forward -this- account manager.
 
             scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());    // Load stylesheets.
         } catch (IOException e) {
@@ -67,7 +71,7 @@ public class AccountManager {
 
             MainWindowController mainWindowController = loader.getController();
             mainWindowController.setAccountManager(this);
-            primaryStage.setMaximized(true);
+            primaryStage.setMaximized(true);    // Maximize the window.
 
             scene.getStylesheets().add(getClass().getResource("../style.css").toExternalForm());    // Load stylesheets.
         } catch (Exception e) {
@@ -76,7 +80,7 @@ public class AccountManager {
     }
 
     /**
-     *
+     * Resets the current user and shows the login view.
      */
 
     public void logout() {
@@ -85,7 +89,9 @@ public class AccountManager {
     }
 
     /**
+     * Sets the currently logged in user to the one defined by the login procedure.
      *
+     * @param user returned by login function
      */
 
     public void setCurrentUser(User user) {
@@ -93,7 +99,7 @@ public class AccountManager {
     }
 
     /**
-     *
+     * Return the currently logged in user.
      */
 
     public static User getCurrentUser() {

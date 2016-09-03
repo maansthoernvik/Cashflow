@@ -3,7 +3,7 @@ package model.objects;
 /**
  * Created by MTs on 02/09/16.
  *
- *
+ * Object to represent a users monthly rent cost.
  */
 
 public class Rent {
@@ -13,8 +13,9 @@ public class Rent {
     private int amount;
 
     /**
+     * Initializes without an id, in case user has not specified a rent cost before - no entry available in DB.
      *
-     * @param amount
+     * @param amount rent cost
      */
 
     public Rent(int amount) {
@@ -22,9 +23,10 @@ public class Rent {
     }
 
     /**
+     * When user already saved rent cost, and entry exists with an id.
      *
-     * @param id
-     * @param amount
+     * @param id of rent entry
+     * @param amount rent cost
      */
 
     public Rent(int id, int amount) {
@@ -33,9 +35,10 @@ public class Rent {
     }
 
     /**
+     * Changes rent entry id number.
      *
-     * @param newId
-     * @return
+     * @param newId of rent entry
+     * @return new id number
      */
 
     public int setId(int newId) {
@@ -44,9 +47,10 @@ public class Rent {
     }
 
     /**
+     * Sets the amount paid in rent.
      *
-     * @param newAmount
-     * @return
+     * @param newAmount of rent
+     * @return new rent cost
      */
 
     public int setAmount(int newAmount) {
@@ -55,8 +59,9 @@ public class Rent {
     }
 
     /**
+     * Returns the id of the rent object.
      *
-     * @return
+     * @return id of rent entry
      */
 
     public int getId() {
@@ -64,8 +69,9 @@ public class Rent {
     }
 
     /**
+     * Returns the rent cost.
      *
-     * @return
+     * @return rent amount
      */
 
     public int getAmount() {

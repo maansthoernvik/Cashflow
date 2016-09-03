@@ -2,17 +2,17 @@ package controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
+
+import java.util.ArrayList;
+
 import model.AccountManager;
 import model.objects.Expense;
 import model.objects.Loan;
 
-import java.util.ArrayList;
-
 /**
  * Created by MTs on 25/08/16.
  *
- *
+ * This is the overview tab's controller.
  */
 
 public class OverviewTabViewController {
@@ -24,21 +24,18 @@ public class OverviewTabViewController {
     @FXML private TextField tfExpenses;
 
     /**
-     *
+     * When the overview is refreshed, values of all its fields are updated with changes that can have been made to
+     * either expenses and/or loans.
      */
 
     public void refreshOverview() {
-        // Variables for temporarily saving information.
-        int monthlyTotal = 0;
-        int loanTotal = 0;
-        int rent = 0;
-        int food = 0;
-        int expenseTotal = 0;
+        // Variables for getting the total amount for the various text fields.
+        int monthlyTotal = 0,  loanTotal = 0, rent = 0, food = 0, expenseTotal = 0;
 
-        // Get all loans from the DB.
+        // Get all loans from the User's list of loans.
         ArrayList<Loan> loans = AccountManager.getCurrentUser().getLoans();
 
-        // For each loan gotten, add interest and amortization amounts to vars.
+        // For each loan gotten, add interest and amortization amounts to vars. monthlyTotal and loanTotal.
         for (Loan loan : loans) {
             // The interest rate is saved as (for 1.41%) 1.41. To get the actual monthly cost, the value needs to be
             // multiplied by 0.01 so that it becomes 0.0141. Divide by 12 to get the payment amount/month.
@@ -49,22 +46,24 @@ public class OverviewTabViewController {
             loanTotal += loan.getAmortizationAmount();
         }
 
+        // Get current user's rent cost, defaults to 0 if no rent has been added.
         if (AccountManager.getCurrentUser().getRent() != null) {
             rent = AccountManager.getCurrentUser().getRent().getAmount();
         }
         monthlyTotal += rent;
 
+        // Get the current user's food cost, defaults to 0 if no food cost has been added.
         if (AccountManager.getCurrentUser().getRent() != null) {
             food = AccountManager.getCurrentUser().getFood().getAmount();
         }
         monthlyTotal += food;
 
-        // Get all expenses from the DB.
+        // Get all expenses from the user's list of expenses.
         ArrayList<Expense> expenses = AccountManager.getCurrentUser().getExpenses();
 
         // For each expense gotten, add amount to monthly and expense total.
         for (Expense expense : expenses) {
-            // Simply get the amounts.
+            // Simply add the amounts.
             monthlyTotal += expense.getAmount();
             expenseTotal += expense.getAmount();
         }

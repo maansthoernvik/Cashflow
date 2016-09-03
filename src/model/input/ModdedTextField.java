@@ -19,8 +19,6 @@ public class ModdedTextField extends TextField {
     /**
      * Constructor takes a regular expression as input to define what input the DatePicker will accept. In this case,
      * Regex.AMOUNT/NAME/LESSERAMOUNT etc. should be used.
-     *
-     * @param regex input format accepted
      */
 
     public ModdedTextField() {
