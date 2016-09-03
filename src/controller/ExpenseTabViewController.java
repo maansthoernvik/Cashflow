@@ -127,7 +127,8 @@ public class ExpenseTabViewController {
                 }
             } else {
                 if (new SQLiteConnection().updateRent(newRent, AccountManager.getCurrentUser().getId())) {  // Update.
-                    AccountManager.getCurrentUser().updateRent(newRent.getAmount());    // Update user objects rent.
+                    AccountManager.getCurrentUser().getRent().setAmount(newRent.getAmount());   // Update user objects
+                                                                                                // rent.
                 }
             }
         }
@@ -148,7 +149,7 @@ public class ExpenseTabViewController {
                 }
             } else {
                 if (new SQLiteConnection().updateFood(newFood, AccountManager.getCurrentUser().getId())) {
-                    AccountManager.getCurrentUser().updateFood(newFood.getAmount());
+                    AccountManager.getCurrentUser().getFood().setAmount(newFood.getAmount());
                 }
             }
         }

@@ -17,6 +17,7 @@ import model.time.TimeTracking;
 public class User {
 
     private int id;
+
     private String name;
     private ArrayList<Loan> loans;
     private ArrayList<Expense> expenses;
@@ -167,16 +168,6 @@ public class User {
     }
 
     /**
-     * Getter for user's loans.
-     *
-     * @return an arraylist of all user's loans
-     */
-
-    public ArrayList<Loan> getLoans() {
-        return loans;
-    }
-
-    /**
      * Adds all expenses of the user in the DB to the array list of expenses.
      */
 
@@ -214,16 +205,6 @@ public class User {
     }
 
     /**
-     * Getter for user's expenses.
-     *
-     * @return all the user's expenses as an array list
-     */
-
-    public ArrayList<Expense> getExpenses() {
-        return expenses;
-    }
-
-    /**
      * Initializes the rent object of the user.
      */
 
@@ -233,52 +214,12 @@ public class User {
     }
 
     /**
-     * Updates the current rent cost of the user's rent object.
-     *
-     * @param newAmount of rent
-     */
-
-    public void updateRent(int newAmount) {
-        rent.setAmount(newAmount);
-    }
-
-    /**
-     * Getter of user's Rent.
-     *
-     * @return user's rent
-     */
-
-    public Rent getRent() {
-        return rent;
-    }
-
-    /**
      * Initializes the food object of the user.
      */
 
     public void addFood() {
         SQLiteConnection SQLiteConn = new SQLiteConnection();
         food = SQLiteConn.fetchFood("SELECT * FROM Food WHERE UserID = ?;", id);
-    }
-
-    /**
-     * Updates the current food cost of the user's food object.
-     *
-     * @param newAmount cost of food
-     */
-
-    public void updateFood(int newAmount) {
-        food.setAmount(newAmount);
-    }
-
-    /**
-     * Getter of user's food object.
-     *
-     * @return user's food object
-     */
-
-    public Food getFood() {
-        return food;
     }
 
     /**
@@ -323,5 +264,45 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Getter for user's loans.
+     *
+     * @return an arraylist of all user's loans
+     */
+
+    public ArrayList<Loan> getLoans() {
+        return loans;
+    }
+
+    /**
+     * Getter for user's expenses.
+     *
+     * @return all the user's expenses as an array list
+     */
+
+    public ArrayList<Expense> getExpenses() {
+        return expenses;
+    }
+
+    /**
+     * Getter of user's Rent.
+     *
+     * @return user's rent
+     */
+
+    public Rent getRent() {
+        return rent;
+    }
+
+    /**
+     * Getter of user's food object.
+     *
+     * @return user's food object
+     */
+
+    public Food getFood() {
+        return food;
     }
 }
