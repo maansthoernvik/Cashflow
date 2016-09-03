@@ -271,7 +271,7 @@ public class LoanTabViewController {
      * Used to either populate the table view or update it when a new loan has been saved/updated/deleted.
      */
 
-    public void refreshTableContent() {
+    private void refreshTableContent() {
         // Get the current list of loans from the users list of loans.
         ObservableList<Loan> loans = FXCollections.observableArrayList(
                 AccountManager.getCurrentUser().getLoans()

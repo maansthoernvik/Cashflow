@@ -298,7 +298,7 @@ public class ExpenseTabViewController {
      * Used to either populate the table view or update it when a new expense has been saved/updated/deleted.
      */
 
-    public void refreshTableContent() {
+    private void refreshTableContent() {
         // Get the current list of expenses from the users list of expenses.
         ObservableList<Expense> expenses = FXCollections.observableArrayList(
                 AccountManager.getCurrentUser().getExpenses()
@@ -311,7 +311,7 @@ public class ExpenseTabViewController {
      * Populates or re-populates the rent field.
      */
 
-    public void refreshRent() {
+    private void refreshRent() {
         Rent rent = AccountManager.getCurrentUser().getRent();
 
         if (rent != null) {
@@ -325,7 +325,7 @@ public class ExpenseTabViewController {
      * Populates or re-populates the food field.
      */
 
-    public void refreshFood() {
+    private void refreshFood() {
         Food food = AccountManager.getCurrentUser().getFood();
 
         if (food != null) {
