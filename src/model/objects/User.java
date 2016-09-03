@@ -45,106 +45,13 @@ public class User {
      */
 
     public void addAllLoans() {
-        SQLiteConnection SQLiteConn = new SQLiteConnection();
-        loans = SQLiteConn.fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
+        loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
 
         // Loan payment dates are checked upon retrieval to see if amortization amounts need to be deducted in order
         // to display the correct amounts.
-        checkPaymentDates();
-    }
+        loans.forEach(Loan::performPayments);
 
-    /**
-     * Used to check the payment dates of all loans and deduct amortization amount for them to be correctly represented
-     * in the application.
-     */
-
-    private void checkPaymentDates() {
-        for (Loan loan : loans) {
-            // If the next payment date is after the epoch day, but before today's date - continue.
-            if (loan.getNextPayment() > 86400000 && loan.getNextPayment() < TimeTracking.getCurrentDate()) {
-                // As long as the next payment date is before the current date - continue.
-                while (loan.getNextPayment() < TimeTracking.getCurrentDate()) {
-                    // Deduct amortization amount.
-                    loan.setAmount(loan.getAmount() - loan.getAmortizationAmount());
-
-                    // Change the next payment date by first getting the current one:
-                    LocalDate nextPaymentDate = new Date(loan.getNextPayment()).toLocalDate();
-
-                    int year = nextPaymentDate.getYear();           // Old next payment year.
-                    int month = nextPaymentDate.getMonthValue();    // Old next payment month.
-                    int day = nextPaymentDate.getDayOfMonth();      // Old next payment day.
-
-                    // Is it a leap year?
-                    boolean isLeapYear = TimeTracking.isLeapYear(year);
-
-                    // Depending on what month it is, there will be different payment days.
-                    // TODO - If the next payment day is set to 30, make it carry over so that if it passes february it
-                    // TODO - is set to 28/29 and then in the next month it is set back to 30!
-                    switch (month) {
-                        case 1:
-                            month = 2;
-                            if (isLeapYear) {
-                                day = day > 29 ? 29 : day;
-                            } else {
-                                day = day > 28 ? 28 : day;
-                            }
-                            break;
-                        case 2:
-                            month = 3;
-                            break;
-                        case 3:
-                            month = 4;
-                            day = day > 30 ? 30 : day;
-                            break;
-                        case 4:
-                            month = 5;
-                            break;
-                        case 5:
-                            month = 6;
-                            day = day > 30 ? 30 : day;
-                            break;
-                        case 6:
-                            month = 7;
-                            break;
-                        case 7:
-                            month = 8;
-                            break;
-                        case 8:
-                            month = 9;
-                            day = day > 30 ? 30 : day;
-                            break;
-                        case 9:
-                            month = 10;
-                            break;
-                        case 10:
-                            month = 11;
-                            day = day > 30 ? 30 : day;
-                            break;
-                        case 11:
-                            month = 12;
-                            break;
-                        case 12:
-                            year += 1;
-                            month = 1;
-                    }
-
-                    Calendar nextPaymentCal = Calendar.getInstance();
-                    nextPaymentCal.set(year, month - 1, day, 0, 0, 0);
-                    loan.setNextPayment(nextPaymentCal.getTimeInMillis());
-                }
-                new SQLiteConnection().updateLoan(loan);    // Updates the loan after while loop comes to an end.
-            }
-        }
-    }
-
-    /**
-     * Add a loan to the User's list of loans.
-     */
-
-    public void addLoan(Loan loan) {
-        loans.add(loan);
-
-        checkPaymentDates();
+        loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
     }
 
     /**
@@ -152,10 +59,15 @@ public class User {
      */
 
     public void updateLoan(Loan oldLoan, Loan newLoan) {
-        int i = loans.indexOf(oldLoan);
-        loans.set(i, newLoan);
+        newLoan.performPayments();
 
-        checkPaymentDates();
+        int i = loans.indexOf(oldLoan);
+
+        if (newLoan.getAmount() > 0) {
+            loans.set(i, newLoan);
+        } else {
+            removeLoan(oldLoan);
+        }
     }
 
     /**
@@ -174,16 +86,6 @@ public class User {
     public void addAllExpenses() {
         SQLiteConnection SQLiteConn = new SQLiteConnection();
         expenses = SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?", id);
-    }
-
-    /**
-     * Adds an expense to the user's list of expenses.
-     *
-     * @param expense added
-     */
-
-    public void addExpense(Expense expense) {
-        expenses.add(expense);
     }
 
     /**
