@@ -1,12 +1,8 @@
 package model.objects;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import model.SQLiteConnection;
-import model.time.TimeTracking;
 
 /**
  * Created by MTs on 19/08/16.
@@ -34,6 +30,13 @@ public class User {
     public User(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    /**
+     * Populates all the user's fields with values
+     */
+
+    public void populateUserFields() {
         addAllLoans();
         addAllExpenses();
         addRent();

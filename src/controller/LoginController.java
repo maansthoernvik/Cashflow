@@ -48,6 +48,7 @@ public class LoginController {
     public void handleLogin() {
         User user = authenticate();                 // Authentication returns a matching user of what has been entered
                                                     // into login fields.
+        user.populateUserFields();
         // Fetch User will return null upon error.
         if (user != null) {
             accountManager.setCurrentUser(user);    // Set the current user of the account manager to the logged in
@@ -64,7 +65,10 @@ public class LoginController {
     private User authenticate() {
         SQLiteConnection SQLiteConn = new SQLiteConnection();
 
-        return SQLiteConn.fetchUser("SELECT UserID, Username FROM Users WHERE Username = ? AND Password = ?",
+        User result;
+        result = SQLiteConn.fetchUser("SELECT UserID, Username FROM Users WHERE Username = ? AND Password = ?",
                 tfLogin.getText(), pwfLogin.getText());
+
+        return result;
     }
 }

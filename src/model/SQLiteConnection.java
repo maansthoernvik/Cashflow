@@ -1,11 +1,11 @@
 package model;
 
 import model.objects.*;
-
 import org.sqlite.SQLiteConfig;
 
 import java.sql.*;
 import java.util.ArrayList;
+
 
 /**
  * Created by MTs on 07/08/16.
@@ -42,23 +42,24 @@ public class SQLiteConnection {
      */
 
     public ArrayList<Loan> fetchLoans(String query, int id) {
+        ArrayList<Loan> result = new ArrayList<>();
         // Convert config to properties for use with the connection object.
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createSelectPreparedStatement(conn, query, id);   // Separate method for creating
              ResultSet rs = ps.executeQuery()) {                                        // the prepared statement.
-            ArrayList<Loan> result = new ArrayList<>();
 
             while (rs.next()) {
                 result.add(new Loan(rs.getInt("LoanID"), rs.getString("Name"), rs.getInt("Amount"),
                         rs.getDouble("InterestRate"), rs.getInt("AmortizationAmount"), rs.getLong("NextPayment"),
                         rs.getLong("BoundTo")));
             }
-
-            return result;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
+        result.forEach(Loan::performPayments);
+
+        return result;
     }
 
     /**
