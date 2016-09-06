@@ -630,7 +630,8 @@ public class SQLiteConnection {
      * @throws SQLException thrown
      */
 
-    private PreparedStatement createDeleteExpensePreparedStatement(Connection conn, String delete, Expense expense) throws SQLException {
+    private PreparedStatement createDeleteExpensePreparedStatement(Connection conn, String delete, Expense expense)
+            throws SQLException {
         PreparedStatement ps = conn.prepareStatement(delete);
         ps.setInt(1, expense.getId());
 
