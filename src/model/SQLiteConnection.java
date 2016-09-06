@@ -89,10 +89,11 @@ public class SQLiteConnection {
     }
 
     /**
+     * Queries the DB for a user's rent entry.
      *
-     * @param query
-     * @param id
-     * @return
+     * @param query for rent
+     * @param id of current user
+     * @return user's rent if one exists
      */
 
     public Rent fetchRent(String query, int id) {
@@ -113,10 +114,11 @@ public class SQLiteConnection {
     }
 
     /**
+     * Queries the DB for a user's food entry.
      *
-     * @param query
-     * @param id
-     * @return
+     * @param query for food
+     * @param id of current user
+     * @return user's food if one exists
      */
 
     public Food fetchFood(String query, int id) {
@@ -155,7 +157,12 @@ public class SQLiteConnection {
     }
 
     /**
+     * Attempts to get a user from the database, if one is found that matches the given user name and password.
      *
+     * @param query for user
+     * @param user to check for
+     * @param password to check for
+     * @return user gotten from DB
      */
 
     public User fetchUser(String query, String user, String password) {
@@ -171,7 +178,14 @@ public class SQLiteConnection {
     }
 
     /**
+     * Prepares a select user query statement that can be sent to the DB.
      *
+     * @param conn connection object
+     * @param query for user
+     * @param user to check for
+     * @param password to check for
+     * @return prepared statement to query for user
+     * @throws SQLException if an error is raised
      */
 
     private PreparedStatement createSelectUserPreparedStatement(Connection conn, String query, String user,
@@ -188,10 +202,11 @@ public class SQLiteConnection {
     // *                                                        *
 
     /**
+     * Inserts user's rent into the DB if the user has not already provided one.
      *
-     * @param rent
-     * @param id
-     * @return
+     * @param rent to be inserted
+     * @param id of current user
+     * @return true if successful
      */
 
     public boolean insertRent(Rent rent, int id) {
@@ -209,13 +224,14 @@ public class SQLiteConnection {
     }
 
     /**
+     * Prepares an SQL statement to be executed.
      *
-     * @param conn
-     * @param insert
-     * @param rent
-     * @param id
-     * @return
-     * @throws SQLException
+     * @param conn connection object
+     * @param insert statement
+     * @param rent object to be inserted
+     * @param id of user
+     * @return a prepared insert rent statement
+     * @throws SQLException if an error is raised
      */
 
     private PreparedStatement createInsertRentPreparedStatement(Connection conn, String insert, Rent rent, int id)
@@ -228,10 +244,11 @@ public class SQLiteConnection {
     }
 
     /**
+     * Updates the rent of a user.
      *
-     * @param rent
-     * @param id
-     * @return
+     * @param rent to be updated
+     * @param id of the current user
+     * @return true if update DB successful
      */
 
     public boolean updateRent(Rent rent, int id) {
@@ -249,13 +266,14 @@ public class SQLiteConnection {
     }
 
     /**
+     * Prepares a statement to send to the DB to update a user's rent.
      *
-     * @param conn
-     * @param update
-     * @param rent
-     * @param id
-     * @return
-     * @throws SQLException
+     * @param conn connection object
+     * @param update statement
+     * @param rent to be updated
+     * @param id of the current user
+     * @return a prepared statement to update rent
+     * @throws SQLException if an error is raised
      */
 
     private PreparedStatement createUpdateRentPreparedStatement(Connection conn, String update, Rent rent, int id)
@@ -272,10 +290,11 @@ public class SQLiteConnection {
     // *                                                        *
 
     /**
+     * Inserts a food cost entry into the DB for the current user.
      *
-     * @param food
-     * @param id
-     * @return
+     * @param food to be inserted
+     * @param id of the current user
+     * @return true if successful insert
      */
 
     public boolean insertFood(Food food, int id) {
@@ -293,12 +312,13 @@ public class SQLiteConnection {
     }
 
     /**
+     * Prepares a preparedStatement for inserting food.
      *
-     * @param conn
-     * @param insert
-     * @param food
-     * @param id
-     * @return
+     * @param conn connection object
+     * @param insert statement for food
+     * @param food object to be inserted
+     * @param id of the current user
+     * @return a prepared insert statement for food
      */
 
     private PreparedStatement createInsertFoodPreparedStatement(Connection conn, String insert, Food food, int id)
@@ -311,10 +331,11 @@ public class SQLiteConnection {
     }
 
     /**
+     * Updates the food specified for the current user.
      *
-     * @param food
-     * @param id
-     * @return
+     * @param food to be updated
+     * @param id of the current user
+     * @return true if successful update
      */
 
     public boolean updateFood(Food food, int id) {
@@ -332,13 +353,14 @@ public class SQLiteConnection {
     }
 
     /**
+     * Prepares an update food preparedStatement.
      *
-     * @param conn
-     * @param update
-     * @param food
-     * @param id
-     * @return
-     * @throws SQLException
+     * @param conn connection object
+     * @param update statement for food
+     * @param food to be updated
+     * @param id current user
+     * @return prepared update food statement
+     * @throws SQLException if an error is raised
      */
 
     private PreparedStatement createUpdateFoodPreparedStatement(Connection conn, String update, Food food, int id)
