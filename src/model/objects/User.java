@@ -2,7 +2,7 @@ package model.objects;
 
 import java.util.ArrayList;
 
-import model.SQLiteConnection;
+import controller.SQLiteConnection;
 
 /**
  * Created by MTs on 19/08/16.

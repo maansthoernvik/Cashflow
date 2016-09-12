@@ -1,4 +1,4 @@
-package model;
+package controller;
 
 import model.objects.*;
 import org.sqlite.SQLiteConfig;

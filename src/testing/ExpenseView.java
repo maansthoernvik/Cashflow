@@ -1,7 +1,7 @@
 //package view;
 //
 //import model.AccountManager;
-//import model.SQLiteConnection;
+//import controller.SQLiteConnection;
 //import model.objects.Expense;
 //import model.input.ModdedDatePicker;
 //import model.input.ModdedTextField;

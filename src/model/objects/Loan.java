@@ -1,6 +1,6 @@
 package model.objects;
 
-import model.SQLiteConnection;
+import controller.SQLiteConnection;
 import model.time.TimeTracking;
 
 import java.sql.Date;
