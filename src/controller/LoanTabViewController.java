@@ -9,6 +9,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.util.Calendar;
 
@@ -17,6 +18,7 @@ import model.input.ModdedDatePicker;
 import model.input.ModdedTextField;
 import model.input.Regex;
 import model.objects.Loan;
+import model.time.TimeTracking;
 
 /**
  * Created by MTs on 26/08/16.
@@ -63,7 +65,7 @@ public class LoanTabViewController {
         tfAmortizationAmount.setUpValidation(Regex.AMOUNT);
 
         dpNextPayment.setUpValidation(Regex.DATE);          // Only accepts input in the correct date form. See Regex
-        dpBoundTo.setUpValidation(Regex.DATE);              // class for details.
+        dpBoundTo.setUpValidation(Regex.DATE);
 
         chebBoundTo.setOnAction( actionEvent -> {
             if (chebBoundTo.isSelected()) {         // If checkbox is selected, disable datepicker and null its value.
@@ -104,8 +106,7 @@ public class LoanTabViewController {
                     // If the value of NextPayment is greater than 86 400 000 milliseconds, the date is greater than
                     // epoch and the date shall be displayed. This is so since dates that are left empty are assigned
                     // the epoch value. Otherwise, the date is simply set to null and checkbox is selected.
-                    // TODO make it so that is check for dates between 86400000 and now(), if in this range then do...
-                    if (currentLoan.getNextPayment() > 86400000) {
+                    if (currentLoan.getNextPayment() < 86400001) {
                         dpNextPayment.setDisable(false);
                         chebNextPayment.setSelected(false);
                         dpNextPayment.setValue(new Date(currentLoan.getNextPayment()).toLocalDate());
@@ -114,7 +115,8 @@ public class LoanTabViewController {
                         chebNextPayment.setSelected(true);
                         dpNextPayment.setValue(null);
                     }
-                    if (currentLoan.getBoundTo() > 86400000) {
+
+                    if (currentLoan.getBoundTo() < 86400001) {
                         dpBoundTo.setDisable(false);
                         chebBoundTo.setSelected(false);
                         dpBoundTo.setValue(new Date(currentLoan.getBoundTo()).toLocalDate());
@@ -140,28 +142,33 @@ public class LoanTabViewController {
             // the values needs to be converted into milliseconds since epoch.
 
             // 1. Create a local date, new Date(0) creates an epoch date object.
+            // 2. Create Calendar instance.
+            // 3. Set Calendar instance to date gotten from datepicker, monthValue is set 0 for january, hence - 1.
             LocalDate nextPaymentDate = dpNextPayment.getValue() == null ? new Date(0).toLocalDate() :
                     dpNextPayment.getValue();
-            // 2. Create Calendar instance.
             Calendar nextPaymentCal = Calendar.getInstance();
-            // 3. Set Calendar instance to date gotten from datepicker, monthValue is set 0 for january, hence - 1.
             nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
                     nextPaymentDate.getDayOfMonth(), 0, 0, 0);
 
             // 1. Create a local date.
-            LocalDate boundToDate = dpBoundTo.getValue() == null ? new Date(0).toLocalDate() : dpBoundTo.getValue();
             // 2. Create Calendar instance.
-            Calendar boundToCal = Calendar.getInstance();
             // 3. Set Calendar instance to date gotten from datepicker.
+            LocalDate boundToDate = dpBoundTo.getValue() == null ? new Date(0).toLocalDate() : dpBoundTo.getValue();
+            Calendar boundToCal = Calendar.getInstance();
             boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 0, 0,
                     0);
+
+            // Offset between end of month and day of month is calculated.
+            // TODO check if works.
+            int dayOffset = TimeTracking.getDayOffset(nextPaymentCal.getActualMaximum(Calendar.DAY_OF_MONTH),
+                    nextPaymentCal.get(Calendar.DAY_OF_MONTH));
 
             // All fields are converted into their respective data types as all types are strings until this point.
             // Doubles and its need to be parsed before submission into the DB. Calendar values are converted into
             // longs by use of getTimeInMillis() method from the Calendar class.
             Loan insertedLoan = new Loan(tfName.getText(), Integer.parseInt(tfAmount.getText()),
                     Double.parseDouble(tfInterestRate.getText()), Integer.parseInt(tfAmortizationAmount.getText()),
-                    nextPaymentCal.getTimeInMillis(), boundToCal.getTimeInMillis());
+                    nextPaymentCal.getTimeInMillis(), dayOffset, boundToCal.getTimeInMillis());
 
             if (new SQLiteConnection().insertLoan(insertedLoan, AccountManager.getCurrentUser().getId())) {
                 // Since a new loan has been inserted into the DB, all loans now need to be re-loaded into the
@@ -194,9 +201,12 @@ public class LoanTabViewController {
             Calendar boundToCal = Calendar.getInstance();
             boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 0, 0, 0);
 
+            int dayOffset = TimeTracking.getDayOffset(nextPaymentCal.getActualMaximum(Calendar.DAY_OF_MONTH),
+                    nextPaymentCal.get(Calendar.DAY_OF_MONTH));
+
             Loan updatedLoan = new Loan(currentLoan.getId(), tfName.getText(),
                     Integer.parseInt(tfAmount.getText()), Double.parseDouble(tfInterestRate.getText()),
-                    Integer.parseInt(tfAmortizationAmount.getText()), nextPaymentCal.getTimeInMillis(),
+                    Integer.parseInt(tfAmortizationAmount.getText()), nextPaymentCal.getTimeInMillis(), dayOffset,
                     boundToCal.getTimeInMillis());
 
             // No need to specify user here, the ID of the loan in question is used.

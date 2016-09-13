@@ -23,6 +23,7 @@ public class Loan {
     private double interestRate;    // The current interest
     private int amortizationAmount;
     private long nextPayment;
+    private int dayOffset;
     private long boundTo;
 
     /**
@@ -33,15 +34,18 @@ public class Loan {
      * @param interestRate of loan
      * @param amortizationAmount of loan
      * @param nextPayment of loan
+     * @param dayOffset of loan
      * @param boundTo of loan
      */
 
-    public Loan(String name, int amount, double interestRate, int amortizationAmount, long nextPayment, long boundTo) {
+    public Loan(String name, int amount, double interestRate, int amortizationAmount, long nextPayment, int dayOffset,
+                long boundTo) {
         this.name = name;
         this.amount = amount;
         this.interestRate = interestRate;
         this.amortizationAmount = amortizationAmount;
         this.nextPayment = nextPayment;
+        this.dayOffset = dayOffset;
         this.boundTo = boundTo;
     }
 
@@ -54,17 +58,19 @@ public class Loan {
      * @param interestRate of loan
      * @param amortizationAmount of loan
      * @param nextPayment of loan
+     * @param dayOffset of loan
      * @param boundTo of loan
      */
 
     public Loan(int id, String name, int amount, double interestRate, int amortizationAmount, long nextPayment,
-                long boundTo) {
+                int dayOffset, long boundTo) {
         this.id = id;
         this.name = name;
         this.amount = amount;
         this.interestRate = interestRate;
         this.amortizationAmount = amortizationAmount;
         this.nextPayment = nextPayment;
+        this.dayOffset = dayOffset;
         this.boundTo = boundTo;
     }
 
@@ -74,84 +80,155 @@ public class Loan {
      */
 
     public void performPayments() {
-        if (nextPayment > 86400000 && nextPayment < TimeTracking.getCurrentDate()) {
-            while (nextPayment < TimeTracking.getCurrentDate() && amount > 0) {
-                System.out.println("Deducted amortization amount.");
+        while (nextPayment < TimeTracking.getCurrentDate() && amount > 0 && amortizationAmount > 0) {
+            System.out.println("Deducting amortization amount.");
 
-                // Deduct amortization amount.
-                amount -= amortizationAmount;
+            // Deduct amortization amount.
+            amount -= amortizationAmount;
 
-                // Change the next payment date by first getting the current one:
-                LocalDate nextPaymentDate = new Date(nextPayment).toLocalDate();
+            // Change the next payment date by first getting the current one:
+            LocalDate nextPaymentDate = new Date(nextPayment).toLocalDate();
 
-                int year = nextPaymentDate.getYear();           // Old next payment year.
-                int month = nextPaymentDate.getMonthValue();    // Old next payment month.
-                int day = nextPaymentDate.getDayOfMonth();      // Old next payment day.
+            int year = nextPaymentDate.getYear();           // Old next payment year.
+            int month = nextPaymentDate.getMonthValue();    // Old next payment month.
+            int day = nextPaymentDate.getDayOfMonth();      // Old next payment day.
 
-                // Is it a leap year?
-                boolean isLeapYear = TimeTracking.isLeapYear(year);
+            // Is it a leap year?
+            boolean isLeapYear = TimeTracking.isLeapYear(year);
 
-                // Depending on what month it is, there will be different payment days.
-                // TODO - If the next payment day is set to 30, make it carry over so that if it passes february it
-                // TODO - is set to 28/29 and then in the next month it is set back to 30!
-                switch (month) {
-                    case 1:
-                        month = 2;
-                        if (isLeapYear) {
-                            day = day > 29 ? 29 : day;
-                        } else {
-                            day = day > 28 ? 28 : day;
-                        }
-                        break;
-                    case 2:
-                        month = 3;
-                        break;
-                    case 3:
-                        month = 4;
-                        day = day > 30 ? 30 : day;
-                        break;
-                    case 4:
-                        month = 5;
-                        break;
-                    case 5:
-                        month = 6;
-                        day = day > 30 ? 30 : day;
-                        break;
-                    case 6:
-                        month = 7;
-                        break;
-                    case 7:
-                        month = 8;
-                        break;
-                    case 8:
-                        month = 9;
-                        day = day > 30 ? 30 : day;
-                        break;
-                    case 9:
-                        month = 10;
-                        break;
-                    case 10:
-                        month = 11;
-                        day = day > 30 ? 30 : day;
-                        break;
-                    case 11:
-                        month = 12;
-                        break;
-                    case 12:
-                        year += 1;
-                        month = 1;
-                        break;
-                }
-                Calendar nextPaymentCal = new GregorianCalendar(year, month - 1, day);
-                //nextPaymentCal.set(year, month - 1, day, 0, 0, 0);
-                nextPayment = nextPaymentCal.getTimeInMillis();
+            // Depending on what month it is, there will be different payment days.
+            switch (month) {
+                case 1:
+                    month = 2;
+
+                    if (isLeapYear && dayOffset < 2) {
+                        day = 29;
+                    } else if (dayOffset < 3) {
+                        day = 28;
+                    }
+
+                    break;
+
+                case 2:
+                    month = 3;
+
+                    day = 31 - dayOffset;
+
+                    break;
+
+                case 3:
+                    month = 4;
+
+                    if (dayOffset < 1) {
+                        day = 30;
+                    } else {
+                        day = 30 - (dayOffset - 1); // How does this work?...
+                    }
+
+                    /* Months that have less than 31 days get 1 deducted from their dayOffsets.
+                     * For example:
+                     * Loan is saved on the 30th of January, dayOffset in hence 1 (31 - 1).
+                     * February, day is set to either 29th or 28th depending on leap years.
+                     * March comes, day is set to march total days - dayOffset (31 - 1).
+                     * April comes, day is set to april total days - (dayOffset - 1) = 30 - (1 - 1) = 30.
+                     *
+                     * Another example:
+                     * Loan is saved march 25th, dayoffset = 6
+                     * april comes, day is set to 30 - (6 - 1) = 25
+                     * may comes, day is set to 31 - 6 = 25
+                     * june comes, day is set to 30 - (6 - 1) = 25
+                     * ... and so on
+                     */
+
+                    break;
+
+                case 4:
+                    month = 5;
+
+                    day = 31 - dayOffset;
+
+                    break;
+
+                case 5:
+                    month = 6;
+
+                    if (dayOffset < 1) {
+                        day = 30;
+                    } else {
+                        day = 30 - (dayOffset - 1);
+                    }
+
+                    break;
+
+                case 6:
+                    month = 7;
+
+                    day = 31 - dayOffset;
+
+                    break;
+
+                case 7:
+                    month = 8;
+
+                    day = 31 - dayOffset;
+
+                    break;
+
+                case 8:
+                    month = 9;
+
+                    if (dayOffset < 1) {
+                        day = 30;
+                    } else {
+                        day = 30 - (dayOffset - 1);
+                    }
+
+                    break;
+
+                case 9:
+                    month = 10;
+
+                    day = 31 - dayOffset;
+
+                    break;
+
+                case 10:
+                    month = 11;
+
+                    if (dayOffset < 1) {
+                        day = 30;
+                    } else {
+                        day = 30 - (dayOffset - 1);
+                    }
+
+                    break;
+
+                case 11:
+                    month = 12;
+
+                    day = 31 - dayOffset;
+
+                    break;
+
+                case 12:
+                    year += 1;
+                    month = 1;
+
+                    day = 31 - dayOffset;
+
+                    break;
             }
-            if (amount > 0) {
-                new SQLiteConnection().updateLoan(this);    // Updates the loan after while loop comes to an end.
-            } else {
-                System.out.println("Deleted expired loan");
-                new SQLiteConnection().deleteLoan(this);
-            }
+            Calendar nextPaymentCal = new GregorianCalendar(year, month - 1, day);
+            nextPayment = nextPaymentCal.getTimeInMillis();
+        }
+        if (amount > 0) {   // This means that the loan has been updated but there is still left to pay.
+
+            new SQLiteConnection().updateLoan(this);    // Updates the loan after while loop comes to an end.
+            System.out.println("Updated loan payments and amount.");
+        } else {            // Loop terminated due to loan amount being <= 0, delete the crap.
+
+            System.out.println("Deleted expired loan.");
+            new SQLiteConnection().deleteLoan(this);
         }
     }
 
@@ -234,6 +311,19 @@ public class Loan {
     }
 
     /**
+     * Setter of day offset of loans.
+     *
+     * @param newDayOffset of loan
+     * @return new day offset
+     */
+
+    @SuppressWarnings("unused")
+    public int setDayOffset(int newDayOffset) {
+        dayOffset = newDayOffset;
+        return dayOffset;
+    }
+
+    /**
      * Setter of bound to date of loan.
      *
      * @param newBoundTo of loan
@@ -307,6 +397,16 @@ public class Loan {
     }
 
     /**
+     * Getter of loan's day offset.
+     *
+     * @return day offset of loan
+     */
+
+    public int getDayOffset() {
+        return dayOffset;
+    }
+
+    /**
      * Getter of loan's bound to date.
      *
      * @return bound to date of loan
@@ -314,17 +414,5 @@ public class Loan {
 
     public long getBoundTo() {
         return boundTo;
-    }
-
-    /**
-     * Standard toString.
-     *
-     * @return string representation of loan
-     */
-
-    public String toString() {
-        return amount + " at " + interestRate + " % interest. Bound until " + boundTo + "\n" +
-                "Amortization is set to " + amortizationAmount + ".\n" +
-                "Next payment is due " + nextPayment;
     }
 }

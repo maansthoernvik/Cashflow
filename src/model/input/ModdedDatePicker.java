@@ -3,6 +3,10 @@ package model.input;
 import javafx.css.PseudoClass;
 import javafx.scene.control.DatePicker;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Calendar;
+
 /**
  * Created by MTs on 14/08/16.
  *
@@ -56,11 +60,17 @@ public class ModdedDatePicker extends DatePicker {
             pseudoClassStateChanged(error, false);
 
             return true;
-        } else {
-            pseudoClassStateChanged(error, true);
+        }
 
+        // TODO check if works...
+        Calendar cal = Calendar.getInstance();
+        if (getValue().isBefore(new Date(cal.getTimeInMillis()).toLocalDate())) {
+            pseudoClassStateChanged(error, true);
             return false;
         }
+
+        pseudoClassStateChanged(error, true);
+        return false;
     }
 
     /**

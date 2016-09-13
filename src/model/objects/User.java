@@ -134,6 +134,7 @@ public class User {
      * @return new id number
      */
 
+    @SuppressWarnings("usused")
     public int setId(int newId) {
         id = newId;
         return id;
@@ -146,6 +147,7 @@ public class User {
      * @return new username
      */
 
+    @SuppressWarnings("usused")
     public String setName(String newName) {
         name = newName;
         return name;

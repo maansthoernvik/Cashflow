@@ -51,7 +51,7 @@ public class SQLiteConnection {
             while (rs.next()) {
                 result.add(new Loan(rs.getInt("LoanID"), rs.getString("Name"), rs.getInt("Amount"),
                         rs.getDouble("InterestRate"), rs.getInt("AmortizationAmount"), rs.getLong("NextPayment"),
-                        rs.getLong("BoundTo")));
+                        rs.getInt("DayOffset"), rs.getLong("BoundTo")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -386,7 +386,7 @@ public class SQLiteConnection {
 
     public boolean insertLoan(Loan loan, int id) {
         String insert = "INSERT INTO Loans (Name, Amount, InterestRate, AmortizationAmount, " +
-                "NextPayment, BoundTo, UserID) VALUES (?, ?, ?, ?, ?, ?, ?);";
+                "NextPayment, DayOffset, BoundTo, UserID) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createInsertLoanPreparedStatement(conn, insert, loan, id)) {
@@ -418,8 +418,9 @@ public class SQLiteConnection {
         ps.setDouble(3, loan.getInterestRate());
         ps.setInt(4, loan.getAmortizationAmount());
         ps.setLong(5, loan.getNextPayment());
-        ps.setLong(6, loan.getBoundTo());
-        ps.setInt(7, id);
+        ps.setInt(6, loan.getDayOffset());
+        ps.setLong(7, loan.getBoundTo());
+        ps.setInt(8, id);
 
         return ps;
     }
@@ -433,7 +434,7 @@ public class SQLiteConnection {
 
     public boolean updateLoan(Loan loan) {
         String update = "UPDATE Loans SET Name = ?, Amount = ?, InterestRate = ?, AmortizationAmount = ?, " +
-                "NextPayment = ?, BoundTo = ? WHERE LoanID = ?;";
+                "NextPayment = ?, DayOffset = ?, BoundTo = ? WHERE LoanID = ?;";
 
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createUpdateLoanPreparedStatement(conn, update, loan)) {
@@ -464,8 +465,9 @@ public class SQLiteConnection {
         ps.setDouble(3, loan.getInterestRate());
         ps.setInt(4, loan.getAmortizationAmount());
         ps.setLong(5, loan.getNextPayment());
-        ps.setLong(6, loan.getBoundTo());
-        ps.setInt(7, loan.getId());
+        ps.setInt(6, loan.getDayOffset());
+        ps.setLong(7, loan.getBoundTo());
+        ps.setInt(8, loan.getId());
 
         return ps;
     }

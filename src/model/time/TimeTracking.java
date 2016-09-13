@@ -38,17 +38,20 @@ public class TimeTracking extends TimerTask {
     }
 
     /**
+     * Returns the day offset from the end of the month, as input it takes the days of a month.
      *
+     * @param maxDaysOfMonth total days of the current month
+     * @param dayOfMonth day of month selected
+     * @return integer of day offset between the end of month and the selected day
      */
 
-    public static int daysOfMonth() {
-        return 1;
+    public static int getDayOffset(int maxDaysOfMonth, int dayOfMonth) {
+        return maxDaysOfMonth - dayOfMonth;
     }
 
     /**
      * Updates the current date every x seconds when this class is instantiated, defined by how this class is used.
      */
-
 
     @Override
     public void run() {
