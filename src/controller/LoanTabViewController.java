@@ -9,7 +9,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.util.Calendar;
 
@@ -106,7 +105,7 @@ public class LoanTabViewController {
                     // If the value of NextPayment is greater than 86 400 000 milliseconds, the date is greater than
                     // epoch and the date shall be displayed. This is so since dates that are left empty are assigned
                     // the epoch value. Otherwise, the date is simply set to null and checkbox is selected.
-                    if (currentLoan.getNextPayment() < 86400001) {
+                    if (currentLoan.getNextPayment() > 86400000) {
                         dpNextPayment.setDisable(false);
                         chebNextPayment.setSelected(false);
                         dpNextPayment.setValue(new Date(currentLoan.getNextPayment()).toLocalDate());
@@ -116,7 +115,7 @@ public class LoanTabViewController {
                         dpNextPayment.setValue(null);
                     }
 
-                    if (currentLoan.getBoundTo() < 86400001) {
+                    if (currentLoan.getBoundTo() > 86400000) {
                         dpBoundTo.setDisable(false);
                         chebBoundTo.setSelected(false);
                         dpBoundTo.setValue(new Date(currentLoan.getBoundTo()).toLocalDate());

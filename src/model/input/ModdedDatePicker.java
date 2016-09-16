@@ -63,7 +63,7 @@ public class ModdedDatePicker extends DatePicker {
         }
 
         // TODO check if works...
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();  // Gets the current date.
         if (getValue().isBefore(new Date(cal.getTimeInMillis()).toLocalDate())) {
             pseudoClassStateChanged(error, true);
             return false;

@@ -80,155 +80,160 @@ public class Loan {
      */
 
     public void performPayments() {
-        while (nextPayment < TimeTracking.getCurrentDate() && amount > 0 && amortizationAmount > 0) {
-            System.out.println("Deducting amortization amount.");
+        // No use to enter payments if set to epoch or is amortization set to less than 1...
+        if (nextPayment > 86400000 && amortizationAmount > 0) {
 
-            // Deduct amortization amount.
-            amount -= amortizationAmount;
+            while (nextPayment < TimeTracking.getCurrentDate() && amount > 0) {
+                System.out.println("Deducting amortization amount of loan " + name);
 
-            // Change the next payment date by first getting the current one:
-            LocalDate nextPaymentDate = new Date(nextPayment).toLocalDate();
+                // Deduct amortization amount.
+                amount -= amortizationAmount;
 
-            int year = nextPaymentDate.getYear();           // Old next payment year.
-            int month = nextPaymentDate.getMonthValue();    // Old next payment month.
-            int day = nextPaymentDate.getDayOfMonth();      // Old next payment day.
+                // Change the next payment date by first getting the current one:
+                LocalDate nextPaymentDate = new Date(nextPayment).toLocalDate();
 
-            // Is it a leap year?
-            boolean isLeapYear = TimeTracking.isLeapYear(year);
+                int year = nextPaymentDate.getYear();           // Old next payment year.
+                int month = nextPaymentDate.getMonthValue();    // Old next payment month.
+                int day = nextPaymentDate.getDayOfMonth();      // Old next payment day.
 
-            // Depending on what month it is, there will be different payment days.
-            switch (month) {
-                case 1:
-                    month = 2;
+                // Is it a leap year?
+                boolean isLeapYear = TimeTracking.isLeapYear(year);
 
-                    if (isLeapYear && dayOffset < 2) {
-                        day = 29;
-                    } else if (dayOffset < 3) {
-                        day = 28;
-                    }
+                // Depending on what month it is, there will be different payment days.
+                switch (month) {
+                    case 1:
+                        month = 2;
 
-                    break;
+                        if (isLeapYear && dayOffset < 2) {
+                            day = 29;
+                        } else if (dayOffset < 3) {
+                            day = 28;
+                        }
 
-                case 2:
-                    month = 3;
+                        break;
 
-                    day = 31 - dayOffset;
+                    case 2:
+                        month = 3;
 
-                    break;
+                        day = 31 - dayOffset;
 
-                case 3:
-                    month = 4;
+                        break;
 
-                    if (dayOffset < 1) {
-                        day = 30;
-                    } else {
-                        day = 30 - (dayOffset - 1); // How does this work?...
-                    }
+                    case 3:
+                        month = 4;
 
-                    /* Months that have less than 31 days get 1 deducted from their dayOffsets.
-                     * For example:
-                     * Loan is saved on the 30th of January, dayOffset in hence 1 (31 - 1).
-                     * February, day is set to either 29th or 28th depending on leap years.
-                     * March comes, day is set to march total days - dayOffset (31 - 1).
-                     * April comes, day is set to april total days - (dayOffset - 1) = 30 - (1 - 1) = 30.
-                     *
-                     * Another example:
-                     * Loan is saved march 25th, dayoffset = 6
-                     * april comes, day is set to 30 - (6 - 1) = 25
-                     * may comes, day is set to 31 - 6 = 25
-                     * june comes, day is set to 30 - (6 - 1) = 25
-                     * ... and so on
-                     */
+                        if (dayOffset < 1) {
+                            day = 30;
+                        } else {
+                            day = 30 - (dayOffset - 1); // How does this work?...
+                        }
 
-                    break;
+                        /* Months that have less than 31 days get 1 deducted from their dayOffsets.
+                         * For example:
+                         * Loan is saved on the 30th of January, dayOffset in hence 1 (31 - 1).
+                         * February, day is set to either 29th or 28th depending on leap years.
+                         * March comes, day is set to march total days - dayOffset (31 - 1).
+                         * April comes, day is set to april total days - (dayOffset - 1) = 30 - (1 - 1) = 30.
+                         *
+                         * Another example:
+                         * Loan is saved march 25th, dayoffset = 6
+                         * april comes, day is set to 30 - (6 - 1) = 25
+                         * may comes, day is set to 31 - 6 = 25
+                         * june comes, day is set to 30 - (6 - 1) = 25
+                         * ... and so on
+                         */
 
-                case 4:
-                    month = 5;
+                        break;
 
-                    day = 31 - dayOffset;
+                    case 4:
+                        month = 5;
 
-                    break;
+                        day = 31 - dayOffset;
 
-                case 5:
-                    month = 6;
+                        break;
 
-                    if (dayOffset < 1) {
-                        day = 30;
-                    } else {
-                        day = 30 - (dayOffset - 1);
-                    }
+                    case 5:
+                        month = 6;
 
-                    break;
+                        if (dayOffset < 1) {
+                            day = 30;
+                        } else {
+                            day = 30 - (dayOffset - 1);
+                        }
 
-                case 6:
-                    month = 7;
+                        break;
 
-                    day = 31 - dayOffset;
+                    case 6:
+                        month = 7;
 
-                    break;
+                        day = 31 - dayOffset;
 
-                case 7:
-                    month = 8;
+                        break;
 
-                    day = 31 - dayOffset;
+                    case 7:
+                        month = 8;
 
-                    break;
+                        day = 31 - dayOffset;
 
-                case 8:
-                    month = 9;
+                        break;
 
-                    if (dayOffset < 1) {
-                        day = 30;
-                    } else {
-                        day = 30 - (dayOffset - 1);
-                    }
+                    case 8:
+                        month = 9;
 
-                    break;
+                        if (dayOffset < 1) {
+                            day = 30;
+                        } else {
+                            day = 30 - (dayOffset - 1);
+                        }
 
-                case 9:
-                    month = 10;
+                        break;
 
-                    day = 31 - dayOffset;
+                    case 9:
+                        month = 10;
 
-                    break;
+                        day = 31 - dayOffset;
 
-                case 10:
-                    month = 11;
+                        break;
 
-                    if (dayOffset < 1) {
-                        day = 30;
-                    } else {
-                        day = 30 - (dayOffset - 1);
-                    }
+                    case 10:
+                        month = 11;
 
-                    break;
+                        if (dayOffset < 1) {
+                            day = 30;
+                        } else {
+                            day = 30 - (dayOffset - 1);
+                        }
 
-                case 11:
-                    month = 12;
+                        break;
 
-                    day = 31 - dayOffset;
+                    case 11:
+                        month = 12;
 
-                    break;
+                        day = 31 - dayOffset;
 
-                case 12:
-                    year += 1;
-                    month = 1;
+                        break;
 
-                    day = 31 - dayOffset;
+                    case 12:
+                        year += 1;
+                        month = 1;
 
-                    break;
+                        day = 31 - dayOffset;
+
+                        break;
+                }
+                Calendar nextPaymentCal = new GregorianCalendar(year, month - 1, day);
+                nextPayment = nextPaymentCal.getTimeInMillis();
             }
-            Calendar nextPaymentCal = new GregorianCalendar(year, month - 1, day);
-            nextPayment = nextPaymentCal.getTimeInMillis();
-        }
-        if (amount > 0) {   // This means that the loan has been updated but there is still left to pay.
 
-            new SQLiteConnection().updateLoan(this);    // Updates the loan after while loop comes to an end.
-            System.out.println("Updated loan payments and amount.");
-        } else {            // Loop terminated due to loan amount being <= 0, delete the crap.
+            if (amount > 0) {   // This means that the loan has been updated but there is still left to pay.
 
-            System.out.println("Deleted expired loan.");
-            new SQLiteConnection().deleteLoan(this);
+                new SQLiteConnection().updateLoan(this);    // Updates the loan after while loop comes to an end.
+                System.out.println("Updated loan payments and amount of " + name);
+            } else {            // Loop terminated due to loan amount being <= 0, delete the crap.
+
+                System.out.println("Deleted expired loan " + name);
+                new SQLiteConnection().deleteLoan(this);
+            }
         }
     }
 
