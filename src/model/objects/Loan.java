@@ -81,7 +81,7 @@ public class Loan {
 
     public void performPayments() {
         // No use to enter payments if set to epoch or is amortization set to less than 1...
-        if (nextPayment > 86400000 && amortizationAmount > 0) {
+        if (nextPayment > 86400000 && nextPayment < TimeTracking.getCurrentDate() && amortizationAmount > 0) {
 
             while (nextPayment < TimeTracking.getCurrentDate() && amount > 0) {
                 System.out.println("Deducting amortization amount of loan " + name);
@@ -235,6 +235,7 @@ public class Loan {
                 new SQLiteConnection().deleteLoan(this);
             }
         }
+        System.out.println("No payments needed to be performed for " + name);
     }
 
     /**

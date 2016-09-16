@@ -58,6 +58,6 @@ public class TimeTracking extends TimerTask {
         Calendar cal = Calendar.getInstance();
         CURRENT_DATE = cal.getTimeInMillis();
 
-        System.out.println(new Date(cal.getTimeInMillis()).toString());     // For testing purposes.
+        //System.out.println(new Date(cal.getTimeInMillis()).toString());     // For testing purposes.
     }
 }

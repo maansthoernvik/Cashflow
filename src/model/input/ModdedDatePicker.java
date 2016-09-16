@@ -50,27 +50,27 @@ public class ModdedDatePicker extends DatePicker {
      */
 
     public boolean validate() {
+        Calendar cal = Calendar.getInstance();  // Gets the current date.
+        // If the value is null, its OK that just means that there is no set date, return true and set error to false.
         if (getValue() == null) {
             pseudoClassStateChanged(error, false);
 
             return true;
-        }
+            // If the date exists but is set to before todays date, return false, that shit's bad.
+        } else if (getValue().isBefore(new Date(cal.getTimeInMillis()).toLocalDate())) {
+            pseudoClassStateChanged(error, true);
 
-        if (getValue().toString().matches(regex.getRegex())) {
+            return false;
+            // matching regex? Well of course come on through!
+        } else if (getValue().toString().matches(regex.getRegex())) {
             pseudoClassStateChanged(error, false);
 
             return true;
-        }
-
-        // TODO check if works...
-        Calendar cal = Calendar.getInstance();  // Gets the current date.
-        if (getValue().isBefore(new Date(cal.getTimeInMillis()).toLocalDate())) {
+            // In any other case, what the actual fuck was entered. FALSE!
+        } else {
             pseudoClassStateChanged(error, true);
             return false;
         }
-
-        pseudoClassStateChanged(error, true);
-        return false;
     }
 
     /**
