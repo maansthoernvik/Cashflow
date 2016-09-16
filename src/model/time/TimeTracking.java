@@ -1,8 +1,9 @@
 package model.time;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.TimerTask;
-import java.sql.Date;
 
 /**
  * Created by MTs on 03/08/16.
@@ -13,6 +14,7 @@ import java.sql.Date;
 public class TimeTracking extends TimerTask {
 
     private static long CURRENT_DATE;
+    private static long LAST_SESSION = 0;
 
     /**
      * Getter of the current date.
@@ -23,6 +25,37 @@ public class TimeTracking extends TimerTask {
     @SuppressWarnings("unused")
     public static long getCurrentDate() {
         return CURRENT_DATE;
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    public static long getLastSession() {
+        return LAST_SESSION;
+    }
+
+    /**
+     *
+     * @param newCurrentDate
+     * @return
+     */
+
+    public static long setCurrentDate(long newCurrentDate) {
+        CURRENT_DATE = newCurrentDate;
+        System.out.println("Current date: " + CURRENT_DATE);
+        return CURRENT_DATE;
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    public static long setLastSession(long newLastSession) {
+        LAST_SESSION = newLastSession;
+        return LAST_SESSION;
     }
 
     /**
@@ -50,6 +83,27 @@ public class TimeTracking extends TimerTask {
     }
 
     /**
+     * This method determines, depending on two longs, how many month shifts have occured between the two. This number
+     * is then used by the top level caller to determine records to create of previous month's transactions.
+     *
+     * @param s
+     * @param e
+     * @return
+     */
+
+    public static int howManyMonthShifts(long s, long e) {
+        int shifts = 0;
+
+        LocalDate start = new Date(s).toLocalDate();
+        LocalDate end = new Date(e).toLocalDate();
+
+        int yearDiff = start.getYear() - end.getYear();
+        int monthDiff = start.getMonthValue() - end.getMonthValue();
+
+
+    }
+
+    /**
      * Updates the current date every x seconds when this class is instantiated, defined by how this class is used.
      */
 
@@ -57,7 +111,5 @@ public class TimeTracking extends TimerTask {
     public void run() {
         Calendar cal = Calendar.getInstance();
         CURRENT_DATE = cal.getTimeInMillis();
-
-        //System.out.println(new Date(cal.getTimeInMillis()).toString());     // For testing purposes.
     }
 }

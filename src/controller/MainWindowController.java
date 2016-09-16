@@ -6,6 +6,13 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
 import model.AccountManager;
+import model.objects.Expense;
+import model.objects.Food;
+import model.objects.Loan;
+import model.objects.Rent;
+import model.time.TimeTracking;
+
+import java.util.ArrayList;
 
 /**
  * Created by MTs on 06/08/16.
@@ -44,7 +51,42 @@ public class MainWindowController {
 
     @SuppressWarnings("unused")
     public void initialize() {
-        overviewTabViewController.refreshOverview();    // Load initial values into overview fields.
+        ArrayList<Loan> loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?",
+                AccountManager.getCurrentUser().getId());
+
+        // Check if new records of previous month's expenses need to be created.
+        int shifts = TimeTracking.howManyMonthShifts(TimeTracking.getLastSession(), TimeTracking.getCurrentDate());
+
+        // If new records need to be created, then all expenses need to be gotten first to create correct input.
+        if (shifts > 0) {
+            ArrayList<Expense> expenses = new SQLiteConnection().fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?",
+                    AccountManager.getCurrentUser().getId());
+
+            Rent rent = new SQLiteConnection().fetchRent("SELECT * FROM Rent WHERE UserID = ?" ,
+                    AccountManager.getCurrentUser().getId());
+
+            if (rent == null) {
+                rent = new Rent();
+            }
+
+            Food food = new SQLiteConnection().fetchFood("SELECT * FROM Food WHERE UserID = ?;",
+                    AccountManager.getCurrentUser().getId());
+
+            if (food == null) {
+                food = new Food();
+            }
+
+
+        }
+
+        // Make sure all loans have been "paid"...
+        loans.forEach(Loan::performPayments);
+
+        // Give user current DB records, everything should now be UTD.
+        AccountManager.getCurrentUser().populateUserFields();
+
+        // Load initial values into overview fields.
+        overviewTabViewController.refreshOverview();
 
         tabPane.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Tab> observable,
                                                                             Tab oldTab, Tab newTab) -> {

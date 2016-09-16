@@ -12,6 +12,10 @@ public class Rent {
 
     private int amount;
 
+    public Rent() {
+        this.amount = 0;
+    }
+
     /**
      * Initializes without an id, in case user has not specified a rent cost before - no entry available in DB.
      *
