@@ -5,7 +5,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import model.AccountManager;
-import model.SQLiteConnection;
 import model.objects.User;
 
 /**

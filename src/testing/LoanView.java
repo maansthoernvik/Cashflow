@@ -5,7 +5,7 @@
 //import model.objects.Loan;
 //import model.input.ModdedTextField;
 //import model.input.Regex;
-//import model.SQLiteConnection;
+//import controller.SQLiteConnection;
 //
 //import javafx.collections.FXCollections;
 //import javafx.collections.ObservableList;
