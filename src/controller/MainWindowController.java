@@ -84,27 +84,32 @@ public class MainWindowController {
 
                 ArrayList<Expense> expenses = new SQLiteConnection().fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?",
                         AccountManager.getCurrentUser().getId());
-
                 for (Expense expense : expenses) {
-
+                    if (expense.getEndDate() > currentDateShift) {
+                        expenseTotal += expense.getAmount();
+                    }
                 }
 
                 Rent rent = new SQLiteConnection().fetchRent("SELECT * FROM Rent WHERE UserID = ?",
                         AccountManager.getCurrentUser().getId());
-
                 if (rent == null) {
                     rent = new Rent();
                 }
 
                 Food food = new SQLiteConnection().fetchFood("SELECT * FROM Food WHERE UserID = ?;",
                         AccountManager.getCurrentUser().getId());
-
                 if (food == null) {
                     food = new Food();
                 }
+
+                total = loanTotal + expenseTotal + rent.getAmount() + food.getAmount();
+                System.out.println(total);
             }
 
         }
+
+        loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?",
+                AccountManager.getCurrentUser().getId());
 
         // Make sure all loans have been "paid"...
         loans.forEach(Loan::performPayments);
