@@ -55,6 +55,7 @@ public class TimeTracking extends TimerTask {
 
     public static long setLastSession(long newLastSession) {
         LAST_SESSION = newLastSession;
+        System.out.println("Last session: " + LAST_SESSION);
         return LAST_SESSION;
     }
 
@@ -86,21 +87,23 @@ public class TimeTracking extends TimerTask {
      * This method determines, depending on two longs, how many month shifts have occured between the two. This number
      * is then used by the top level caller to determine records to create of previous month's transactions.
      *
-     * @param s
-     * @param e
-     * @return
+     * @return positive integer of month shifts between two dates, negative number if the start is before the end
      */
 
-    public static int howManyMonthShifts(long s, long e) {
+    public static int howManyMonthShifts() {
         int shifts = 0;
 
-        LocalDate start = new Date(s).toLocalDate();
-        LocalDate end = new Date(e).toLocalDate();
+        LocalDate start = new Date(LAST_SESSION).toLocalDate();
+        LocalDate end = new Date(CURRENT_DATE).toLocalDate();
 
-        int yearDiff = start.getYear() - end.getYear();
-        int monthDiff = start.getMonthValue() - end.getMonthValue();
+        int yearDiff = end.getYear() - start.getYear() > 0 ? 12 * (end.getYear() - start.getYear()) : 0;
+        int monthDiff = end.getMonthValue() - start.getMonthValue();
 
+        shifts = yearDiff + monthDiff;
 
+        System.out.println("Month shifts: " + shifts);
+
+        return shifts;
     }
 
     /**

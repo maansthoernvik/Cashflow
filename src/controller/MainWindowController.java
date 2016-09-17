@@ -54,8 +54,9 @@ public class MainWindowController {
         ArrayList<Loan> loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?",
                 AccountManager.getCurrentUser().getId());
 
-        // Check if new records of previous month's expenses need to be created.
-        int shifts = TimeTracking.howManyMonthShifts(TimeTracking.getLastSession(), TimeTracking.getCurrentDate());
+        // Check if new records of previous month's expenses need to be created. This checks the time of the last
+        // session against the current date.
+        int shifts = TimeTracking.howManyMonthShifts();
 
         // If new records need to be created, then all expenses need to be gotten first to create correct input.
         if (shifts > 0) {
