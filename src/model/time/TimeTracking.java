@@ -3,6 +3,7 @@ package model.time;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.TimerTask;
 
 /**
@@ -34,6 +35,22 @@ public class TimeTracking extends TimerTask {
 
     public static long getLastSession() {
         return LAST_SESSION;
+    }
+
+    /**
+     *
+     * @return
+     */
+
+    public static long getLastSessionFirstDayOfMonth() {
+        LocalDate date = new Date(LAST_SESSION).toLocalDate();
+        int day = date.getDayOfMonth();
+        date = date.minusDays(day - 1);
+        Calendar cal = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
+
+        System.out.println(cal.getTime());
+
+        return cal.getTimeInMillis();
     }
 
     /**
@@ -87,7 +104,7 @@ public class TimeTracking extends TimerTask {
      * This method determines, depending on two longs, how many month shifts have occured between the two. This number
      * is then used by the top level caller to determine records to create of previous month's transactions.
      *
-     * @return positive integer of month shifts between two dates, negative number if the start is before the end
+     * @return positive integer of month shifts between two dates, negative or zero if the start is before the end
      */
 
     public static int howManyMonthShifts() {

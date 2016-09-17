@@ -14,6 +14,8 @@ import model.time.TimeTracking;
 
 import java.util.ArrayList;
 
+import static oracle.jrockit.jfr.events.Bits.intValue;
+
 /**
  * Created by MTs on 06/08/16.
  *
@@ -58,25 +60,49 @@ public class MainWindowController {
         // session against the current date.
         int shifts = TimeTracking.howManyMonthShifts();
 
-        // If new records need to be created, then all expenses need to be gotten first to create correct input.
+        // If shifts is bigger then 0, then there needs to be created new records.
         if (shifts > 0) {
-            ArrayList<Expense> expenses = new SQLiteConnection().fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?",
-                    AccountManager.getCurrentUser().getId());
+            // This is done once to be able to track the progress up until today's date and not add stuff that has an
+            // earlier end date.
+            long currentDateShift = TimeTracking.getLastSession();
 
-            Rent rent = new SQLiteConnection().fetchRent("SELECT * FROM Rent WHERE UserID = ?" ,
-                    AccountManager.getCurrentUser().getId());
+            // For every shift of month, one record needs to be inserted.
+            for (int i = shifts; i > 0; i--) {
+                int total = 0, loanTotal = 0, expenseTotal = 0;     // Declaring totals for this iteration.
 
-            if (rent == null) {
-                rent = new Rent();
+                // Start by adding loan values to loanTotal:
+                for (Loan loan : loans) {
+                    // Loan amount might be zero, in which case do not add it.
+                    if (loan.getAmount() > 0) {
+                        // Add the loans amounts to total.
+                        loanTotal += intValue((loan.getAmount() * loan.getInterestRate()) +
+                                loan.getAmortizationAmount());
+                        // Deducts amortization amount for next iteration of shift-loop (top level loop).
+                        loan.setAmount(loan.getAmount() - loan.getAmortizationAmount());
+                    }
+                }
+
+                ArrayList<Expense> expenses = new SQLiteConnection().fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?",
+                        AccountManager.getCurrentUser().getId());
+
+                for (Expense expense : expenses) {
+
+                }
+
+                Rent rent = new SQLiteConnection().fetchRent("SELECT * FROM Rent WHERE UserID = ?",
+                        AccountManager.getCurrentUser().getId());
+
+                if (rent == null) {
+                    rent = new Rent();
+                }
+
+                Food food = new SQLiteConnection().fetchFood("SELECT * FROM Food WHERE UserID = ?;",
+                        AccountManager.getCurrentUser().getId());
+
+                if (food == null) {
+                    food = new Food();
+                }
             }
-
-            Food food = new SQLiteConnection().fetchFood("SELECT * FROM Food WHERE UserID = ?;",
-                    AccountManager.getCurrentUser().getId());
-
-            if (food == null) {
-                food = new Food();
-            }
-
 
         }
 
