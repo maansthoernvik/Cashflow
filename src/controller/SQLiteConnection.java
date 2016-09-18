@@ -5,6 +5,7 @@ import org.sqlite.SQLiteConfig;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -150,6 +151,74 @@ public class SQLiteConnection {
 
     private PreparedStatement createSelectPreparedStatement(Connection conn, String query, int id)
             throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, id);
+
+        return ps;
+    }
+
+    /**
+     * Creates a hashmap of all historical records of previous months transactions. Uses string identifiers for the
+     * different types of records.
+     *
+     * @param id of the currently signed in user
+     * @return a hashmap of all records
+     */
+
+    public HashMap<String, ArrayList<Record>> fetchRecords(int id) {
+        HashMap<String, ArrayList<Record>> result = new HashMap<>();
+
+        String query = "SELECT * FROM LoanRecords WHERE UserID = ?;";
+        result.put("LoanRecords", fetchRecord(query, id));
+
+        query = "SELECT * FROM ExpenseRecords WHERE UserID = ?;";
+        result.put("ExpenseRecords", fetchRecord(query, id));
+
+        query = "SELECT * FROM RentRecords WHERE UserID = ?;";
+        result.put("RentRecords", fetchRecord(query, id));
+
+        query = "SELECT * FROM FoodRecords WHERE UserID = ?;";
+        result.put("FoodRecords", fetchRecord(query, id));
+
+        return result;
+    }
+
+    /**
+     * Fetches all of the loan historical records.
+     *
+     * @param query to fetch record
+     * @param id of currently logged in user
+     * @return array list of records
+     */
+
+    private ArrayList<Record> fetchRecord(String query, int id) {
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createFetchRecordsPreparedStatement(conn, query, id);
+             ResultSet rs = ps.executeQuery()) {
+            ArrayList<Record> result = new ArrayList<>();
+
+            while (rs.next()) {
+                result.add(new Record(rs.getInt("Amount"), rs.getLong("Date")));
+            }
+
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Prepares parameters for a fetch records prepared statement.
+     *
+     * @param conn connection to DB
+     * @param query to be prepared with parameters
+     * @param id of user logged in
+     * @return PreparedStatement object prepared with parameters
+     */
+
+    public PreparedStatement createFetchRecordsPreparedStatement(Connection conn, String query, int id) throws
+            SQLException {
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setInt(1, id);
 
