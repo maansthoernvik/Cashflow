@@ -49,12 +49,6 @@ public class User {
 
     public void addAllLoans() {
         loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
-
-        // Loan payment dates are checked upon retrieval to see if amortization amounts need to be deducted in order
-        // to display the correct amounts.
-//        loans.forEach(Loan::performPayments);
-//
-//        loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
     }
 
     /**

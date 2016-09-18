@@ -158,7 +158,6 @@ public class LoanTabViewController {
                     0);
 
             // Offset between end of month and day of month is calculated.
-            // TODO check if works.
             int dayOffset = TimeTracking.getDayOffset(nextPaymentCal.getActualMaximum(Calendar.DAY_OF_MONTH),
                     nextPaymentCal.get(Calendar.DAY_OF_MONTH));
 

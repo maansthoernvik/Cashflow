@@ -48,15 +48,16 @@ public class TimeTracking extends TimerTask {
         date = date.minusDays(day - 1);
         Calendar cal = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
 
-        System.out.println(cal.getTime());
+        System.out.println("First day of last session month is: " +  cal.getTime());
 
         return cal.getTimeInMillis();
     }
 
     /**
+     * Setter for CURRENT_DATE.
      *
-     * @param newCurrentDate
-     * @return
+     * @param newCurrentDate new long date
+     * @return new CURRENT_DATE
      */
 
     public static long setCurrentDate(long newCurrentDate) {
@@ -66,14 +67,166 @@ public class TimeTracking extends TimerTask {
     }
 
     /**
+     * Setter for LAST_SESSION.
      *
-     * @return
+     * @param newLastSession new long date
+     * @return new LAST_SESSION
      */
 
     public static long setLastSession(long newLastSession) {
         LAST_SESSION = newLastSession;
         System.out.println("Last session: " + LAST_SESSION);
         return LAST_SESSION;
+    }
+
+    /**
+     * Adds one month to a date represented as a long.
+     *
+     * @param input long to be increased
+     * @param dayOffset int representing current dayOffset of object calling function. If < 0, no dayOffset exists and a
+     * new one will be created.
+     */
+
+    public static long addOneMonth(long input, int dayOffset) {
+        LocalDate date = new Date(input).toLocalDate();
+
+        int year = date.getYear();
+        int month = date.getMonthValue();
+        int day = date.getDayOfMonth();
+
+        // Input dayOffset < 0 means, no dayOffset exists so make your own.
+        if (dayOffset < 0) {
+            Calendar cal = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
+
+            dayOffset = getDayOffset(cal.getActualMaximum(Calendar.DAY_OF_MONTH), day);
+        }
+
+        // Depending on what month it is, there will be different payment days.
+        switch (month) {
+            case 1:
+                month = 2;
+
+                if (isLeapYear(year) && dayOffset < 2) {
+                    day = 29;
+                } else if (dayOffset < 3) {
+                    day = 28;
+                } else {
+                    day = 28 - (dayOffset - 3);
+                }
+
+                break;
+
+            case 2:
+                month = 3;
+
+                day = 31 - dayOffset;
+
+                break;
+
+            case 3:
+                month = 4;
+
+                if (dayOffset < 1) {
+                    day = 30;
+                } else {
+                    day = 30 - (dayOffset - 1); // How does this work?...
+                }
+
+                /* Months that have less than 31 days get 1 deducted from their dayOffsets.
+                 * For example:
+                 * Loan is saved on the 30th of January, dayOffset in hence 1 (31 - 1).
+                 * February, day is set to either 29th or 28th depending on leap years.
+                 * March comes, day is set to march total days - dayOffset (31 - 1).
+                 * April comes, day is set to april total days - (dayOffset - 1) = 30 - (1 - 1) = 30.
+                 *
+                 * Another example:
+                 * Loan is saved march 25th, dayoffset = 6
+                 * april comes, day is set to 30 - (6 - 1) = 25
+                 * may comes, day is set to 31 - 6 = 25
+                 * june comes, day is set to 30 - (6 - 1) = 25
+                 * ... and so on
+                 */
+
+                break;
+
+            case 4:
+                month = 5;
+
+                day = 31 - dayOffset;
+
+                break;
+
+            case 5:
+                month = 6;
+
+                if (dayOffset < 1) {
+                    day = 30;
+                } else {
+                    day = 30 - (dayOffset - 1);
+                }
+
+                break;
+
+            case 6:
+                month = 7;
+
+                day = 31 - dayOffset;
+
+                break;
+
+            case 7:
+                month = 8;
+
+                day = 31 - dayOffset;
+
+                break;
+
+            case 8:
+                month = 9;
+
+                if (dayOffset < 1) {
+                    day = 30;
+                } else {
+                    day = 30 - (dayOffset - 1);
+                }
+
+                break;
+
+            case 9:
+                month = 10;
+
+                day = 31 - dayOffset;
+
+                break;
+
+            case 10:
+                month = 11;
+
+                if (dayOffset < 1) {
+                    day = 30;
+                } else {
+                    day = 30 - (dayOffset - 1);
+                }
+
+                break;
+
+            case 11:
+                month = 12;
+
+                day = 31 - dayOffset;
+
+                break;
+
+            case 12:
+                year += 1;
+                month = 1;
+
+                day = 31 - dayOffset;
+
+                break;
+        }
+        Calendar cal = new GregorianCalendar(year, month - 1, day);
+        return cal.getTimeInMillis();
     }
 
     /**
@@ -97,6 +250,15 @@ public class TimeTracking extends TimerTask {
      */
 
     public static int getDayOffset(int maxDaysOfMonth, int dayOfMonth) {
+        if (maxDaysOfMonth < 31) {
+            if (maxDaysOfMonth == 30) {
+                return maxDaysOfMonth - (dayOfMonth - 1);
+            } else if (maxDaysOfMonth == 29) {
+                return maxDaysOfMonth - (dayOfMonth - 2);
+            } else if (maxDaysOfMonth == 28) {
+                return maxDaysOfMonth - (dayOfMonth - 3);
+            }
+        }
         return maxDaysOfMonth - dayOfMonth;
     }
 
@@ -108,7 +270,7 @@ public class TimeTracking extends TimerTask {
      */
 
     public static int howManyMonthShifts() {
-        int shifts = 0;
+        int shifts;
 
         LocalDate start = new Date(LAST_SESSION).toLocalDate();
         LocalDate end = new Date(CURRENT_DATE).toLocalDate();
