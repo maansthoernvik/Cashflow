@@ -1,15 +1,16 @@
 package controller;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-
 import model.AccountManager;
 import model.objects.*;
 import model.time.TimeTracking;
 
-import java.util.ArrayList;
+import javafx.fxml.FXML;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import static oracle.jrockit.jfr.events.Bits.intValue;
 
 /**
@@ -68,10 +69,12 @@ public class LoginController {
 
                 loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?",
                         AccountManager.getCurrentUser().getId());
+                ArrayList<Expense> expenses = new SQLiteConnection().fetchExpenses(
+                        "SELECT * FROM Expenses WHERE UserID = ?", AccountManager.getCurrentUser().getId());
 
-                // This is done once to be able to track the progress up until today's date and not add stuff that has an
-                // earlier end date.
-                long currentDateShift = TimeTracking.getLastSession();
+                // This is done once to be able to track the progress up until today's date and not add stuff that has
+                // an earlier end date.
+                long currentDateShift = TimeTracking.getLastSessionFirstDayOfMonth();
 
                 // For every shift of month, one record needs to be inserted.
                 for (int i = shifts; i > 0; i--) {
@@ -90,8 +93,6 @@ public class LoginController {
                         }
                     }
 
-                    ArrayList<Expense> expenses = new SQLiteConnection().fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?",
-                            AccountManager.getCurrentUser().getId());
                     for (Expense expense : expenses) {
                         if (expense.getEndDate() > currentDateShift) {
                             expenseTotal += expense.getAmount();
@@ -110,12 +111,22 @@ public class LoginController {
                         food = new Food();
                     }
 
+                    // Add totals to total variable, this amount will be saved.
                     total = loanTotal + expenseTotal + rent.getAmount() + food.getAmount();
-                    System.out.println(total);
+
+                    // Step forward one month in time. -1 is for "no specific dayOffset".
+                    LocalDate currentDate = new Date(currentDateShift).toLocalDate();   // Used for record creation.
+                    currentDateShift = TimeTracking.addOneMonth(currentDateShift, -1);
+
+                    // TODO something with the total besides printing it.
+                    System.out.println("The month of " + currentDate.getYear() + "-" + currentDate.getMonthValue() +
+                            " had the following total: " + total);
+
                 }
 
             }
 
+            // Refresh loans arraylist in case the above DB record creation needed to be performed.
             loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?",
                     AccountManager.getCurrentUser().getId());
 

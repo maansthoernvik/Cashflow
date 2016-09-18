@@ -19,9 +19,9 @@ import java.util.Timer;
 public class ChillBillsDesktop extends Application {
 
     /**
-     * Mejn
+     * Mejn sabb-rutin.
      *
-     * @param args
+     * @param args command line arguments
      */
 
     public static void main(String[] args) {
@@ -32,8 +32,8 @@ public class ChillBillsDesktop extends Application {
      * Overridden method from JavaFX 8. Starts the application with a new stage. Loads the account manager to show the
      * login view.
      *
-     * @param primaryStage
-     * @throws Exception
+     * @param primaryStage of the application
+     * @throws Exception in case of error
      */
 
     @Override

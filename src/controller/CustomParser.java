@@ -35,7 +35,6 @@ public class CustomParser {
                 // if the line read matches the LAST_SESSION regex, put it in lastSession.
                 if (readLine.matches(Regex.LAST_SESSION.getRegex())) {
                     lastSession = Long.parseLong(readLine);
-                    System.out.println("Last session: " + lastSession);
                 }
             }
 
