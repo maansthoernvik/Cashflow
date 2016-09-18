@@ -46,7 +46,9 @@ public class TimeTracking extends TimerTask {
         LocalDate date = new Date(LAST_SESSION).toLocalDate();
         int day = date.getDayOfMonth();
         date = date.minusDays(day - 1);
-        Calendar cal = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
+        // The hour of day is set to 01:00:00 since this is central european time, epoch is counted from Greenwich (+0)
+        // which is one hour behind.
+        Calendar cal = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth(), 1, 0, 0);
 
         System.out.println("First day of last session month is: " +  cal.getTime());
 

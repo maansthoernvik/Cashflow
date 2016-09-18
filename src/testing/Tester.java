@@ -5,6 +5,7 @@ import model.objects.Record;
 import model.time.TimeTracking;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -13,25 +14,29 @@ public class Tester {
 
     public static void main(String[] args) {
 
-        SQLiteConnection sql = new SQLiteConnection();
+        TimeTracking.setLastSession(new Long(2142412414));
+        System.out.println(new Date(TimeTracking.getLastSession()).toLocalDate());
+        System.out.println(new Date(TimeTracking.getLastSessionFirstDayOfMonth()).toLocalDate());
 
-        HashMap<String, ArrayList<Record>> res = sql.fetchRecords(1);
-
-        System.out.println("Do loan records exist?    : " + res.containsKey("LoanRecords"));
-        System.out.println("Do expense records exist? : " + res.containsKey("ExpenseRecords"));
-        System.out.println("Do rent records exist?    : " + res.containsKey("RentRecords"));
-        System.out.println("Do food records exist?    : " + res.containsKey("FoodRecords"));
-
-        System.out.println("");
-
-        Set<String> set = res.keySet();
-
-        for (String s : set) {
-            ArrayList<Record> arr = res.get(s);
-            for (Record r : arr) {
-                System.out.println(s + " : " + r.getAmount() + " / " + r.getDate());
-            }
-        }
+//        SQLiteConnection sql = new SQLiteConnection();
+//
+//        HashMap<String, ArrayList<Record>> res = sql.fetchRecords(1);
+//
+//        System.out.println("Do loan records exist?    : " + res.containsKey("LoanRecords"));
+//        System.out.println("Do expense records exist? : " + res.containsKey("ExpenseRecords"));
+//        System.out.println("Do rent records exist?    : " + res.containsKey("RentRecords"));
+//        System.out.println("Do food records exist?    : " + res.containsKey("FoodRecords"));
+//
+//        System.out.println("");
+//
+//        Set<String> set = res.keySet();
+//
+//        for (String s : set) {
+//            ArrayList<Record> arr = res.get(s);
+//            for (Record r : arr) {
+//                System.out.println(s + " : " + r.getAmount() + " / " + r.getDate());
+//            }
+//        }
 
 
 //        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:chillbills_master");

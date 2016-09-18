@@ -147,14 +147,14 @@ public class LoanTabViewController {
                     dpNextPayment.getValue();
             Calendar nextPaymentCal = Calendar.getInstance();
             nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
-                    nextPaymentDate.getDayOfMonth(), 0, 0, 0);
+                    nextPaymentDate.getDayOfMonth(), 1, 0, 0);
 
             // 1. Create a local date.
             // 2. Create Calendar instance.
             // 3. Set Calendar instance to date gotten from datepicker.
             LocalDate boundToDate = dpBoundTo.getValue() == null ? new Date(0).toLocalDate() : dpBoundTo.getValue();
             Calendar boundToCal = Calendar.getInstance();
-            boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 0, 0,
+            boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 1, 0,
                     0);
 
             // Offset between end of month and day of month is calculated.
@@ -193,11 +193,11 @@ public class LoanTabViewController {
                     dpNextPayment.getValue();
             Calendar nextPaymentCal = Calendar.getInstance();
             nextPaymentCal.set(nextPaymentDate.getYear(), nextPaymentDate.getMonthValue() - 1,
-                    nextPaymentDate.getDayOfMonth(), 0, 0, 0);
+                    nextPaymentDate.getDayOfMonth(), 1, 0, 0);
 
             LocalDate boundToDate = dpBoundTo.getValue() == null ? new Date(0).toLocalDate() : dpBoundTo.getValue();
             Calendar boundToCal = Calendar.getInstance();
-            boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 0, 0, 0);
+            boundToCal.set(boundToDate.getYear(), boundToDate.getMonthValue() - 1, boundToDate.getDayOfMonth(), 1, 0, 0);
 
             int dayOffset = TimeTracking.getDayOffset(nextPaymentCal.getActualMaximum(Calendar.DAY_OF_MONTH),
                     nextPaymentCal.get(Calendar.DAY_OF_MONTH));
