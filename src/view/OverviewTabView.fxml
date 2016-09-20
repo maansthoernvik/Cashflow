@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ScrollPane?>
 
 <?import javafx.scene.text.Font?>
 
@@ -16,135 +17,142 @@
     Depth of node hierarchy is denoted with levels, 0 being top.-->
 
 <!--Start of Level 0-->
-<VBox xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controller.OverviewTabViewController" nodeOrientation="LEFT_TO_RIGHT">
-    <!--Start of Level 1-->
-    <GridPane alignment="CENTER" hgap="3" vgap="5" nodeOrientation="LEFT_TO_RIGHT">
-        <padding><Insets bottom="25" left="25" right="25" top="25" /></padding>
-
-        <!--Start of Level 2-->
-        <!--Grid row 0-->
-        <Label text="Your total bills" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="0"
-               GridPane.halignment="LEFT" GridPane.valignment="BOTTOM">
-            <font>
-                <Font size="25" />
-            </font>
-        </Label>
-        <!--Grid row 1-->
-        <HBox alignment="BOTTOM_LEFT" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1">
-            <TextField fx:id="tfTotal" alignment="CENTER_RIGHT" maxHeight="50.0" maxWidth="300.0" minHeight="50.0"
-                       minWidth="300">
-                <font>
-                    <Font size="35"/>
-                </font>
-            </TextField>
-            <Label text="kr/month">
-                <padding><Insets left="5" /></padding>
+<?import javafx.scene.chart.BarChart?>
+<ScrollPane fx:id="scrollPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.OverviewTabViewController" fitToWidth="true">
+    <VBox fx:id="vbox" alignment="CENTER">
+        <!--Start of Level 1-->
+        <GridPane fx:id="gridPane" alignment="CENTER" hgap="3" vgap="5" nodeOrientation="LEFT_TO_RIGHT">
+            <padding><Insets bottom="25" left="25" right="25" top="25" /></padding>
+            <!--Start of Level 2-->
+            <!--Grid row 0-->
+            <Label text="Your total bills" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="0"
+                   GridPane.halignment="LEFT" GridPane.valignment="BOTTOM">
                 <font>
                     <Font size="25" />
                 </font>
             </Label>
-        </HBox>
-        <!--Grid row 2-->
-        <Separator GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="2">
-            <padding><Insets top="10" bottom="10" /></padding>
-        </Separator>
-        <!--Grid row 3-->
-        <VBox GridPane.columnIndex="0" GridPane.rowIndex="3">
-            <Label text="Loans">
-                <font>
-                    <Font size="18" />
-                </font>
-            </Label>
-            <HBox alignment="BOTTOM_LEFT">
-                <TextField fx:id="tfLoans" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
-                           minWidth="200">
+            <!--Grid row 1-->
+            <HBox alignment="BOTTOM_LEFT" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                <TextField fx:id="tfTotal" alignment="CENTER_RIGHT" maxHeight="50.0" maxWidth="300.0" minHeight="50.0"
+                           minWidth="300">
                     <font>
-                        <Font size="20"/>
+                        <Font size="35"/>
                     </font>
                 </TextField>
                 <Label text="kr/month">
                     <padding><Insets left="5" /></padding>
                     <font>
-                        <Font size="18" />
+                        <Font size="25" />
                     </font>
                 </Label>
             </HBox>
-        </VBox>
+            <!--Grid row 2-->
+            <Separator GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="2">
+                <padding><Insets top="10" bottom="10" /></padding>
+            </Separator>
+            <!--Grid row 3-->
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="3">
+                <Label text="Loans">
+                    <font>
+                        <Font size="18" />
+                    </font>
+                </Label>
+                <HBox alignment="BOTTOM_LEFT">
+                    <TextField fx:id="tfLoans" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
+                               minWidth="200">
+                        <font>
+                            <Font size="20"/>
+                        </font>
+                    </TextField>
+                    <Label text="kr/month">
+                        <padding><Insets left="5" /></padding>
+                        <font>
+                            <Font size="18" />
+                        </font>
+                    </Label>
+                </HBox>
+            </VBox>
 
-        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
-            <padding><Insets left="20"/></padding>
-            <Label text="Living">
-                <font>
-                    <Font size="18" />
-                </font>
-            </Label>
-            <HBox alignment="BOTTOM_LEFT">
-                <TextField fx:id="tfRent" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
-                           minWidth="200">
-                    <font>
-                        <Font size="20"/>
-                    </font>
-                </TextField>
-                <Label text="kr/month">
-                    <padding><Insets left="5" /></padding>
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <padding><Insets left="20"/></padding>
+                <Label text="Living">
                     <font>
                         <Font size="18" />
                     </font>
                 </Label>
-            </HBox>
-        </VBox>
+                <HBox alignment="BOTTOM_LEFT">
+                    <TextField fx:id="tfRent" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
+                               minWidth="200">
+                        <font>
+                            <Font size="20"/>
+                        </font>
+                    </TextField>
+                    <Label text="kr/month">
+                        <padding><Insets left="5" /></padding>
+                        <font>
+                            <Font size="18" />
+                        </font>
+                    </Label>
+                </HBox>
+            </VBox>
 
-        <VBox GridPane.columnIndex="2" GridPane.rowIndex="3">
-            <padding><Insets left="20"/></padding>
-            <Label text="Food">
-                <font>
-                    <Font size="18" />
-                </font>
-            </Label>
-            <HBox alignment="BOTTOM_LEFT">
-                <TextField fx:id="tfFood" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
-                           minWidth="200">
-                    <font>
-                        <Font size="20"/>
-                    </font>
-                </TextField>
-                <Label text="kr/month">
-                    <padding><Insets left="5" /></padding>
+            <VBox GridPane.columnIndex="2" GridPane.rowIndex="3">
+                <padding><Insets left="20"/></padding>
+                <Label text="Food">
                     <font>
                         <Font size="18" />
                     </font>
                 </Label>
-            </HBox>
-        </VBox>
-        <!--Grid row 4-->
-        <VBox GridPane.columnIndex="0" GridPane.rowIndex="4">
-            <Label text="Other">
-                <font>
-                    <Font size="18" />
-                </font>
-            </Label>
-            <HBox alignment="BOTTOM_LEFT">
-                <TextField fx:id="tfExpenses" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
-                           minWidth="200">
-                    <font>
-                        <Font size="20"/>
-                    </font>
-                </TextField>
-                <Label text="kr/month">
-                    <padding><Insets left="5" /></padding>
+                <HBox alignment="BOTTOM_LEFT">
+                    <TextField fx:id="tfFood" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
+                               minWidth="200">
+                        <font>
+                            <Font size="20"/>
+                        </font>
+                    </TextField>
+                    <Label text="kr/month">
+                        <padding><Insets left="5" /></padding>
+                        <font>
+                            <Font size="18" />
+                        </font>
+                    </Label>
+                </HBox>
+            </VBox>
+            <!--Grid row 4-->
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="4">
+                <Label text="Other">
                     <font>
                         <Font size="18" />
                     </font>
                 </Label>
-            </HBox>
-        </VBox>
-        <!--Grid row 5-->
-        <Separator GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="5">
-            <padding><Insets top="10" bottom="10" /></padding>
-        </Separator>
-        <!--End of Level 2-->
-    </GridPane>
-    <!--End of Level 1-->
-</VBox>
+                <HBox alignment="BOTTOM_LEFT">
+                    <TextField fx:id="tfExpenses" alignment="CENTER_RIGHT" maxHeight="40.0" maxWidth="200.0" minHeight="40.0"
+                               minWidth="200">
+                        <font>
+                            <Font size="20"/>
+                        </font>
+                    </TextField>
+                    <Label text="kr/month">
+                        <padding><Insets left="5" /></padding>
+                        <font>
+                            <Font size="18" />
+                        </font>
+                    </Label>
+                </HBox>
+            </VBox>
+            <!--Grid row 5-->
+            <Separator GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="5">
+                <padding><Insets top="10" bottom="10" /></padding>
+            </Separator>
+            <!--End of Level 2-->
+        </GridPane>
+        <!--End of Level 1-->
+        <Label text="History" >
+            <font>
+                <Font size="25" />
+            </font>
+        </Label>
+    </VBox>
+</ScrollPane>
 <!--End of Level 0-->

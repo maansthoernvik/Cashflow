@@ -30,6 +30,9 @@ public class Tester {
         System.out.println(cal.getTime());
         TimeTracking.setCurrentDate(cal.getTimeInMillis());
 
+        String hello = new Date(0).toLocalDate().getMonth().toString();
+
+        System.out.println(hello.toLowerCase());
 
         // ZIS IS ZE TEST!
         //TestInsert.testRecord();

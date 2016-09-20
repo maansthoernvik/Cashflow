@@ -55,6 +55,7 @@ public class MainWindowController {
     public void initialize() {
         // Load initial values into overview fields.
         overviewTabViewController.refreshOverview();
+        overviewTabViewController.createChart();
 
         tabPane.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Tab> observable,
                                                                             Tab oldTab, Tab newTab) -> {
