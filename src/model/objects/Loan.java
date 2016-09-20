@@ -4,9 +4,6 @@ import controller.SQLiteConnection;
 import model.time.TimeTracking;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  * Created by MTs on 03/08/16.
@@ -82,16 +79,18 @@ public class Loan {
     public void performPayments() {
         // No use to enter payments if set to epoch or is amortization set to less than 1...
         if (nextPayment > 86400000 && nextPayment < TimeTracking.getCurrentDate() && amortizationAmount > 0) {
-
+            System.out.println("Payments need to be performed for loan " + name + ". NextPayment was " +
+                    new Date(nextPayment).toLocalDate());
             while (nextPayment < TimeTracking.getCurrentDate() && amount > 0) {
-                System.out.println("Deducting amortization amount of loan " + name);
+                System.out.println("Deducting amortization amount of loan " + name + ".");
 
                 // Deduct amortization amount.
                 amount -= amortizationAmount;
 
-                // TODO check if works.
                 nextPayment = TimeTracking.addOneMonth(nextPayment, dayOffset);
             }
+
+            System.out.println("Payments performed. NextPayment is now " + new Date(nextPayment).toLocalDate());
 
             /* ************** *
              * Loop broken!!! *
@@ -100,14 +99,14 @@ public class Loan {
             if (amount > 0) {   // This means that the loan has been updated but there is still left to pay.
 
                 new SQLiteConnection().updateLoan(this);    // Updates the loan after while loop comes to an end.
-                System.out.println("Updated loan payments and amount of " + name);
+                System.out.println("Updated loan " + name);
             } else {            // Loop terminated due to loan amount being <= 0, delete the crap.
 
-                System.out.println("Deleted expired loan " + name);
+                System.out.println("Deleted loan " + name);
                 new SQLiteConnection().deleteLoan(this);
             }
         } else {
-            System.out.println("No payments needed to be performed for " + name);
+            System.out.println("No payments needed to be performed for loan " + name);
         }
     }
 

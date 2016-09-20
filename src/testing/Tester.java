@@ -32,7 +32,7 @@ public class Tester {
 
 
         // ZIS IS ZE TEST!
-        TestInsert.testRecord();
+        //TestInsert.testRecord();
 
 
 //        SQLiteConnection sql = new SQLiteConnection();
