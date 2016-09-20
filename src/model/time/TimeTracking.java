@@ -29,8 +29,10 @@ public class TimeTracking extends TimerTask {
     }
 
     /**
+     * Returns the value of LAST_SESSION, a variable containing information about when the app was last used, prior to
+     * the current session CURRENT_DATE.
      *
-     * @return
+     * @return LAST_SESSION variable
      */
 
     public static long getLastSession() {
@@ -38,8 +40,9 @@ public class TimeTracking extends TimerTask {
     }
 
     /**
+     * Returns the LAST_SESSION modified to the first day of the month of the last session.
      *
-     * @return
+     * @return LAST_SESSION - current days of month.
      */
 
     public static long getLastSessionFirstDayOfMonth() {
@@ -51,6 +54,23 @@ public class TimeTracking extends TimerTask {
         Calendar cal = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth(), 1, 0, 0);
 
         System.out.println("First day of last session month is: " +  cal.getTime());
+
+        return cal.getTimeInMillis();
+    }
+
+    /**
+     * Return LAST_SESSION modified so that the last session's day is the last of the month.
+     *
+     * @return LAST_SESSION + days up until the last day of month.
+     */
+
+    public static long getLastSessionLastDayOfMonth() {
+        LocalDate date = new Date(LAST_SESSION).toLocalDate();
+
+        Calendar cal = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth(), 1, 0, 0);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+        System.out.println("Last  day of last session month is: " +  cal.getTime());
 
         return cal.getTimeInMillis();
     }

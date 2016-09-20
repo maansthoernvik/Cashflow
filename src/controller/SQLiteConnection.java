@@ -54,13 +54,12 @@ public class SQLiteConnection {
                         rs.getDouble("InterestRate"), rs.getInt("AmortizationAmount"), rs.getLong("NextPayment"),
                         rs.getInt("DayOffset"), rs.getLong("BoundTo")));
             }
+
+            return result;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
-        result.forEach(Loan::performPayments);
-
-        return result;
     }
 
     /**
@@ -705,6 +704,55 @@ public class SQLiteConnection {
             throws SQLException {
         PreparedStatement ps = conn.prepareStatement(delete);
         ps.setInt(1, expense.getId());
+
+        return ps;
+    }
+
+    // *                                                        *
+    // *                 RECORD STATEMENTS!                     *
+    // *                                                        *
+
+    /**
+     * Inserts a new record into the DB.
+     *
+     * @param record to be inserted
+     * @param identifier of the target table
+     * @param id of the current user
+     * @return true if successful insert
+     */
+
+    public boolean insertRecord(Record record, String identifier, int id) {
+        String insert = "INSERT INTO " + identifier + " (Amount, Date, UserID) VALUES (?, ?, ?);";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createInsertRecordPreparedStatement(conn, insert, record, id)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+    /**
+     * Prepares a statement for inserting a record.
+     *
+     * @param conn connection object
+     * @param insert sql statement
+     * @param record to be inserted
+     * @param id of the current user
+     * @return PreparedStatement object to be executed
+     * @throws SQLException in case of error
+     */
+
+    private PreparedStatement createInsertRecordPreparedStatement(Connection conn, String insert, Record record, int id)
+            throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(insert);
+        ps.setInt(1, record.getAmount());
+        ps.setLong(2, record.getDate());
+        ps.setInt(3, id);
 
         return ps;
     }

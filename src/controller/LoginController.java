@@ -27,6 +27,12 @@ public class LoginController {
 
     private AccountManager accountManager;
 
+
+    // TODO remove!!!!
+    public LoginController() {
+
+    }
+
     /**
      * Sets the account manager of this session. This is needed for the login to function.
      */
@@ -58,6 +64,7 @@ public class LoginController {
             accountManager.setCurrentUser(user);    // Set the current user of the account manager to the logged in
                                                     // user.
 
+            // Init loans here since it is going to be used at some point, might as well fix it here...
             ArrayList<Loan> loans;
 
             // Check if new records of previous month's expenses need to be created. This checks the time of the last
@@ -67,25 +74,28 @@ public class LoginController {
             // If shifts is bigger then 0, then there needs to be created new records.
             if (shifts > 0) {
 
+                // Fill loans.
                 loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?",
                         AccountManager.getCurrentUser().getId());
+                // Get expenses, only gotten in case of new shifts.
                 ArrayList<Expense> expenses = new SQLiteConnection().fetchExpenses(
                         "SELECT * FROM Expenses WHERE UserID = ?", AccountManager.getCurrentUser().getId());
 
                 // This is done once to be able to track the progress up until today's date and not add stuff that has
-                // an earlier end date.
-                long currentDateShift = TimeTracking.getLastSessionFirstDayOfMonth();
+                // an earlier end date. Needs to be outside for loop!
+                long currentDateShift = TimeTracking.getLastSessionLastDayOfMonth();
 
-                // For every shift of month, one record needs to be inserted.
+                // For every shift of month, one record needs to be inserted. For-loop iteration counter checked OK!
                 for (int i = shifts; i > 0; i--) {
                     System.out.print("Iteration " + i + " of shift loop.");
-                    int total, loanTotal = 0, expenseTotal = 0;     // Declaring totals for this iteration.
+                    int loanTotal = 0, expenseTotal = 0;     // Declaring totals for this iteration.
 
                     // Start by adding loan values to loanTotal:
                     for (Loan loan : loans) {
-                        // Loan amount might be zero, in which case do not add it.
+                        // Loan amount might be zero, in which case do not add it. It could become zero during
+                        // calculations.
                         if (loan.getAmount() > 0) {
-                            // Add the loans amounts to total.
+                            // Add the current iteration's loan amount to loanTotal.
                             loanTotal += intValue((loan.getAmount() * loan.getInterestRate()) +
                                     loan.getAmortizationAmount());
                             // Deducts amortization amount for next iteration of shift-loop (top level loop).
@@ -111,22 +121,26 @@ public class LoginController {
                         food = new Food();
                     }
 
-                    // Add totals to total variable, this amount will be saved.
-                    total = loanTotal + expenseTotal + rent.getAmount() + food.getAmount();
+                    // TODO Add the record inserts here!
+                    //new SQLiteConnection().insertRecord(query, AccountManager.getCurrentUser().getId());
+                    // TODO Add the record inserts here!
 
-                    // Step forward one month in time. -1 is for "no specific dayOffset".
-                    LocalDate currentDate = new Date(currentDateShift).toLocalDate();   // Used for record creation.
+                    LocalDate currentDate = new Date(currentDateShift).toLocalDate();   // Used for record creation
+                                                                                        // print.
+
+                    // After records created, step forward one month in time. -1 is for "no specific dayOffset".
                     currentDateShift = TimeTracking.addOneMonth(currentDateShift, -1);
 
                     // TODO something with the total besides printing it.
                     System.out.println("The month of " + currentDate.getYear() + "-" + currentDate.getMonthValue() +
-                            " had the following total: " + total);
+                            " had the following total: " + (loanTotal + expenseTotal + rent.getAmount() +
+                            food.getAmount()));
 
                 }
 
             }
 
-            // Refresh loans arraylist in case the above DB record creation needed to be performed.
+            // Refresh loans ArrayList in case the above DB record creation needed to be performed.
             loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?",
                     AccountManager.getCurrentUser().getId());
 
@@ -136,7 +150,7 @@ public class LoginController {
             // Give user current DB records, everything should now be UTD.
             AccountManager.getCurrentUser().populateUserFields();
 
-            accountManager.showMainView();
+            //accountManager.showMainView();
         }
     }
 

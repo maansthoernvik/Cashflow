@@ -106,8 +106,9 @@ public class Loan {
                 System.out.println("Deleted expired loan " + name);
                 new SQLiteConnection().deleteLoan(this);
             }
+        } else {
+            System.out.println("No payments needed to be performed for " + name);
         }
-        System.out.println("No payments needed to be performed for " + name);
     }
 
     /**

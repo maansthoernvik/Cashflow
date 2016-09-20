@@ -1,7 +1,13 @@
 package testing;
 
+import controller.LoginController;
 import controller.SQLiteConnection;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import model.AccountManager;
 import model.objects.Record;
+import model.objects.User;
 import model.time.TimeTracking;
 
 import java.sql.*;
@@ -14,9 +20,20 @@ public class Tester {
 
     public static void main(String[] args) {
 
-        TimeTracking.setLastSession(new Long(2142412414));
-        System.out.println(new Date(TimeTracking.getLastSession()).toLocalDate());
-        System.out.println(new Date(TimeTracking.getLastSessionFirstDayOfMonth()).toLocalDate());
+        // 1st of January 2016, 01:00:00
+        Calendar cal = new GregorianCalendar(2016, 0, 5, 1, 0, 0);
+        // Setting last session time to above date.
+        System.out.println(cal.getTime());
+        TimeTracking.setLastSession(cal.getTimeInMillis());
+
+        cal.set(2016, 8, 15, 1, 0, 0);
+        System.out.println(cal.getTime());
+        TimeTracking.setCurrentDate(cal.getTimeInMillis());
+
+
+        // ZIS IS ZE TEST!
+        TestInsert.testRecord();
+
 
 //        SQLiteConnection sql = new SQLiteConnection();
 //
