@@ -30,9 +30,18 @@ public class Tester {
         System.out.println(cal.getTime());
         TimeTracking.setCurrentDate(cal.getTimeInMillis());
 
-        String hello = new Date(0).toLocalDate().getMonth().toString();
+        ArrayList<Record> totals = new SQLiteConnection().fetchRecord(
+                "SELECT SUM(Amount) AS Amount, Date, UserID FROM (" +
+                        "SELECT Amount, Date, UserID FROM LoanRecords UNION ALL " +
+                        "SELECT Amount, Date, UserID FROM ExpenseRecords UNION ALL " +
+                        "SELECT Amount, Date, UserID FROM RentRecords UNION ALL " +
+                        "SELECT Amount, Date, UserID From FoodRecords) " +
+                        "WHERE UserID = ? GROUP BY Date;",
+                1);
 
-        System.out.println(hello.toLowerCase());
+        for (Record r : totals) {
+            System.out.println(r.getDate());
+        }
 
         // ZIS IS ZE TEST!
         //TestInsert.testRecord();

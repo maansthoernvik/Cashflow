@@ -1,10 +1,7 @@
 package controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.TextField;
 
 import java.sql.Date;
@@ -91,24 +88,37 @@ public class OverviewTabViewController {
      */
 
     public void createChart() {
-        final NumberAxis amount = new NumberAxis();
-        amount.setLabel("Amount");
-        amount.setTickLabelRotation(90.0);
-
         final CategoryAxis month = new CategoryAxis();
         month.setLabel("Month");
 
-        BarChart<Number, String> barChart = new BarChart<>(amount, month);
+        final NumberAxis amount = new NumberAxis();
+        amount.setLabel("Amount");
+
+        LineChart<String, Number> barChart = new LineChart<>(month, amount);
         vbox.getChildren().add(barChart);
 
         HashMap<String, ArrayList<Record>> records = new SQLiteConnection().fetchRecords(
                 AccountManager.getCurrentUser().getId());
-        ArrayList<Record> loanRecords = records.get("LoanRecords");
-        ArrayList<Record> expenseRecords = records.get("ExpenseRecords");
-        ArrayList<Record> rentRecords = records.get("RentRecords");
-        ArrayList<Record> foodRecords = records.get("FoodRecords");
+        ArrayList<Record> loanRecords       = records.get("LoanRecords");
+        ArrayList<Record> expenseRecords    = records.get("ExpenseRecords");
+        ArrayList<Record> rentRecords       = records.get("RentRecords");
+        ArrayList<Record> foodRecords       = records.get("FoodRecords");
+
+        ArrayList<Record> totals = new SQLiteConnection().fetchRecord(
+                "SELECT SUM(Amount) AS Amount, Date, UserID FROM (" +
+                        "SELECT Amount, Date, UserID FROM LoanRecords UNION ALL " +
+                        "SELECT Amount, Date, UserID FROM ExpenseRecords UNION ALL " +
+                        "SELECT Amount, Date, UserID FROM RentRecords UNION ALL " +
+                        "SELECT Amount, Date, UserID From FoodRecords) " +
+                        "WHERE UserID = ? GROUP BY Date;",
+                AccountManager.getCurrentUser().getId());
+
+        // 5 or size() - 1 since the index starts at 0
+        int recordSize = loanRecords.size() - 1;
 
         // Get info max of 6 months back in time.
+        XYChart.Series total    = new XYChart.Series();
+        total.setName("Total");
         XYChart.Series loans    = new XYChart.Series();
         loans.setName("Loans");
         XYChart.Series expenses = new XYChart.Series();
@@ -118,16 +128,27 @@ public class OverviewTabViewController {
         XYChart.Series food     = new XYChart.Series();
         food.setName("Food");
 
-        for (int i = 0; loanRecords.size() > i && i < 6; i++) {
-            loans.getData().add(new XYChart.Data<Number, String>(loanRecords.get(loanRecords.size() - (i + 1)).getAmount(),
-                    new Date(loanRecords.get(loanRecords.size() - (i + 1)).getDate()).toLocalDate().getMonth().toString()));
-            expenses.getData().add(new XYChart.Data<Number, String>(expenseRecords.get(expenseRecords.size() - (i + 1)).getAmount(),
-                    new Date(expenseRecords.get(expenseRecords.size() - (i + 1)).getDate()).toLocalDate().getMonth().toString()));
-            rent.getData().add(new XYChart.Data<Number, String>(rentRecords.get(rentRecords.size() - (i + 1)).getAmount(),
-                    new Date(rentRecords.get(rentRecords.size() - (i + 1)).getDate()).toLocalDate().getMonth().toString()));
-            food.getData().add(new XYChart.Data<Number, String>(foodRecords.get(foodRecords.size() - (i + 1)).getAmount(),
-                    new Date(foodRecords.get(foodRecords.size() - (i + 1)).getDate()).toLocalDate().getMonth().toString()));
+        for (int i = recordSize - 6; i <= recordSize; i++) {
+            total.getData().add(new XYChart.Data<String, Number>(
+                    new Date(   loanRecords.get(i).getDate()).toLocalDate().getMonth().toString(),
+                                totals.get(i).getAmount()));
+
+            loans.getData().add(new XYChart.Data<String, Number>(
+                    new Date(   loanRecords.get(i).getDate()).toLocalDate().getMonth().toString(),
+                                loanRecords.get(i).getAmount()));
+
+            expenses.getData().add(new XYChart.Data<String, Number>(
+                    new Date(   expenseRecords.get(i).getDate()).toLocalDate().getMonth().toString(),
+                                expenseRecords.get(i).getAmount()));
+
+            rent.getData().add(new XYChart.Data<String, Number>(
+                    new Date(   rentRecords.get(i).getDate()).toLocalDate().getMonth().toString(),
+                                rentRecords.get(i).getAmount()));
+
+            food.getData().add(new XYChart.Data<String, Number>(
+                    new Date(   foodRecords.get(i).getDate()).toLocalDate().getMonth().toString(),
+                                foodRecords.get(i).getAmount()));
         }
-        barChart.getData().addAll(loans, expenses, rent, food);
+        barChart.getData().addAll(total, loans, expenses, rent, food);
     }
 }

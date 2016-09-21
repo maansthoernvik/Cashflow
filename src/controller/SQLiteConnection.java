@@ -190,7 +190,7 @@ public class SQLiteConnection {
      * @return array list of records
      */
 
-    private ArrayList<Record> fetchRecord(String query, int id) {
+    public ArrayList<Record> fetchRecord(String query, int id) {
         try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
              PreparedStatement ps = createFetchRecordsPreparedStatement(conn, query, id);
              ResultSet rs = ps.executeQuery()) {
