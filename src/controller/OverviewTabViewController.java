@@ -150,5 +150,10 @@ public class OverviewTabViewController {
                                 foodRecords.get(i).getAmount()));
         }
         barChart.getData().addAll(total, loans, expenses, rent, food);
+
+        total.getNode().setOnMouseReleased( releaseEvent -> {
+            barChart.getData().remove(1, 5);
+        });
+
     }
 }
