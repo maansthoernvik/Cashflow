@@ -1,63 +1,29 @@
-package controller;
+package testing;
 
+import controller.SQLiteConnection;
 import model.AccountManager;
 import model.objects.*;
 import model.time.TimeTracking;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
 import static oracle.jrockit.jfr.events.Bits.intValue;
 
 /**
- * Created by MTs on 19/08/16.
+ * Created by MTs on 19/09/16.
  *
- * The controller for the login view, handling the login function of the application.
+ * Testing inserts of Records.
  */
 
-public class LoginController {
+public class TestInsert {
 
-    // Injected FXML fields.
-    @FXML private TextField tfLogin;
-    @FXML private PasswordField pwfLogin;
-
-    private AccountManager accountManager;
-
-    /**
-     * Sets the account manager of this session. This is needed for the login to function.
-     */
-
-    public void setAccountManager(AccountManager accountManager) {
-        this.accountManager = accountManager;
-    }
-
-    /**
-     * Automatically called method upon initialization of the controller. All methods called initialize will be
-     * auto-called.
-     */
-
-    @SuppressWarnings("unused")
-    public void initialize() {
-        tfLogin.setText("alpha");                       // This is only here for debugging/during incipient development
-        pwfLogin.setText("opq531");                     // to ease access to the application.
-    }
-
-    /**
-     * Handler for the login button.
-     */
-
-    public void handleLogin() {
-        User user = authenticate();                 // Authentication returns a matching user of what has been entered
-                                                    // into login fields.
+    public static void testRecord() {
+        User user = new User(1, "alpha");   // Authentication returns a matching user of what has been entered
+        // into login fields.
         // Fetch User will return null upon error.
         if (user != null) {
-            accountManager.setCurrentUser(user);    // Set the current user of the account manager to the logged in
-                                                    // user.
-
             // Init loans here since it is going to be used at some point, might as well fix it here...
             ArrayList<Loan> loans;
 
@@ -67,7 +33,6 @@ public class LoginController {
 
             // If shifts is bigger then 0, then there needs to be created new records.
             if (shifts > 0) {
-                System.out.println("Month shifts detected, performing record creation...");
 
                 // Fill loans.
                 loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?", user.getId());
@@ -131,16 +96,16 @@ public class LoginController {
                      */
 
                     new SQLiteConnection().insertRecord(new Record(loanTotal, currentDateShift),
-                            "LoanRecords", user.getId());
+                                                        "LoanRecords", user.getId());
 
                     new SQLiteConnection().insertRecord(new Record(expenseTotal, currentDateShift),
-                            "ExpenseRecords", user.getId());
+                                                        "ExpenseRecords", user.getId());
 
                     new SQLiteConnection().insertRecord(new Record(rent.getAmount(), currentDateShift),
-                            "RentRecords", user.getId());
+                                                        "RentRecords", user.getId());
 
                     new SQLiteConnection().insertRecord(new Record(food.getAmount(), currentDateShift),
-                            "FoodRecords", user.getId());
+                                                        "FoodRecords", user.getId());
 
                     LocalDate currentDate = new Date(currentDateShift).toLocalDate();   // Used for record creation
                     // print.
@@ -155,33 +120,9 @@ public class LoginController {
                 }
             }
 
-            // Refresh loans ArrayList in case the above DB record creation needed to be performed.
-            loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?",
-                    AccountManager.getCurrentUser().getId());
+            // TODO test extracting records here!
 
-            // Make sure all loans have been "paid"...
-            loans.forEach(Loan::performPayments);
-
-            // Give user current DB records, everything should now be UpToDate.
-            AccountManager.getCurrentUser().populateUserFields();
-
-            accountManager.showMainView();
+            // TODO test extracting records here!
         }
-    }
-
-    /**
-     * Checks what has been entered into username and password field against records in the database.
-     *
-     * @return user if one can be matched
-     */
-
-    private User authenticate() {
-        SQLiteConnection SQLiteConn = new SQLiteConnection();
-
-        User result;
-        result = SQLiteConn.fetchUser("SELECT UserID, Username FROM Users WHERE Username = ? AND Password = ?",
-                tfLogin.getText(), pwfLogin.getText());
-
-        return result;
     }
 }

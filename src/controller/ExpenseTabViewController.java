@@ -168,7 +168,7 @@ public class ExpenseTabViewController {
             // 2. Create Calendar instance.
             Calendar endDateCal = Calendar.getInstance();
             // 3. Set Calendar instance to date gotten from datepicker.
-            endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth(), 0, 0,
+            endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth(), 1, 0,
                     0);
 
             // All fields are converted into their respective data types as all types are strings until this point.
@@ -200,7 +200,7 @@ public class ExpenseTabViewController {
             // See saving process used for btnSaveExpense.
             LocalDate endDateDate = dpEndDate.getValue() == null ? new Date(0).toLocalDate() : dpEndDate.getValue();
             Calendar endDateCal = Calendar.getInstance();
-            endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth(), 0, 0,
+            endDateCal.set(endDateDate.getYear(), endDateDate.getMonthValue() - 1, endDateDate.getDayOfMonth(), 1, 0,
                     0);
 
             Expense updatedExpense = new Expense(currentExpense.getId(), tfName.getText(),

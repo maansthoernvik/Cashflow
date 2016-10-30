@@ -4,9 +4,6 @@ import controller.SQLiteConnection;
 import model.time.TimeTracking;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  * Created by MTs on 03/08/16.
@@ -82,160 +79,35 @@ public class Loan {
     public void performPayments() {
         // No use to enter payments if set to epoch or is amortization set to less than 1...
         if (nextPayment > 86400000 && nextPayment < TimeTracking.getCurrentDate() && amortizationAmount > 0) {
-
+            System.out.println("Payments need to be performed for loan " + name + ". NextPayment was " +
+                    new Date(nextPayment).toLocalDate());
             while (nextPayment < TimeTracking.getCurrentDate() && amount > 0) {
-                System.out.println("Deducting amortization amount of loan " + name);
+                System.out.println("Deducting amortization amount of loan " + name + ".");
 
                 // Deduct amortization amount.
                 amount -= amortizationAmount;
 
-                // Change the next payment date by first getting the current one:
-                LocalDate nextPaymentDate = new Date(nextPayment).toLocalDate();
-
-                int year = nextPaymentDate.getYear();           // Old next payment year.
-                int month = nextPaymentDate.getMonthValue();    // Old next payment month.
-                int day = nextPaymentDate.getDayOfMonth();      // Old next payment day.
-
-                // Is it a leap year?
-                boolean isLeapYear = TimeTracking.isLeapYear(year);
-
-                // Depending on what month it is, there will be different payment days.
-                switch (month) {
-                    case 1:
-                        month = 2;
-
-                        if (isLeapYear && dayOffset < 2) {
-                            day = 29;
-                        } else if (dayOffset < 3) {
-                            day = 28;
-                        }
-
-                        break;
-
-                    case 2:
-                        month = 3;
-
-                        day = 31 - dayOffset;
-
-                        break;
-
-                    case 3:
-                        month = 4;
-
-                        if (dayOffset < 1) {
-                            day = 30;
-                        } else {
-                            day = 30 - (dayOffset - 1); // How does this work?...
-                        }
-
-                        /* Months that have less than 31 days get 1 deducted from their dayOffsets.
-                         * For example:
-                         * Loan is saved on the 30th of January, dayOffset in hence 1 (31 - 1).
-                         * February, day is set to either 29th or 28th depending on leap years.
-                         * March comes, day is set to march total days - dayOffset (31 - 1).
-                         * April comes, day is set to april total days - (dayOffset - 1) = 30 - (1 - 1) = 30.
-                         *
-                         * Another example:
-                         * Loan is saved march 25th, dayoffset = 6
-                         * april comes, day is set to 30 - (6 - 1) = 25
-                         * may comes, day is set to 31 - 6 = 25
-                         * june comes, day is set to 30 - (6 - 1) = 25
-                         * ... and so on
-                         */
-
-                        break;
-
-                    case 4:
-                        month = 5;
-
-                        day = 31 - dayOffset;
-
-                        break;
-
-                    case 5:
-                        month = 6;
-
-                        if (dayOffset < 1) {
-                            day = 30;
-                        } else {
-                            day = 30 - (dayOffset - 1);
-                        }
-
-                        break;
-
-                    case 6:
-                        month = 7;
-
-                        day = 31 - dayOffset;
-
-                        break;
-
-                    case 7:
-                        month = 8;
-
-                        day = 31 - dayOffset;
-
-                        break;
-
-                    case 8:
-                        month = 9;
-
-                        if (dayOffset < 1) {
-                            day = 30;
-                        } else {
-                            day = 30 - (dayOffset - 1);
-                        }
-
-                        break;
-
-                    case 9:
-                        month = 10;
-
-                        day = 31 - dayOffset;
-
-                        break;
-
-                    case 10:
-                        month = 11;
-
-                        if (dayOffset < 1) {
-                            day = 30;
-                        } else {
-                            day = 30 - (dayOffset - 1);
-                        }
-
-                        break;
-
-                    case 11:
-                        month = 12;
-
-                        day = 31 - dayOffset;
-
-                        break;
-
-                    case 12:
-                        year += 1;
-                        month = 1;
-
-                        day = 31 - dayOffset;
-
-                        break;
-                }
-                Calendar nextPaymentCal = new GregorianCalendar(year, month - 1, day);
-                nextPayment = nextPaymentCal.getTimeInMillis();
+                nextPayment = TimeTracking.addOneMonth(nextPayment, dayOffset);
             }
+
+            System.out.println("Payments performed. NextPayment is now " + new Date(nextPayment).toLocalDate());
+
+            /* ************** *
+             * Loop broken!!! *
+             * ************** */
 
             if (amount > 0) {   // This means that the loan has been updated but there is still left to pay.
 
                 new SQLiteConnection().updateLoan(this);    // Updates the loan after while loop comes to an end.
-                System.out.println("Updated loan payments and amount of " + name);
+                System.out.println("Updated loan " + name);
             } else {            // Loop terminated due to loan amount being <= 0, delete the crap.
 
-                System.out.println("Deleted expired loan " + name);
+                System.out.println("Deleted loan " + name);
                 new SQLiteConnection().deleteLoan(this);
             }
+        } else {
+            System.out.println("No payments needed to be performed for loan " + name);
         }
-        System.out.println("No payments needed to be performed for " + name);
     }
 
     /**

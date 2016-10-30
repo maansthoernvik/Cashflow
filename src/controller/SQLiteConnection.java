@@ -5,6 +5,7 @@ import org.sqlite.SQLiteConfig;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -53,13 +54,12 @@ public class SQLiteConnection {
                         rs.getDouble("InterestRate"), rs.getInt("AmortizationAmount"), rs.getLong("NextPayment"),
                         rs.getInt("DayOffset"), rs.getLong("BoundTo")));
             }
+
+            return result;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
-        result.forEach(Loan::performPayments);
-
-        return result;
     }
 
     /**
@@ -150,6 +150,74 @@ public class SQLiteConnection {
 
     private PreparedStatement createSelectPreparedStatement(Connection conn, String query, int id)
             throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, id);
+
+        return ps;
+    }
+
+    /**
+     * Creates a hashmap of all historical records of previous months transactions. Uses string identifiers for the
+     * different types of records.
+     *
+     * @param id of the currently signed in user
+     * @return a hashmap of all records
+     */
+
+    public HashMap<String, ArrayList<Record>> fetchRecords(int id) {
+        HashMap<String, ArrayList<Record>> result = new HashMap<>();
+
+        String query = "SELECT * FROM LoanRecords WHERE UserID = ?;";
+        result.put("LoanRecords", fetchRecord(query, id));
+
+        query = "SELECT * FROM ExpenseRecords WHERE UserID = ?;";
+        result.put("ExpenseRecords", fetchRecord(query, id));
+
+        query = "SELECT * FROM RentRecords WHERE UserID = ?;";
+        result.put("RentRecords", fetchRecord(query, id));
+
+        query = "SELECT * FROM FoodRecords WHERE UserID = ?;";
+        result.put("FoodRecords", fetchRecord(query, id));
+
+        return result;
+    }
+
+    /**
+     * Fetches all of the loan historical records.
+     *
+     * @param query to fetch record
+     * @param id of currently logged in user
+     * @return array list of records
+     */
+
+    public ArrayList<Record> fetchRecord(String query, int id) {
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createFetchRecordsPreparedStatement(conn, query, id);
+             ResultSet rs = ps.executeQuery()) {
+            ArrayList<Record> result = new ArrayList<>();
+
+            while (rs.next()) {
+                result.add(new Record(rs.getInt("Amount"), rs.getLong("Date")));
+            }
+
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Prepares parameters for a fetch records prepared statement.
+     *
+     * @param conn connection to DB
+     * @param query to be prepared with parameters
+     * @param id of user logged in
+     * @return PreparedStatement object prepared with parameters
+     */
+
+    public PreparedStatement createFetchRecordsPreparedStatement(Connection conn, String query, int id) throws
+            SQLException {
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setInt(1, id);
 
@@ -636,6 +704,55 @@ public class SQLiteConnection {
             throws SQLException {
         PreparedStatement ps = conn.prepareStatement(delete);
         ps.setInt(1, expense.getId());
+
+        return ps;
+    }
+
+    // *                                                        *
+    // *                 RECORD STATEMENTS!                     *
+    // *                                                        *
+
+    /**
+     * Inserts a new record into the DB.
+     *
+     * @param record to be inserted
+     * @param identifier of the target table
+     * @param id of the current user
+     * @return true if successful insert
+     */
+
+    public boolean insertRecord(Record record, String identifier, int id) {
+        String insert = "INSERT INTO " + identifier + " (Amount, Date, UserID) VALUES (?, ?, ?);";
+
+        try (Connection conn = DriverManager.getConnection(connectionURL, config.toProperties());
+             PreparedStatement ps = createInsertRecordPreparedStatement(conn, insert, record, id)) {
+            ps.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+    /**
+     * Prepares a statement for inserting a record.
+     *
+     * @param conn connection object
+     * @param insert sql statement
+     * @param record to be inserted
+     * @param id of the current user
+     * @return PreparedStatement object to be executed
+     * @throws SQLException in case of error
+     */
+
+    private PreparedStatement createInsertRecordPreparedStatement(Connection conn, String insert, Record record, int id)
+            throws SQLException {
+        PreparedStatement ps = conn.prepareStatement(insert);
+        ps.setInt(1, record.getAmount());
+        ps.setLong(2, record.getDate());
+        ps.setInt(3, id);
 
         return ps;
     }

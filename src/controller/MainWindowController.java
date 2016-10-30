@@ -6,6 +6,15 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
 import model.AccountManager;
+import model.objects.Expense;
+import model.objects.Food;
+import model.objects.Loan;
+import model.objects.Rent;
+import model.time.TimeTracking;
+
+import java.util.ArrayList;
+
+import static oracle.jrockit.jfr.events.Bits.intValue;
 
 /**
  * Created by MTs on 06/08/16.
@@ -44,7 +53,9 @@ public class MainWindowController {
 
     @SuppressWarnings("unused")
     public void initialize() {
-        overviewTabViewController.refreshOverview();    // Load initial values into overview fields.
+        // Load initial values into overview fields.
+        overviewTabViewController.refreshOverview();
+        overviewTabViewController.createChart();
 
         tabPane.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Tab> observable,
                                                                             Tab oldTab, Tab newTab) -> {

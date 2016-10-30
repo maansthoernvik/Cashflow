@@ -12,6 +12,10 @@ public class Food {
 
     private int amount;
 
+    public Food() {
+        this.amount = 0;
+    }
+
     /**
      * Basic constructor to create a food object with no id.
      *

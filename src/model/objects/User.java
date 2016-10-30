@@ -49,12 +49,6 @@ public class User {
 
     public void addAllLoans() {
         loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
-
-        // Loan payment dates are checked upon retrieval to see if amortization amounts need to be deducted in order
-        // to display the correct amounts.
-        loans.forEach(Loan::performPayments);
-
-        loans = new SQLiteConnection().fetchLoans("SELECT * FROM Loans WHERE UserID = ?", id);
     }
 
     /**
@@ -87,8 +81,7 @@ public class User {
      */
 
     public void addAllExpenses() {
-        SQLiteConnection SQLiteConn = new SQLiteConnection();
-        expenses = SQLiteConn.fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?", id);
+        expenses = new SQLiteConnection().fetchExpenses("SELECT * FROM Expenses WHERE UserID = ?", id);
     }
 
     /**
@@ -114,8 +107,7 @@ public class User {
      */
 
     public void addRent() {
-        SQLiteConnection SQLiteConn = new SQLiteConnection();
-        rent = SQLiteConn.fetchRent("SELECT * FROM Rent WHERE UserID = ?" , id);
+        rent = new SQLiteConnection().fetchRent("SELECT * FROM Rent WHERE UserID = ?" , id);
     }
 
     /**
@@ -123,8 +115,7 @@ public class User {
      */
 
     public void addFood() {
-        SQLiteConnection SQLiteConn = new SQLiteConnection();
-        food = SQLiteConn.fetchFood("SELECT * FROM Food WHERE UserID = ?;", id);
+        food = new SQLiteConnection().fetchFood("SELECT * FROM Food WHERE UserID = ?;", id);
     }
 
     /**
